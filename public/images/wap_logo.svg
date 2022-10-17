@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg" height="425" width="425" preserveAspectRatio="xMidYMid meet">
+  <g transform="translate(13, 13)">
+  <g transform="translate(0, 0)">
+  <polygon points="0,0 125,0 200,200 200,425 175, 425" style="fill:white;stroke:white;stroke-width:0" />
+  <polygon points="175,0 300,0 350,200 350,425 325,425" style="fill:white;stroke:white;stroke-width:0" />
+  <polygon points="345,0 395,0 395,125 395,125 375,125" style="fill:white;stroke:white;stroke-width:0" />
+</svg>

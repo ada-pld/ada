@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+        <title>Test</title>
+    </head>
+    <body>
+        <%- include("../partials/navbar.ejs") %>
+        <div class="container-fluid p-5">
+            <div class="row mb-5 text-center">
+                <% if (wap.sprint) { %>
+                    <h1>Sprint: <%= wap.sprint.name %></h1>
+                <% } else { %>
+                    <h1>No active sprint</h1>
+                <% } %>
+            </div>
+            <% if (wap.sprint) { %>
+                <div class="row mb-5">
+                    <div class="col mx-auto col-12">
+                        <button type="button" class="d-grid btn btn-outline-primary btn-lg col-5 mx-auto">Download last PLD</button>
+                    </div>
+                </div>
+                <div class="row border-top border-2 mb-5"></div>
+                <div class="row text-center mb-2">
+                    <h3>Your infos:</h3>
+                </div>
+                <div class="row mb-5 row-cols-md-5 justify-content-center">
+                    <div class="col text-center">
+                        <h2><span class="badge bg-secondary">Number of cards: <%= totalCards %></span></h2>
+                    </div>
+                    <div class="col text-center">
+                        <h2><span class="badge bg-success">Finished cards: <%= totalFinishedCards %></span></h2>
+                    </div>
+                    <div class="col text-center">
+                        <h2><span class="badge bg-warning">Cards In progress: <%= totalCardInProgress %></span></h2>
+                    </div>
+                    <div class="col text-center">
+                        <h2><span class="badge bg-danger">Cards not started: <%= totalCardNotStarted %></span></h2>
+                    </div>
+                    <div class="col text-center">
+                        <h2><span class="badge bg-primary">Woking days: <%= totalWorkingDays %>/<%= wap.sprint.workDaysNeeded %></span></h2>
+                    </div>
+                </div>
+                <div class="row border-top border-2 mb-5"></div>
+                <div class="row text-center mb-2">
+                    <h3>Your cards:</h3>
+                </div>
+                <div class="row row-cols-1 row-cols-md-3 g-5">
+                    <% for (const card of allApproved) { %>
+                        <div class="col">
+                            <%- include("../partials/card.ejs", { card: card, canEdit: false, canApprove: false, canChangeStatus: true}) %>
+                        </div>
+                    <% } %>
+                </div>
+                <% if (allApproved == null || allApproved.length == 0) { %>
+                    <div class="row text-center">
+                        <h4 class="text-muted">No cards active... yet !</h4>
+                    </div>
+                <% } %>
+            <% } else { %>
+                <div class="ms-auto text-center">
+                    <h4 class="text-muted">So sad... Come back when a sprint have started !</h4>
+                </div>
+            <% } %>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    </body>
+</html>
