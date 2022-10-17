@@ -31,7 +31,7 @@ class SprintController implements IController {
             ]
         })
         for (const user of allUsers) {
-            user.cards.filter((cards) => {
+            user.cards = user.cards.filter((cards) => {
                 return (cards.sprintId == req.wap.sprint.id) && !(cards.status == "REJECTED" || cards.status == "WAITING_APPROVAL");
             })
             let totalJH = 0
