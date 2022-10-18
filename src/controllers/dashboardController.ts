@@ -39,7 +39,7 @@ class DashboardController implements IController {
                     DoD
                 ]
             })
-            allApproved.filter((element) => {
+            allApproved = allApproved.filter((element) => {
                 return element.assignees.map(a => a.id).includes(req.user.id);
             })
         }
