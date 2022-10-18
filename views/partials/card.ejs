@@ -1,5 +1,13 @@
-<div class="card">
-    <ul class="card-header p-0 m-0 nav nav-tabs" id="cardTab-<%= card.id %>" role="tabList">
+<% var border = "";
+if (card.status == "FINISHED") {
+    border = "success";
+} else if (card.status == "STARTED") {
+    border = "warning";
+} else if (card.status == "NOT_STARTED") {
+    border = "danger";
+} %>
+<div class="card border-<%= border %>">
+    <ul class="card-header p-0 m-0 nav nav-tabs border-<%= border %>" id="cardTab-<%= card.id %>" role="tabList">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="overview-tab-<%= card.id %>" data-bs-toggle="tab" data-bs-target="#overview-<%= card.id %>" type="button" role="tab" aria-controls="overview-<%= card.id %>" aria-selected="true">Overview</button>
         </li>
@@ -34,33 +42,33 @@
     <div class="tab-content" id="cardTabContent-<%= card.id %>">
         <div class="tab-pane fade show active" id="overview-<%= card.id %>" role="tabpanel" aria-labelledby="overview-tab-<%= card.id %>">
             <div class="card-body">
-                <h5 class="card-title"><%= wap.sprint.id %>.<%= card.part.id %>.<%= (card.idInSprint == -1) ? "U" : card.idInSprint %> <%= card.name %></h5>
+                <h5 class="card-title text-<%= border %>"><%= wap.sprint.id %>.<%= card.part.id %>.<%= (card.idInSprint == -1) ? "U" : card.idInSprint %> <%= card.name %></h5>
                 <h6 class="card-subtitle mb-2 text-muted">Version: <%= card.version %></h6>
                 <p class="card-text"><%= card.task %></p>
             </div>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">Infos:</li>
-                <li class="list-group-item">Jours hommes: <%= card.workingDays %>J/H</li>
-                <li class="list-group-item">Status: <%= card.status %></li>
+                <li class="list-group-item border-<%= border %>">Infos:</li>
+                <li class="list-group-item border-<%= border %>">Jours hommes: <%= card.workingDays %>J/H</li>
+                <li class="list-group-item border-<%= border %>">Status: <%= card.status %></li>
             </ul>
         </div>
         <div class="tab-pane fade" id="description-<%= card.id %>" role="tabpanel" aria-labelledby="description-tab-<%= card.id %>">
             <div class="card-body">
-                <h5 class="card-title"><%= wap.sprint.id %>.<%= card.part.id %>.<%= (card.idInSprint == -1) ? "U" : card.idInSprint %> <%= card.name %></h5>
+                <h5 class="card-title text-<%= border %>"><%= wap.sprint.id %>.<%= card.part.id %>.<%= (card.idInSprint == -1) ? "U" : card.idInSprint %> <%= card.name %></h5>
                 <h6 class="card-subtitle mb-2 text-muted">Version: <%= card.version %></h6>
                 <div class="card-text">
                     <%= card.description %>
                 </div>
             </div>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">Definitions of Done:</li>
+                <li class="list-group-item border-<%= border %>">Definitions of Done:</li>
                 <% for (const dod of card.dods.reverse()) { %>
-                    <li class="list-group-item"><%= dod.name %></li>
+                    <li class="list-group-item border-<%= border %>"><%= dod.name %></li>
                 <% } %>
             </ul>
         </div>
     </div>
-    <div class="card-footer text-muted">
+    <div class="card-footer text-muted border-<%= border %>">
         Assignees: <% for (let i = 0, r=card.assignees.reverse(); i < r.length; i++) { %><%=r[i].firstname + " " + r[i].lastname%><%= (i != r.length - 1) ? ", " : "" %><% } %>
     </div>
 </div>
