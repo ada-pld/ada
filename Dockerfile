@@ -8,6 +8,8 @@ RUN npm install
 
 COPY ./ ./
 
+RUN npm run buildMail
+
 RUN npm run build
 
 EXPOSE 4000
