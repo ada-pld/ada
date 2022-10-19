@@ -5,7 +5,7 @@ import { checkPerm } from "../middlewares/checkPerms";
 import User, {Role} from "../models/user";
 import * as bcrypt from "bcrypt";
 import { body, validationResult } from 'express-validator';
-import { sendCreationEmail } from "../mails";
+import { checkMailTransporter, sendCreationEmail } from "../mails";
 
 class UserController implements IController {
     public path = "/users";
@@ -41,7 +41,8 @@ class UserController implements IController {
             currentPage: '/users',
             wap: req.wap,
             user: req.user,
-            isAdmin: (req.user.role == "ADMIN")
+            isAdmin: (req.user.role == "ADMIN"),
+            isTransporter: checkMailTransporter()
         })
     }
 
@@ -49,7 +50,7 @@ class UserController implements IController {
         body("firstname").exists({ checkFalsy: true}),
         body("lastname").exists({ checkFalsy: true }),
         body("email").normalizeEmail().isEmail(),
-        body("role").isIn(["ADMIN", "EDITOR", "MAINTAINER", "USER"]),
+        body("role").isIn(["ADMIN", "EDITOR", "MAINTENER", "USER"]),
         async (req: Request, res: Response) => {
             if (!validationResult(req).isEmpty()) {
                 return res.redirect("/users/create/?error=invalid_body");
@@ -63,14 +64,19 @@ class UserController implements IController {
                 return res.redirect("/users/create/?error=already_exists");
             }
             const randomPassword = User.generateRandomPassword();
-            const created = await User.create({
+            const created = User.build({
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
                 email: req.body.email,
                 password: await bcrypt.hash(process.env.PASS_SALT + randomPassword, 10),
                 role: req.body.role
             })
-            sendCreationEmail(created, req.user, randomPassword);
+            if (checkMailTransporter()) {
+                sendCreationEmail(created, req.user, randomPassword);
+            } else {
+                created.password = await bcrypt.hash(process.env.PASS_SALT + "password", 10);
+            }
+            await created.save();
             req.wap.users = await User.findAll();
             return res.redirect("/users/?info=success");
     }]

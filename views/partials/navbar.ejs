@@ -13,31 +13,40 @@
                     <li class="nav-item">
                         <a class="nav-link <%= currentPage === '/dashboard' ? 'active' : '' %>" <%= currentPage === '/dashboard' ? 'aira-current="page"' : '' %> href="/dashboard">Dashboard</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link <%= currentPage === '/mycards' ? 'active' : '' %>" <%= currentPage === '/mycards' ? 'aira-current="page"' : '' %> href="/mycards">My Cards</a>
-                    </li>
-                    <li class="nav-item">
-                        <div class="tooltip-wrapper" data-toogle="tooltip" data-placement="bootom" title="Not done yet.">
-                            <a class="nav-link disabled <%= currentPage === '/rdv' ? 'active' : '' %>" <%= currentPage === '/rdv' ? 'aira-current="page"' : '' %> href="/rdv">Rendez-vous</a>
-                        </div> 
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <%= currentPage === '/users' ? 'active' : '' %>" <%= currentPage === '/users' ? 'aira-current="page"' : '' %> href="/users">Users</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <%= currentPage === '/cards' ? 'active' : '' %>" <%= currentPage === '/cards' ? 'aira-current="page"' : '' %> href="/cards">Cards</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <%= currentPage === '/sprint' ? 'active' : '' %>" <%= currentPage === '/sprint' ? 'aira-current="page"' : '' %> href="/sprint">Sprint</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <%= currentPage === '/parts' ? 'active' : '' %>" <%= currentPage === '/parts' ? 'aira-current="page"' : '' %> href="/parts">Parts</a>
-                    </li>
-                    <li class="nav-item">
-                        <div class="tooltip-wrapper" data-toogle="tooltip" data-placement="bootom" title="Not done yet.">
-                            <a class="nav-link disabled <%= currentPage === '/pld' ? 'active' : '' %>" <%= currentPage === '/pld' ? 'aira-current="page"' : '' %> href="/pld">PLD</a>
-                        </div>
-                    </li>
+                    <% if (user.role == "MAINTENER" || user.role == "EDITOR" || user.role == "ADMIN") { %>
+                        <li class="nav-item">
+                            <a class="nav-link <%= currentPage === '/mycards' ? 'active' : '' %>" <%= currentPage === '/mycards' ? 'aira-current="page"' : '' %> href="/mycards">My Cards</a>
+                        </li>
+                        <li class="nav-item">
+                            <div class="tooltip-wrapper" data-toogle="tooltip" data-placement="bootom" title="Not done yet.">
+                                <a class="nav-link disabled <%= currentPage === '/rdv' ? 'active' : '' %>" <%= currentPage === '/rdv' ? 'aira-current="page"' : '' %> href="/rdv">Rendez-vous</a>
+                            </div> 
+                        </li>
+                    <% } %>
+                    <% if (user.role == "EDITOR" || user.role == "ADMIN") { %>
+                        <li class="nav-item">
+                            <a class="nav-link <%= currentPage === '/users' ? 'active' : '' %>" <%= currentPage === '/users' ? 'aira-current="page"' : '' %> href="/users">Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <%= currentPage === '/cards' ? 'active' : '' %>" <%= currentPage === '/cards' ? 'aira-current="page"' : '' %> href="/cards">Cards</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <%= currentPage === '/sprint' ? 'active' : '' %>" <%= currentPage === '/sprint' ? 'aira-current="page"' : '' %> href="/sprint">Sprint</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <%= currentPage === '/parts' ? 'active' : '' %>" <%= currentPage === '/parts' ? 'aira-current="page"' : '' %> href="/parts">Parts</a>
+                        </li>
+                        <li class="nav-item">
+                            <div class="tooltip-wrapper" data-toogle="tooltip" data-placement="bootom" title="Not done yet.">
+                                <a class="nav-link disabled <%= currentPage === '/pld' ? 'active' : '' %>" <%= currentPage === '/pld' ? 'aira-current="page"' : '' %> href="/pld">PLD</a>
+                            </div>
+                        </li>
+                    <% } %>
+                    <% if (user.role == "ADMIN") { %>
+                        <li class="nav-item">
+                            <a class="nav-link <%= currentPage === '/config' ? 'active' : '' %>" <%= currentPage === '/config' ? 'aira-current="page"' : '' %> href="/config">Config</a>
+                        </li>
+                    <% } %>
                 </ul>
                 <ul class="navbar-nav mb-2 mb-lg-0 ms-auto">
                     <li class="nav-item me-4">

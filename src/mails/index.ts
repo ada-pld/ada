@@ -4,7 +4,7 @@ import User from '../models/user';
 
 let transporter :Transporter = null;
 
-export async function setup() {
+export async function setupMailTransporter() {
     transporter = nodemailer.createTransport({
         host: process.env.MAIL_HOST.toString(),
         port: parseInt(process.env.MAIL_PORT.toString()),
@@ -13,6 +13,15 @@ export async function setup() {
             pass: process.env.MAIL_PASSWORD
         }
     })
+    try {
+        await transporter.verify()
+    } catch (e) {
+        transporter = null;
+    }
+}
+
+export function checkMailTransporter() {
+    return transporter != null;
 }
 
 export async function sendCreationEmail(newUser: User, creatorUser: User, temporaryPassword: string) {
