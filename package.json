@@ -1,13 +1,14 @@
 {
   "name": "domestia_wap",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Domestia Web Administration Panel",
   "main": "build/app.js",
   "scripts": {
     "build": "tsc",
     "start": "node ./build/server.js",
     "seed": "node ./build/seed_data.js",
-    "buildMail": "mkdir ./mails/build/ && mjml ./mails/*.mjml -o ./mails/build/ --config.minify && node ./renameHtmlToEjs.js"
+    "buildMail": "mkdir ./mails/build/ && mjml ./mails/*.mjml -o ./mails/build/ --config.minify && node ./renameHtmlToEjs.js",
+    "postinstall": "cd pldGenerator && npm i"
   },
   "author": "Théo HEMMER",
   "license": "ISC",

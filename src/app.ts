@@ -27,7 +27,7 @@ const wap = new WAP();
 async function checkDatabaseConnection() {
     try {
         await db.authenticate();
-        await db.sync({ force: true });
+        await db.sync(/*{ force: true }*/);
     } catch (e) {
         console.error(e);
         process.exit(1);
