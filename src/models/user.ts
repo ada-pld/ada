@@ -42,6 +42,21 @@ class User extends Model<User> {
     @BelongsToMany(() => Card, () => CardUser)
     cards: Card[];
 
+    @Default(true)
+    @Column(DataType.BOOLEAN)
+    isDefaultPassword: boolean;
+
+    static generateRandomPassword() {
+        const characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const specials = "#!^@_";
+        let password = "";
+        for (let i = 0; i < 7; i++) {
+            password += characters[Math.floor(Math.random() * characters.length)];
+        }
+        password += specials[Math.floor(Math.random() * specials.length)];
+        return password;
+    }
+
 }
 
 export default User;

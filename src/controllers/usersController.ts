@@ -4,6 +4,8 @@ import { authUser } from "../middlewares/auth";
 import { checkPerm } from "../middlewares/checkPerms";
 import User, {Role} from "../models/user";
 import * as bcrypt from "bcrypt";
+import { body, validationResult } from 'express-validator';
+import { sendCreationEmail } from "../mails";
 
 class UserController implements IController {
     public path = "/users";
@@ -17,8 +19,10 @@ class UserController implements IController {
         this.router.get("/", authUser, checkPerm("EDITOR"), this.getUsers);
         this.router.get("/create", authUser, checkPerm("EDITOR"), this.createUserGET);
         this.router.post("/create", authUser, checkPerm("EDITOR"), this.createUserPOST);
-        this.router.get("/edit/:id", authUser, this.editUserGET)
-        this.router.post("/edit", authUser, this.editUserPOST)
+        this.router.get("/edit/:id", authUser, this.editUserGET);
+        this.router.post("/edit", authUser, this.editUserPOST);
+        this.router.get("/changeDefaultPassword", this.changeDefaultPasswordGET);
+        this.router.post("/changeDefaultPassword", this.changeDefaultPasswordPOST);
     }
 
     private getUsers = async (req: Request, res: Response) => {
@@ -41,31 +45,35 @@ class UserController implements IController {
         })
     }
 
-    private createUserPOST = async (req: Request, res: Response) => {
-        if (!req.body.firstname || !req.body.lastname || !req.body.password || !req.body.email || !req.body.role)
-            return res.redirect("/users/create/?error=invalid_body");
-        if (req.body.role != "ADMIN" && req.body.role != "EDITOR" && req.body.role != "MAINTAINER" && req.body.role != "USER")
-            return res.redirect("/users/create/?error=invalid_body");
-        if (req.user.role == "EDITOR" && req.body.role == "ADMIN")
-            return res.redirect("/users/create/?error=no_permissions");
-        const already_exists = await User.findOne({
-            where: {
-                email: req.body.email
+    private createUserPOST = [
+        body("firstname").exists({ checkFalsy: true}),
+        body("lastname").exists({ checkFalsy: true }),
+        body("email").normalizeEmail().isEmail(),
+        body("role").isIn(["ADMIN", "EDITOR", "MAINTAINER", "USER"]),
+        async (req: Request, res: Response) => {
+            if (!validationResult(req).isEmpty()) {
+                return res.redirect("/users/create/?error=invalid_body");
             }
-        });
-        if (already_exists) {
-            return res.redirect("/users/create/?error=already_exists");
-        }
-        const created = await User.create({
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-            email: req.body.email,
-            password: await bcrypt.hash(process.env.PASS_SALT + req.body.password, 10),
-            role: req.body.role
-        })
-        req.wap.users = await User.findAll();
-        return res.redirect("/users/?info=success");
-    }
+            const already_exists = await User.findOne({
+                where: {
+                    email: req.body.email
+                }
+            });
+            if (already_exists) {
+                return res.redirect("/users/create/?error=already_exists");
+            }
+            const randomPassword = User.generateRandomPassword();
+            const created = await User.create({
+                firstname: req.body.firstname,
+                lastname: req.body.lastname,
+                email: req.body.email,
+                password: await bcrypt.hash(process.env.PASS_SALT + randomPassword, 10),
+                role: req.body.role
+            })
+            sendCreationEmail(created, req.user, randomPassword);
+            req.wap.users = await User.findAll();
+            return res.redirect("/users/?info=success");
+    }]
 
     private editUserGET = async (req: Request, res: Response) => {
         if (!req.params.id)
@@ -146,6 +154,37 @@ class UserController implements IController {
         }
         
     }
+
+    private changeDefaultPasswordGET = async (req: Request, res: Response) => {
+        if (!req.user)
+            return res.redirect("/login");
+        if (!req.user.isDefaultPassword) {
+            return res.redirect("/dashboard");
+        }
+        return res.render("users/change_default_password", {
+            currentPage: '/users',
+            wap: req.wap,
+            user: req.user
+        });
+    }
+
+    private changeDefaultPasswordPOST = [
+        body("password").exists({ checkFalsy: true}),
+        async (req: Request, res: Response) => {
+            if (!req.user)
+                return res.redirect("/login");
+            if (!req.user.isDefaultPassword) {
+                return res.redirect("/dashboard");
+            }
+            if (!validationResult(req).isEmpty()) {
+                return res.redirect("/users/changeDefaultPassword?error=invalid_body");
+            }
+            req.user.password = await bcrypt.hash(process.env.PASS_SALT + req.body.password, 10);
+            req.user.isDefaultPassword = false;
+            await req.user.save();
+            return res.redirect("/dashboard");
+        }
+    ]
 }
 
 export default UserController;
