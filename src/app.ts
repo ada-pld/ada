@@ -2,7 +2,6 @@ import "dotenv/config";
 import express, { Request, Response, NextFunction } from "express";
 import db from "./models";
 import User from "./models/user";
-import * as bcrypt from "bcrypt";
 import session from "express-session";
 import LoginController from "./controllers/loginController";
 import IController from "./controllers/controller";
@@ -17,7 +16,7 @@ import Part from "./models/part";
 import RDVController from "./controllers/rdvController";
 import PLDController from "./controllers/pldController";
 import CardsController from "./controllers/cardsController";
-import { authUser, defaultAuth } from "./middlewares/auth";
+import { authUser, checkDefaultPassword } from "./middlewares/auth";
 import MycardsController from "./controllers/mycardsController";
 
 const app = express();
@@ -27,43 +26,6 @@ async function checkDatabaseConnection() {
     try {
         await db.authenticate();
         await db.sync({ force: true });
-    } catch (e) {
-        console.error(e);
-        process.exit(1);
-    }
-}
-
-async function createDefaultAccount() {
-    try {
-        console.log("Creating default user");
-        await User.create({
-            firstname: "Théo",
-            lastname: "HEMMER",
-            email: "theo.hemmer@domestia.fr",
-            password: await bcrypt.hash(process.env.PASS_SALT + "password", 10),
-            role: "ADMIN"
-        });
-        await User.create({
-            firstname: "EDI",
-            lastname: "TOR",
-            email: "e@domestia.fr",
-            password: await bcrypt.hash(process.env.PASS_SALT + "password", 10),
-            role: "EDITOR"
-        });
-        await User.create({
-            firstname: "MAINT",
-            lastname: "ENER",
-            email: "m@domestia.fr",
-            password: await bcrypt.hash(process.env.PASS_SALT + "password", 10),
-            role: "MAINTENER"
-        });
-        await User.create({
-            firstname: "US",
-            lastname: "ER",
-            email: "u@domestia.fr",
-            password: await bcrypt.hash(process.env.PASS_SALT + "password", 10),
-            role: "USER"
-        });
     } catch (e) {
         console.error(e);
         process.exit(1);
@@ -81,7 +43,7 @@ app.use(session({
         maxAge: 60000*60*60*24
     }
 }))
-app.use(defaultAuth);
+app.use(checkDefaultPassword);
 app.use(async (req: Request, res: Response, next: NextFunction) => {
     if (wap.sprint == null) {
         const sprint = await Sprint.findOne({
@@ -132,4 +94,4 @@ app.use((req, res) => {
     });
 })
 
-export { app, checkDatabaseConnection, createDefaultAccount }
+export { app, checkDatabaseConnection }

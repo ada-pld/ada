@@ -2,3 +2,5 @@ build/
 node_modules/
 .env
 docker-compose.yml
+src/seed_data.ts
+mails/build/
