@@ -1,19 +1,20 @@
 import nodemailer, { Transporter } from 'nodemailer';
 import ejs from 'ejs';
 import User from '../models/user';
+import { wap } from "../app";
 
 let transporter :Transporter = null;
 
 export async function setupMailTransporter() {
-    transporter = nodemailer.createTransport({
-        host: process.env.MAIL_HOST.toString(),
-        port: parseInt(process.env.MAIL_PORT.toString()),
-        auth: {
-            user: process.env.MAIL_USERNAME,
-            pass: process.env.MAIL_PASSWORD
-        }
-    })
     try {
+        transporter = nodemailer.createTransport({
+            host: wap.config.SMTP_Host.value,
+            port: parseInt(wap.config.SMTP_Port.value),
+            auth: {
+                user: wap.config.SMTP_User.value,
+                pass: wap.config.SMTP_Password.value
+            }
+        })
         await transporter.verify()
     } catch (e) {
         transporter = null;
@@ -31,7 +32,7 @@ export async function sendCreationEmail(newUser: User, creatorUser: User, tempor
         creatorLastname: creatorUser.lastname,
         email: newUser.email,
         password: temporaryPassword,
-        wapLink: process.env.HOSTNAME,
+        wapLink: wap.config.Hostname.value,
         wapRepository: "https://github.com/DomestiaDev/wap"
     });
     const options = {

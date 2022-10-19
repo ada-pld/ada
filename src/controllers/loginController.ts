@@ -93,7 +93,7 @@ class LoginController implements IController {
             req.wap.users = await User.findAll();
             req.session.user = user.id;
             req.session.save(() => {
-                return res.redirect("/dashboard");
+                return res.redirect("/config");
             })
         }
     ]

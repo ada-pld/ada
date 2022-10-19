@@ -1,6 +1,7 @@
 import { Sequelize} from "sequelize-typescript";
 import Card from "./card";
 import CardUser from "./cardUser";
+import Config from "./config";
 import DoD from "./dod";
 import Part from "./part";
 import Sprint from "./sprint";
@@ -20,7 +21,8 @@ const sequelize = new Sequelize({
         Part,
         Card,
         CardUser,
-        DoD
+        DoD,
+        Config
     ]
 });
 

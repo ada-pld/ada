@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+        <title>WAP - Config</title>
+    </head>
+    <body>
+        <%- include("../partials/navbar.ejs") %>
+        <div class="container-xxl bd-gutter flex-wrap flex-lg-nowrap p-5">
+            <div class="row mb-5 text-center">
+                <h1>WAP Config</h1>
+            </div>
+            <div class="row mb-3">
+                <h4>Current WAP Version: <%= version %></h4>
+                <h5>Mail transporter: <% if (isTransporter) { %><span class="badge bg-success">Active</span><% } else { %><span class="badge bg-danger">Innactive</span><% } %></h5>
+            </div>
+            <div class="row mb-5 mt-5">
+                <h4>Having troubles ?</h4>
+                <p>Some DB values are cached in the backend of WAP, if you changed values directly in the database and don't see the change appears on the frontend, it could be coming from this.</p>
+                <p>To refresh the backend cache, press this button (this will also restart the connection with the mail transporter)</p>
+                <form method="post" action="/config/refresh">
+                    <button type="submit" class="btn btn-warning">Refresh the cache</button>
+                </form>
+            </div>
+            <form method="post" action="/config" class="mt-5">
+                <h4>Configuration</h4>
+                <div class="mb-3">
+                    <label for="hostname" class="form-label">Hostname</label>
+                    <input type="text" class="form-control" id="hostname" name="hostname" placeholder="https://wap.domain.com/" aria-describedby="hostnameHelp" value="<%= wap.config.Hostname.value %>">
+                    <div id="hostnameHelp" class="form-text">This is the hostname on wich the server runs, used in links and in emails</div>
+                </div>
+                <div class="mb-3">
+                    <label for="smtphost" class="form-label">SMTP Host</label>
+                    <input type="text" class="form-control" id="smtphost" name="smtphost" placeholder="mailbox.domain.com" aria-describedby="smtphostHelp" value="<%= wap.config.SMTP_Host.value %>">
+                    <div id="smtphostHelp" class="form-text">This is the SMTP server host used to send email</div>
+                </div>
+                <div class="mb-3">
+                    <label for="smtpport" class="form-label">SMTP Port</label>
+                    <input type="number" class="form-control" id="smtpport" name="smtpport" placeholder="587" aria-describedby="smtpportHelp" value="<%= wap.config.SMTP_Port.value %>">
+                    <div id="smtpportHelp" class="form-text">This is the SMTP server port</div>
+                </div>
+                <div class="mb-3">
+                    <label for="smtpuser" class="form-label">SMTP User</label>
+                    <input type="text" class="form-control" id="smtpuser" name="smtpuser" placeholder="wap@yourdomain.com" aria-describedby="smtpuserHelp" value="<%= wap.config.SMTP_User.value %>">
+                    <div id="smtpuserHelp" class="form-text">This is the SMTP server user</div>
+                </div>
+                <div class="mb-3">
+                    <label for="smtppassword" class="form-label">SMTP Password</label>
+                    <input type="password" class="form-control" id="smtppassword" name="smtppassword" placeholder="" aria-describedby="smtppasswordHelp" value="<%= wap.config.SMTP_Password.value %>">
+                    <div id="smtpasswordHelp" class="form-text">This is the SMTP server password</div>
+                </div>
+                <div class="mb-3">
+                    <label for="defaultPassword" class="form-label">Default password</label>
+                    <input type="text" class="form-control" id="defaultPassword" name="defaultPassword" placeholder="" aria-describedby="defaultPasswordHelp" value="<%= wap.config.Default_Password.value %>">
+                    <div id="defaultPasswordHelp" class="form-text">This is the default password that is used when creating an account without a mail transporter (this is "password" when empty)</div>
+                </div>
+                <button type="submit" class="btn btn-success">Save</button>
+            </form>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    </body>
+</html>

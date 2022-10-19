@@ -18,6 +18,8 @@ import PLDController from "./controllers/pldController";
 import CardsController from "./controllers/cardsController";
 import { authUser, checkDefaultPassword } from "./middlewares/auth";
 import MycardsController from "./controllers/mycardsController";
+import Config from "./models/config";
+import ConfigController from "./controllers/configController";
 
 const app = express();
 const wap = new WAP();
@@ -61,6 +63,14 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
         const users = await User.findAll();
         wap.users = users;
     }
+    if (wap.config.SMTP_Host == null) {
+        wap.config.SMTP_Host = await Config.getSMTPHost();
+        wap.config.SMTP_User = await Config.getSMTPUser();
+        wap.config.SMTP_Port = await Config.getSMTPPort();
+        wap.config.SMTP_Password = await Config.getSMTPPassword();
+        wap.config.Default_Password = await Config.getDefaultPassword();
+        wap.config.Hostname = await Config.getHostname();
+    }
     req.wap = wap;
     next();
 })
@@ -76,6 +86,7 @@ const controllers : IController[] = [
     new PLDController(),
     new CardsController(),
     new MycardsController(),
+    new ConfigController(),
 ];
 for (let controller of controllers) {
     app.use(controller.path, controller.router);
@@ -94,4 +105,4 @@ app.use((req, res) => {
     });
 })
 
-export { app, checkDatabaseConnection }
+export { app, checkDatabaseConnection, wap }
