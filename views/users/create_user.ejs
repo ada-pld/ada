@@ -40,6 +40,11 @@
                     </div>
                     <div class="mb-3">
                         <p class="text-muted">A mail will be sent to the user with his credentials</p>
+                        <% if (!isTransporter) { %>
+                            <p class="text-danger">
+                                WARNING: No mail transporter configured, the password will be set to: "password"<br>
+                                To configure a transporter, go to the WAP tab (require ADMIN role)</p>
+                        <% } %>
                     </div>
                     <button type="submit" class="btn btn-success">Create</button>
                 </form>

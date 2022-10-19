@@ -1,9 +1,9 @@
 import { app, checkDatabaseConnection } from "./app";
-import { setup } from "./mails";
+import { setupMailTransporter } from "./mails";
 
 (async () => {
     await checkDatabaseConnection();
-    await setup();
+    await setupMailTransporter();
 
     app.listen(parseInt(process.env.PORT), () => {
         console.log(`Server launched on port ${process.env.PORT}`)
