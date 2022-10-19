@@ -42,7 +42,8 @@ class UserController implements IController {
             wap: req.wap,
             user: req.user,
             isAdmin: (req.user.role == "ADMIN"),
-            isTransporter: checkMailTransporter()
+            isTransporter: checkMailTransporter(),
+            defaultPassword: req.wap.config.Default_Password.value || "password"
         })
     }
 
@@ -63,18 +64,21 @@ class UserController implements IController {
             if (already_exists) {
                 return res.redirect("/users/create/?error=already_exists");
             }
-            const randomPassword = User.generateRandomPassword();
+            let password = null;
+            if (checkMailTransporter()) {
+                password = User.generateRandomPassword();
+            } else {
+                password = req.wap.config.Default_Password.value || "password"
+            }
             const created = User.build({
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
                 email: req.body.email,
-                password: await bcrypt.hash(process.env.PASS_SALT + randomPassword, 10),
+                password: await bcrypt.hash(process.env.PASS_SALT + password, 10),
                 role: req.body.role
             })
             if (checkMailTransporter()) {
-                sendCreationEmail(created, req.user, randomPassword);
-            } else {
-                created.password = await bcrypt.hash(process.env.PASS_SALT + "password", 10);
+                sendCreationEmail(created, req.user, password);
             }
             await created.save();
             req.wap.users = await User.findAll();
