@@ -8,6 +8,12 @@ RUN npm install
 
 COPY ./ ./
 
+WORKDIR /usr/src/app/pldGenerator
+
+RUN npm run install
+
+WORKDIR /usr/src/app
+
 RUN npm run buildMail
 
 RUN npm run build
