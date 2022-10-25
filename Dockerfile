@@ -10,7 +10,7 @@ COPY ./ ./
 
 WORKDIR /usr/src/app/pldGenerator
 
-RUN npm run install
+RUN npm install
 
 WORKDIR /usr/src/app
 
