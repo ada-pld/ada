@@ -36,7 +36,7 @@ export async function sendCreationEmail(newUser: User, creatorUser: User, tempor
         wapRepository: "https://github.com/DomestiaDev/wap"
     });
     const options = {
-        from: '"WAP" ' + process.env.MAIL_USERNAME.toString(),
+        from: '"WAP" ' + wap.config.SMTP_User.value.toString(),
         subject: "WAP - Account created",
         to: newUser.email,
         html: rendered
