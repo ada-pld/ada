@@ -7,8 +7,7 @@
     "build": "tsc",
     "start": "node ./build/server.js",
     "seed": "node ./build/seed_data.js",
-    "buildMail": "mkdir ./mails/build/ && mjml ./mails/*.mjml -o ./mails/build/ --config.minify && node ./renameHtmlToEjs.js",
-    "postinstall": "cd pldGenerator && npm i"
+    "buildMail": "mkdir ./mails/build/ && mjml ./mails/*.mjml -o ./mails/build/ --config.minify && node ./renameHtmlToEjs.js"
   },
   "author": "Théo HEMMER",
   "license": "ISC",
