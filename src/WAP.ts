@@ -11,6 +11,7 @@ interface WAP_Config {
     Default_Password :Config;
     Hostname :Config;
     UsingCustomGenerator: Config;
+    UnderMaintenance: Config;
 }
 
 class WAP {
@@ -32,6 +33,7 @@ class WAP {
         Default_Password: null,
         Hostname: null,
         UsingCustomGenerator: null,
+        UnderMaintenance: null,
     };
 
 }

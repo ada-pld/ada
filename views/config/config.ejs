@@ -57,6 +57,11 @@
                     <input type="text" class="form-control" id="defaultPassword" name="defaultPassword" placeholder="" aria-describedby="defaultPasswordHelp" value="<%= wap.config.Default_Password.value %>">
                     <div id="defaultPasswordHelp" class="form-text">This is the default password that is used when creating an account without a mail transporter (this is "password" when empty)</div>
                 </div>
+                <div class="mb-3">
+                    <label for="underMaintenance" class="form-label">Maintenance</label>
+                    <input type="text" class="form-control" id="underMaintenance" name="underMaintenance" placeholder="" aria-describedby="underMaintenanceHelp" value="<%= wap.config.UnderMaintenance.value %>">
+                    <div id="underMaintenanceHelp" class="form-text">if "true" is written here, WAP will be put in maintenance mode and nobody will be able to access it appart from the administrators</div>
+                </div>
                 <button type="submit" class="btn btn-success">Save</button>
             </form>
         </div>

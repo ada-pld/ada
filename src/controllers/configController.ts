@@ -57,6 +57,10 @@ class ConfigController implements IController {
             req.wap.config.Default_Password.value = req.body.defaultPassword;
             await req.wap.config.Default_Password.save();
         }
+        if (req.body.underMaintenance) {
+            req.wap.config.UnderMaintenance.value = req.body.underMaintenance;
+            await req.wap.config.UnderMaintenance.save();
+        }
         await setupMailTransporter();
         return res.redirect("/config");
     }
@@ -76,6 +80,8 @@ class ConfigController implements IController {
         wap.config.SMTP_Password = await Config.getSMTPPassword();
         wap.config.Default_Password = await Config.getDefaultPassword();
         wap.config.Hostname = await Config.getHostname();
+        wap.config.UsingCustomGenerator = await Config.getUsingCustomGenerator();
+        wap.config.UnderMaintenance = await Config.getUnderMaintenance();
         wap.sprint = sprint;
         wap.parts = parts;
         wap.users = users;
