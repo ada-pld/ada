@@ -20,6 +20,8 @@ RUN npm run buildMail
 
 RUN npm run build
 
+RUN npx sequelize db:migrate
+
 EXPOSE 4000
 
 CMD ["npm", "start"]
