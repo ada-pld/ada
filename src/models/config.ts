@@ -79,6 +79,14 @@ class Config extends Model<Config> {
         }))[0];
     }
 
+    static async getUnderMaintenance() {
+        return (await Config.findOrCreate({
+            where: {
+                name: "UNDER_MAINTENANCE"
+            }
+        }))[0];
+    }
+
 }
 
 export default Config;

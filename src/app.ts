@@ -20,6 +20,8 @@ import { authUser, checkDefaultPassword } from "./middlewares/auth";
 import MycardsController from "./controllers/mycardsController";
 import Config from "./models/config";
 import ConfigController from "./controllers/configController";
+import { setupMailTransporter } from "./mails";
+import { checkMaintenance } from "./middlewares/maintenance";
 
 const app = express();
 const wap = new WAP();
@@ -45,7 +47,7 @@ app.use(session({
         maxAge: 60000*60*60*24
     }
 }))
-app.use(checkDefaultPassword);
+
 app.use(async (req: Request, res: Response, next: NextFunction) => {
     if (wap.sprint == null) {
         const sprint = await Sprint.findOne({
@@ -71,10 +73,15 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
         wap.config.Default_Password = await Config.getDefaultPassword();
         wap.config.Hostname = await Config.getHostname();
         wap.config.UsingCustomGenerator = await Config.getUsingCustomGenerator();
+        wap.config.UnderMaintenance = await Config.getUnderMaintenance();
+        await setupMailTransporter();
     }
     req.wap = wap;
     next();
 })
+
+app.use(checkDefaultPassword);
+app.use(checkMaintenance);
 
 const controllers : IController[] = [
     new LoginController(),
@@ -101,6 +108,7 @@ app.use((req, res) => {
     res.status(404);
     return res.render("404", {
         user: req.user,
+        wap: req.wap,
         currentPage: "404",
         url: req.url
     });

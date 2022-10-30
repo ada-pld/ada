@@ -1,4 +1,4 @@
-<header class="navbar navbar-dark navbar-expand-lg bd-navbar sticky-top bg-danger">
+<header class="navbar navbar-dark navbar-expand-lg bd-navbar sticky-top <%= (wap.config.UnderMaintenance.value == "true") ? "bg-secondary" : "bg-danger" %>">
     <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap">
         <a class="navbar-brand" href="/dashboard">
             <img src="/images/wap_logo.svg" alt="Logo" width="32" height="32" class="d-inline-block align-text-middle">
