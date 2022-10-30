@@ -33,7 +33,7 @@ export async function sendCreationEmail(newUser: User, creatorUser: User, tempor
         email: newUser.email,
         password: temporaryPassword,
         wapLink: wap.config.Hostname.value,
-        wapRepository: "https://github.com/DomestiaDev/wap"
+        wapRepository: "https://github.com/theohemmer/wap"
     });
     const options = {
         from: '"WAP" ' + wap.config.SMTP_User.value.toString(),

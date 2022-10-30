@@ -71,6 +71,14 @@ class Config extends Model<Config> {
         }))[0];
     }
 
+    static async getUsingCustomGenerator() {
+        return (await Config.findOrCreate({
+            where: {
+                name: "USING_CUSTOM_GENERATOR"
+            }
+        }))[0];
+    }
+
 }
 
 export default Config;

@@ -1,8 +1,9 @@
 {
-  "name": "domestia_wap",
+  "name": "wap",
   "version": "0.9.0",
-  "description": "Domestia Web Administration Panel",
+  "description": "Web Administration Panel",
   "main": "build/app.js",
+  "repository": "https://github.com/theohemmer/wap",
   "scripts": {
     "build": "tsc",
     "start": "node ./build/server.js",
@@ -10,7 +11,7 @@
     "buildMail": "mkdir ./mails/build/ && mjml ./mails/*.mjml -o ./mails/build/ --config.minify && node ./renameHtmlToEjs.js"
   },
   "author": "Théo HEMMER",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "dotenv": "^16.0.2",

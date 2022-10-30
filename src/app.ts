@@ -70,6 +70,7 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
         wap.config.SMTP_Password = await Config.getSMTPPassword();
         wap.config.Default_Password = await Config.getDefaultPassword();
         wap.config.Hostname = await Config.getHostname();
+        wap.config.UsingCustomGenerator = await Config.getUsingCustomGenerator();
     }
     req.wap = wap;
     next();
