@@ -10,6 +10,7 @@ interface WAP_Config {
     SMTP_Password :Config;
     Default_Password :Config;
     Hostname :Config;
+    UsingCustomGenerator: Config;
 }
 
 class WAP {
@@ -29,7 +30,8 @@ class WAP {
         SMTP_Port: null,
         SMTP_Password: null,
         Default_Password: null,
-        Hostname: null
+        Hostname: null,
+        UsingCustomGenerator: null,
     };
 
 }

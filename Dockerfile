@@ -2,6 +2,8 @@ FROM node:16
 
 WORKDIR /usr/src/app
 
+VOLUME [ "/usr/src/app/pldGenerator/custom/customGenerator", "/usr/src/app/pldGenerator/generated" ]
+
 COPY ./package*.json ./
 
 RUN npm install

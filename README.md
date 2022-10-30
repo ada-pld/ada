@@ -1,5 +1,7 @@
-# Domestia WAP
+# WAP
 
-A web administration panel for Domestia
+A web administration panel for managing sprints and generating PLDs
 
-I'll write some documentation later, this is only a first test version
+# Installation and Usage
+
+To use this project, you'll have to have a MySQL database

@@ -42,14 +42,17 @@ class PLDController implements IController {
             ]
         });
         let dd: any = null;
-        try {
-            dd = (await this.importGenerator("../../pldGenerator/custom")).default(allCards);
-        } catch (e) {
-            console.log(e);
+        if (req.wap.config.UsingCustomGenerator.value == "true") {
+            try {
+                dd = (await this.importGenerator("../../pldGenerator/custom")).default(allCards);
+            } catch (e) {
+                return res.redirect("/dashboard/?error=error_using_custom_generator");
+            }
+        } else {
             dd = generatePLD(allCards);
         }
-        makePld(dd, {}, "test.pld");
-        return res.redirect("/dashboard/?error=not_done_yet");
+        makePld(dd, {}, "./pldGenerator/generated/test.pdf");
+        return res.redirect("/dashboard/?info=success");
     }
 }
 
