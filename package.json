@@ -23,6 +23,7 @@
     "mysql2": "^2.3.3",
     "nodemailer": "^6.8.0",
     "sequelize": "^6.23.1",
+    "sequelize-cli": "^6.5.2",
     "sequelize-typescript": "^2.1.4",
     "uuid": "^9.0.0",
     "validator": "^13.7.0"
