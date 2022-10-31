@@ -5,7 +5,6 @@ import Card from "../models/card";
 import makePld from "../../pldGenerator";
 import { Op } from "sequelize";
 import User from "../models/user";
-import DoD from "../models/dod";
 import Part from "../models/part";
 import generatePLD from "../defaultPldGenerator";
 
@@ -37,7 +36,6 @@ class PLDController implements IController {
             order: [['sprintId', 'ASC'], ['partId', 'ASC'], ['idInSprint', 'ASC']],
             include: [
                 User,
-                DoD,
                 Part
             ]
         });

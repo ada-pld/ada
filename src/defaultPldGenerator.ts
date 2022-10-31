@@ -5,12 +5,6 @@ interface Sprint {
     cards: Card[];
 }
 
-interface DoD {
-    name: string;
-    cardId: number;
-    card: Card;
-}
-
 interface User {
     firstname: string;
     lastname: string;
@@ -36,7 +30,7 @@ interface Card {
     sprint: Sprint;
     partId: number;
     part: Part;
-    dods: DoD[];
+    dods: string;
 }
 
 function createATable(card: Card)
@@ -48,13 +42,10 @@ function createATable(card: Card)
     const descritpion: string = card.description;
     const workingDays: string = card.workingDays + '';
     let assigneesNames: string = "";
-    let dods: string = "";
+    const dods: string = card.dods;
 
     for (let i = 0; i < card.assignees.length; i++) {
         assigneesNames += card.assignees[i].firstname + " " + card.assignees[i].lastname + ((i != card.assignees.length - 1) ? " & " : "");
-    }
-    for (let i = 0; i < card.dods.length; i++) {
-        dods += card.dods[i].name + ((i != card.dods.length - 1) ? "\n" : "");
     }
 
     return {

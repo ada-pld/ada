@@ -62,8 +62,8 @@ if (card.status == "FINISHED") {
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item border-<%= border %>">Definitions of Done:</li>
-                <% for (const dod of card.dods.reverse()) { %>
-                    <li class="list-group-item border-<%= border %>"><%= dod.name %></li>
+                <% for (const dod of card.dods.split(/\n/g)) { %>
+                    <li class="list-group-item border-<%= border %>"><%= dod %></li>
                 <% } %>
             </ul>
         </div>

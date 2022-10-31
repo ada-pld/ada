@@ -4,7 +4,6 @@ import { authUser } from "../middlewares/auth";
 import Card from "../models/card";
 import User from "../models/user";
 import Part from "../models/part";
-import DoD from "../models/dod";
 import Sprint from "../models/sprint";
 import { Op } from "sequelize";
 
@@ -41,7 +40,6 @@ class MycardsController implements IController {
                 include: [
                     User,
                     Part,
-                    DoD
                 ]
             })
             allApproved = await Card.findAll({
@@ -54,7 +52,6 @@ class MycardsController implements IController {
                 include: [
                     User,
                     Part,
-                    DoD
                 ]
             })
             waitingApproval = waitingApproval.filter((element) => {
@@ -89,7 +86,6 @@ class MycardsController implements IController {
         let workingDays = 0;
         let assignees :User[] = [];
         let part :Part;
-        let dods :string[];
         try {
             workingDays = parseInt(req.body.workingDays);
             part = await Part.findOne({
@@ -117,7 +113,6 @@ class MycardsController implements IController {
                 }
             }
             assignees.push(req.user);
-            dods = req.body.dods.replace(/[\r]+/g, '').split(/[\n]+/g)
         } catch (e) {
             console.log(e);
             return res.redirect("/mycards/create?error=error");
@@ -127,19 +122,13 @@ class MycardsController implements IController {
         card.asWho = req.body.who;
         card.task = req.body.task;
         card.description = req.body.description.replace(/[\r]+/g, '');
+        card.dods = req.body.dods.replace(/[\r]+/g, '')
         card.workingDays = workingDays;
         await card.save();
         await card.$set('part', part);
         await card.$set('assignees', assignees);
         await card.$set('sprint', req.wap.sprint);
         
-        for (const dod of dods) {
-            const adod = DoD.build({
-                name: dod
-            })
-            await adod.save();
-            await adod.$set('card', card);
-        }
         return res.redirect("/mycards/?info=success");
     }
 
@@ -153,7 +142,6 @@ class MycardsController implements IController {
             include: [
                 User,
                 Part,
-                DoD
             ]
         });
         if (!toEdit)
@@ -183,7 +171,6 @@ class MycardsController implements IController {
             },
             include: [
                 User,
-                DoD
             ]
         });
         if (!toEdit)
@@ -201,7 +188,6 @@ class MycardsController implements IController {
         let workingDays = 0;
         let assignees :User[] = [];
         let part :Part;
-        let dods :string[];
 
         try {
             workingDays = parseInt(req.body.workingDays);
@@ -230,7 +216,6 @@ class MycardsController implements IController {
                 }
             }
             assignees.push(req.user);
-            dods = req.body.dods.replace(/[\r]+/g, '').split(/[\n]+/g);
         } catch (e) {
             console.log(e);
             return res.redirect(`/mycards/edit/${req.body.id}?error=error`);
@@ -239,23 +224,12 @@ class MycardsController implements IController {
         toEdit.asWho = req.body.who;
         toEdit.task = req.body.task;
         toEdit.description = req.body.description.replace(/[\r]+/g, '');
+        toEdit.dods = req.body.dods.replace(/[\r]+/g, '');
         toEdit.workingDays = workingDays;
         await toEdit.save();
         await toEdit.$set('part', part);
         await toEdit.$set('assignees', assignees);
 
-        const lastDoD :DoD[] = toEdit.dods;
-        for (const dod of lastDoD) {
-            await dod.destroy();
-        }
-        
-        for (const dod of dods) {
-            const adod = DoD.build({
-                name: dod
-            })
-            await adod.save();
-            await adod.$set('card', toEdit);
-        }
         return res.redirect("/mycards/?info=success");
     }
 

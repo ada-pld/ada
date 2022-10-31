@@ -6,7 +6,6 @@ import Sprint from "../models/sprint";
 import User from "../models/user";
 import Card from "../models/card";
 import Part from "../models/part";
-import DoD from "../models/dod";
 
 class SprintController implements IController {
     public path = "/sprint";

@@ -3,7 +3,6 @@ import { Op } from "sequelize";
 import { authUser } from "../middlewares/auth";
 import { checkPerm } from "../middlewares/checkPerms";
 import Card from "../models/card";
-import DoD from "../models/dod";
 import Part from "../models/part";
 import User from "../models/user";
 import IController from "./controller";
@@ -36,7 +35,6 @@ class DashboardController implements IController {
                 include: [
                     User,
                     Part,
-                    DoD
                 ]
             })
             allApproved = allApproved.filter((element) => {

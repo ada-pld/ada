@@ -54,7 +54,7 @@
                     <div class="row">
                         <div class="col mb-3">
                             <label for="dods" class="form-label">Definitions of Done</label>
-                            <textarea type="textarea" class="form-control" id="dods" name="dods"><% for (const dod of toEdit.dods) {%><%=dod.name + "\n"%><%} %></textarea>
+                            <textarea type="textarea" class="form-control" id="dods" name="dods"><%= toEdit.dods %></textarea>
                             <div id="assigneesHelp" class="form-text">Each dod must be put on a newline.</div>
                         </div>
                     </div>
