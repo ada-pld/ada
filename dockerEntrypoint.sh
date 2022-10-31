@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
-npx run sequelize db:migrate
+cd /usr/src/app
+
+npx sequelize db:migrate
 
 exec "$@"
