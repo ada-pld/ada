@@ -93,6 +93,8 @@ Once you have the .env file, run `npm install` then `cd pldGenerator && npm inst
 
 After that, you will have to go to the root folder of the application, and build it, to do so use the command `npm run buildMail` then `npm run build`
 
+You will then have to perform the migrations on the database using `npx sequelize db:migrate`
+
 Once you've build the project, everything is ready, just run the command `npm start`
 
 # Docker
