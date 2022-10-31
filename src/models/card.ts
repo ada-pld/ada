@@ -1,6 +1,5 @@
 import { Model, Column, DataType, Default, AllowNull, Unique, Table, BelongsTo, HasMany, BelongsToMany, ForeignKey } from 'sequelize-typescript';
 import CardUser from './cardUser';
-import DoD from './dod';
 import Part from './part';
 import Sprint from './sprint';
 import User from './user';
@@ -45,6 +44,11 @@ class Card extends Model<Card> {
     @Column(DataType.TEXT)
     description: string;
 
+    @AllowNull(false)
+    @Default("")
+    @Column(DataType.TEXT)
+    dods: string;
+
     @Default(0)
     @Column(DataType.INTEGER)
     workingDays: number;
@@ -69,9 +73,6 @@ class Card extends Model<Card> {
 
     @BelongsTo(() => Part)
     part: Part;
-
-    @HasMany(() => DoD)
-    dods: DoD[];
 
 }
 

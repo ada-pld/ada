@@ -5,7 +5,6 @@ import Card from "../models/card";
 import { Op } from "sequelize";
 import User from "../models/user";
 import Part from "../models/part";
-import DoD from "../models/dod";
 import { checkPerm } from "../middlewares/checkPerms";
 
 class CardsController implements IController {
@@ -38,7 +37,6 @@ class CardsController implements IController {
                 include: [
                     User,
                     Part,
-                    DoD
                 ]
             })
             allApproved = await Card.findAll({
@@ -51,7 +49,6 @@ class CardsController implements IController {
                 include: [
                     User,
                     Part,
-                    DoD
                 ]
             })
         }
@@ -74,7 +71,6 @@ class CardsController implements IController {
             include: [
                 User,
                 Part,
-                DoD
             ]
         });
         if (!toEdit)
@@ -102,7 +98,6 @@ class CardsController implements IController {
             },
             include: [
                 User,
-                DoD
             ]
         });
         if (!toEdit)
@@ -116,7 +111,6 @@ class CardsController implements IController {
         let workingDays = 0;
         let assignees :User[] = [];
         let part :Part;
-        let dods :string[];
 
         try {
             workingDays = parseInt(req.body.workingDays);
@@ -144,7 +138,6 @@ class CardsController implements IController {
                     assignees.push(one);
                 }
             }
-            dods = req.body.dods.replace(/[\r]+/g, '').split(/[\n]+/g);
         } catch (e) {
             console.log(e);
             return res.redirect(`/cards/edit/${req.body.id}?error=error`);
@@ -156,6 +149,7 @@ class CardsController implements IController {
         toEdit.asWho = req.body.who;
         toEdit.task = req.body.task;
         toEdit.description = req.body.description.replace(/[\r]+/g, '');
+        toEdit.dods = req.body.dods.replace(/[\r]+/g, '');
         toEdit.workingDays = workingDays;
         if (toEdit.status != "REJECTED" && toEdit.status != "WAITING_APPROVAL") {
             toEdit.version = toEdit.version + 1;
@@ -164,18 +158,6 @@ class CardsController implements IController {
         await toEdit.$set('part', part);
         await toEdit.$set('assignees', assignees);
 
-        const lastDoD :DoD[] = toEdit.dods;
-        for (const dod of lastDoD) {
-            await dod.destroy();
-        }
-        
-        for (const dod of dods) {
-            const adod = DoD.build({
-                name: dod
-            })
-            await adod.save();
-            await adod.$set('card', toEdit);
-        }
         return res.redirect("/cards/?info=success");
     }
 

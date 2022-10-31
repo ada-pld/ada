@@ -1,6 +1,7 @@
 build/
 node_modules/
 pldGenerator/node_modules/
+pldGenerator/generated/
 .env
 docker-compose.yml
 src/seed_data.ts
