@@ -20,8 +20,8 @@ RUN npm run buildMail
 
 RUN npm run build
 
-RUN npx sequelize db:migrate
-
 EXPOSE 4000
 
+RUN chmod +x dockerEntrypoint.sh
+ENTRYPOINT [ "dockerEntrypoint.sh" ]
 CMD ["npm", "start"]
