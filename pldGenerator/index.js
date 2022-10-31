@@ -14,6 +14,8 @@ module.exports = function makePld(docDefinition, options, fileName)
 {
     var printer = new PdfPrinter(fonts);
     var pdfDoc = printer.createPdfKitDocument(docDefinition, options);
-    pdfDoc.pipe(fs.createWriteStream(fileName));
-    pdfDoc.end();
+    fs.mkdir("./pldGenerator/generated", () => {
+        pdfDoc.pipe(fs.createWriteStream(fileName));
+        pdfDoc.end();
+    });
 }
