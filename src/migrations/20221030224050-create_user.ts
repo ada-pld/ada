@@ -24,6 +24,10 @@ module.exports = {
                         allowNull: false
                     },
                     password: {
+                        type: DataTypes.STRING,
+                        allowNull: false
+                    },
+                    role: {
                         type: DataTypes.ENUM("ADMIN", "EDITOR", "MAINTENER", "USER"),
                         defaultValue: "USER"
                     },
