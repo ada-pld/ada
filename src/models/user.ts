@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { Model, Column, DataType, Default, AllowNull, Unique, Table, HasMany, BelongsToMany } from 'sequelize-typescript';
 import Card from './card';
 import CardUser from './cardUser';
@@ -55,6 +56,16 @@ class User extends Model<User> {
         }
         password += specials[Math.floor(Math.random() * specials.length)];
         return password;
+    }
+
+    static async getEditorAndAdmins() {
+        return this.findAll({
+            where: {
+                role: {
+                    [Op.in]: ["ADMIN", "EDITOR"]
+                }
+            }
+        })
     }
 
 }

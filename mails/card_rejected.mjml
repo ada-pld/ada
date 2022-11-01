@@ -5,7 +5,7 @@
                 <mj-text font-size="20px" color="black" font-family="helvetica">
                     <h3>Hi <%= firstname %>,</h3>
                     <br />
-                    <p>Your card <b><%= cardTitle %></b> as been rejected by an editor or administrator of WAP</p>
+                    <p>Your card <b><%= cardTitle %></b>, as been rejected by an editor or administrator of WAP</p>
                     <br />
                     <p>The reason for the rejection is: <%= cardRejectionReason %></p>
                     <br />
