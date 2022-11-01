@@ -38,7 +38,6 @@ class SprintController implements IController {
             let totalProgress = 0;
             let totalNotStarted = 0;
             for (const card of user.cards) {
-                card.dods = await card.$get('dods');
                 card.part = await card.$get('part');
                 card.assignees = await card.$get('assignees');
                 if (card.status == "FINISHED") {
