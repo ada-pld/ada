@@ -6,6 +6,7 @@ import { Op } from "sequelize";
 import User from "../models/user";
 import Part from "../models/part";
 import { checkPerm } from "../middlewares/checkPerms";
+import { sendApprovalEmail, sendRejectionEmail } from "../mails";
 
 class CardsController implements IController {
     public path = "/cards";
@@ -167,12 +168,15 @@ class CardsController implements IController {
         const toEdit = await Card.findOne({
             where: {
                 id: req.params.id
-            }
+            },
+            include: [
+                User
+            ]
         })
         if (!toEdit)
-        return res.redirect("/cards/?error=invalid_id");
-        if (toEdit.status != "REJECTED" && toEdit.status != "WAITING_APPROVAL")
-        return res.redirect("/cards/?error=already_approved");
+            return res.redirect("/cards/?error=invalid_id");
+        if (toEdit.status != "WAITING_APPROVAL")
+            return res.redirect("/cards/?error=already_assigned");
         const totalCards = await Card.count({
             where: {
                 status: {
@@ -185,6 +189,9 @@ class CardsController implements IController {
         toEdit.idInSprint = totalCards + 1;
         toEdit.status = "NOT_STARTED";
         await toEdit.save();
+        for (const user of toEdit.assignees) {
+            sendApprovalEmail(user, toEdit);
+        }
         return res.redirect("/cards/?info=success");
     }
 
@@ -194,14 +201,20 @@ class CardsController implements IController {
         const toEdit = await Card.findOne({
             where: {
                 id: req.params.id
-            }
+            },
+            include: [
+                User
+            ]
         })
         if (!toEdit)
             return res.redirect("/cards/?error=invalid_id");
-        if (toEdit.status != "REJECTED" && toEdit.status != "WAITING_APPROVAL")
-            return res.redirect("/cards/?error=already_approved");
+        if (toEdit.status != "WAITING_APPROVAL")
+            return res.redirect("/cards/?error=already_assigned");
         toEdit.status = "REJECTED";
         await toEdit.save();
+        for (const user of toEdit.assignees) {
+            sendRejectionEmail(user, toEdit, "");
+        }
         return res.redirect("/cards/?info=success");
     }
 }

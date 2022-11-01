@@ -6,6 +6,7 @@ import User from "../models/user";
 import Part from "../models/part";
 import Sprint from "../models/sprint";
 import { Op } from "sequelize";
+import { sendCardAwaitingApprovalEmail } from "../mails";
 
 class MycardsController implements IController {
     public path = "/mycards";
@@ -129,6 +130,10 @@ class MycardsController implements IController {
         await card.$set('assignees', assignees);
         await card.$set('sprint', req.wap.sprint);
         
+        const editorAndAdmins = await User.getEditorAndAdmins();
+        for (const user of editorAndAdmins) {
+            sendCardAwaitingApprovalEmail(user, req.user, card);
+        }
         return res.redirect("/mycards/?info=success");
     }
 
