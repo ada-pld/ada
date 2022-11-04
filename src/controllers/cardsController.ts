@@ -90,7 +90,6 @@ class CardsController implements IController {
     }
     
     private editPOST = async (req: Request, res: Response) => {
-        console.log(req.body);
         if (!req.body.id)
             return res.redirect("/cards/?error=no_id");
         const toEdit = await Card.findOne({
@@ -140,7 +139,6 @@ class CardsController implements IController {
                 }
             }
         } catch (e) {
-            console.log(e);
             return res.redirect(`/cards/edit/${req.body.id}?error=error`);
         }
         if (assignees.length == 0) {
@@ -149,8 +147,8 @@ class CardsController implements IController {
         toEdit.name = req.body.name;
         toEdit.asWho = req.body.who;
         toEdit.task = req.body.task;
-        toEdit.description = req.body.description.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '');
-        toEdit.dods = req.body.dods.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '');
+        toEdit.description = req.body.description.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd();
+        toEdit.dods = req.body.dods.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd();
         toEdit.workingDays = workingDays;
         if (toEdit.status != "REJECTED" && toEdit.status != "WAITING_APPROVAL") {
             toEdit.version = toEdit.version + 1;

@@ -62,7 +62,6 @@ class MycardsController implements IController {
                 return element.assignees.map(a => a.id).includes(req.user.id);
             })
         }
-        console.log(waitingApproval);
         return res.render("mycards/mycards", {
             currentPage: '/mycards',
             wap: req.wap,
@@ -114,15 +113,14 @@ class MycardsController implements IController {
             }
             assignees.push(req.user);
         } catch (e) {
-            console.log(e);
             return res.redirect("/mycards/create?error=error");
         }
         const card = Card.build();
         card.name = req.body.name;
         card.asWho = req.body.who;
         card.task = req.body.task;
-        card.description = req.body.description.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '');
-        card.dods = req.body.dods.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '');
+        card.description = req.body.description.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd();
+        card.dods = req.body.dods.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd();
         card.workingDays = workingDays;
         await card.save();
         await card.$set('part', part);
@@ -167,7 +165,6 @@ class MycardsController implements IController {
     }
     
     private editPOST = async (req: Request, res: Response) => {
-        console.log(req.body);
         if (!req.body.id)
             return res.redirect("/mycards/?error=no_id");
         const toEdit = await Card.findOne({
@@ -222,7 +219,6 @@ class MycardsController implements IController {
             }
             assignees.push(req.user);
         } catch (e) {
-            console.log(e);
             return res.redirect(`/mycards/edit/${req.body.id}?error=error`);
         }
         toEdit.name = req.body.name;

@@ -27,6 +27,8 @@ export function checkMailTransporter() {
 }
 
 export async function sendCreationEmail(newUser: User, creatorUser: User, temporaryPassword: string) {
+    if (!checkMailTransporter())
+        return;
     const rendered = await ejs.renderFile('./mails/build/registration.ejs', {
         firstname: newUser.firstname,
         creatorFirstname: creatorUser.firstname,
@@ -46,6 +48,8 @@ export async function sendCreationEmail(newUser: User, creatorUser: User, tempor
 }
 
 export async function sendRejectionEmail(user: User, card: Card, rejectionReason: string) {
+    if (!checkMailTransporter())
+        return;
     const rendered = await ejs.renderFile('./mails/build/card_rejected.ejs', {
         firstname: user.firstname,
         cardTitle: card.name,
@@ -62,6 +66,8 @@ export async function sendRejectionEmail(user: User, card: Card, rejectionReason
 }
 
 export async function sendApprovalEmail(user: User, card: Card) {
+    if (!checkMailTransporter())
+        return;
     const rendered = await ejs.renderFile('./mails/build/card_approved.ejs', {
         firstname: user.firstname,
         cardTitle: card.name,
@@ -79,6 +85,8 @@ export async function sendApprovalEmail(user: User, card: Card) {
 }
 
 export async function sendCardAwaitingApprovalEmail(user: User, creator: User, card: Card) {
+    if (!checkMailTransporter())
+        return;
     const rendered = await ejs.renderFile('./mails/build/card_awaiting_approval.ejs', {
         firstname: user.firstname,
         creatorFirstname: creator.firstname,
