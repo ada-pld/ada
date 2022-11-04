@@ -42,7 +42,7 @@
                             <label for="part" class="form-label">Part</label>
                             <select class="form-select" id="part" name="part">
                                 <% for (const part of wap.parts) { %>
-                                    <option value="<%= part.id %>" <% (toEdit.part.id == part.id) ? "selected=true": "" %>><%= part.name %></option>
+                                    <option value="<%= part.id %>" <%= (toEdit.part.id == part.id) ? "selected=true": "" %>><%= part.name %></option>
                                 <% } %>
                             </select>
                         </div>
