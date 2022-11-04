@@ -56,7 +56,7 @@
                     <div class="row row-cols-1 row-cols-md-3 g-5">
                         <% for (const card of allApproved) { %>
                             <div class="col">
-                                <%- include("../partials/card.ejs", { card: card, canEdit: false, canApprove: false, canChangeStatus: true}) %>
+                                <%- include("../partials/card.ejs", { card: card, canEdit: false, canApprove: false, canChangeStatus: true, canDelete: false}) %>
                             </div>
                         <% } %>
                     </div>

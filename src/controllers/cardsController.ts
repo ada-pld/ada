@@ -22,17 +22,27 @@ class CardsController implements IController {
         this.router.post("/edit", authUser, checkPerm("EDITOR"), this.editPOST);
         this.router.get("/approve/:id", authUser, checkPerm("EDITOR"), this.approve);
         this.router.get("/reject/:id", authUser, checkPerm("EDITOR"), this.reject);
+        this.router.get("/delete/:id", authUser, checkPerm("EDITOR"), this.delete);
     }
 
     private cards = async (req: Request, res: Response) => {
         let waitingApproval :Card[] = null;
+        let rejectedCard: Card[] = null;
         let allApproved :Card[] = null;
         if (req.wap.sprint) {
             waitingApproval = await Card.findAll({
                 where: {
-                    status: {
-                        [Op.in]: ["WAITING_APPROVAL", "REJECTED"]
-                    },
+                    status: "WAITING_APPROVAL",
+                    sprintId: req.wap.sprint.id
+                },
+                include: [
+                    User,
+                    Part,
+                ]
+            });
+            rejectedCard = await Card.findAll({
+                where: {
+                    status: "REJECTED",
                     sprintId: req.wap.sprint.id
                 },
                 include: [
@@ -58,6 +68,7 @@ class CardsController implements IController {
             wap: req.wap,
             user: req.user,
             waitingApproval: waitingApproval,
+            rejectedCard: rejectedCard,
             allApproved: allApproved
         })
     }
@@ -153,6 +164,9 @@ class CardsController implements IController {
         if (toEdit.status != "REJECTED" && toEdit.status != "WAITING_APPROVAL") {
             toEdit.version = toEdit.version + 1;
         }
+        if (toEdit.status == "REJECTED") {
+            toEdit.status = "WAITING_APPROVAL";
+        }
         await toEdit.save();
         await toEdit.$set('part', part);
         await toEdit.$set('assignees', assignees);
@@ -214,6 +228,23 @@ class CardsController implements IController {
         for (const user of toEdit.assignees) {
             sendRejectionEmail(user, toEdit, "");
         }
+        return res.redirect("/cards/?info=success");
+    }
+
+    private delete = async (req: Request, res: Response) => {
+        if (!req.params.id)
+            return res.redirect("/cards/?error=no_id");
+        const toEdit = await Card.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!toEdit)
+            return res.redirect("/cards/?error=invalid_id");
+        if (toEdit.status != "REJECTED" && toEdit.status != "WAITING_APPROVAL") {
+            return res.redirect("/cards/?error=already_approved");
+        }
+        await toEdit.destroy();
         return res.redirect("/cards/?info=success");
     }
 }

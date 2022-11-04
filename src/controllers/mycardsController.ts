@@ -25,17 +25,27 @@ class MycardsController implements IController {
         this.router.get("/finished/:id", authUser, this.setCardFinished);
         this.router.get("/inprogress/:id", authUser, this.setCardInProgress);
         this.router.get("/notstart/:id", authUser, this.setCardNotStarted);
+        this.router.get("/delete/:id", authUser, this.delete);
     }
 
     private mycards = async (req: Request, res: Response) => {
         let waitingApproval :Card[] = null;
+        let rejectedCard :Card[] = null;
         let allApproved :Card[] = null;
         if (req.wap.sprint) {
             waitingApproval = await Card.findAll({
                 where: {
-                    status: {
-                        [Op.in]: ["WAITING_APPROVAL", "REJECTED"]
-                    },
+                    status: "WAITING_APPROVAL",
+                    sprintId: req.wap.sprint.id
+                },
+                include: [
+                    User,
+                    Part,
+                ]
+            })
+            rejectedCard = await Card.findAll({
+                where: {
+                    status: "REJECTED",
                     sprintId: req.wap.sprint.id
                 },
                 include: [
@@ -67,6 +77,7 @@ class MycardsController implements IController {
             wap: req.wap,
             user: req.user,
             waitingApproval: waitingApproval,
+            rejectedCard: rejectedCard,
             allApproved: allApproved
         })
     }
@@ -227,6 +238,9 @@ class MycardsController implements IController {
         toEdit.description = req.body.description.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '');
         toEdit.dods = req.body.dods.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '');
         toEdit.workingDays = workingDays;
+        if (toEdit.status == "REJECTED") {
+            toEdit.status = "WAITING_APPROVAL";
+        }
         await toEdit.save();
         await toEdit.$set('part', part);
         await toEdit.$set('assignees', assignees);
@@ -302,6 +316,23 @@ class MycardsController implements IController {
         toEdit.status = "NOT_STARTED";
         await toEdit.save();
         return res.redirect("/mycards?info=success");
+    }
+
+    private delete = async (req: Request, res: Response) => {
+        if (!req.params.id)
+            return res.redirect("/mycards/?error=no_id");
+        const toEdit = await Card.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!toEdit)
+            return res.redirect("/mycards/?error=invalid_id");
+        if (toEdit.status != "REJECTED" && toEdit.status != "WAITING_APPROVAL") {
+            return res.redirect("/mycards/?error=already_approved");
+        }
+        await toEdit.destroy();
+        return res.redirect("/mycards/?info=success");
     }
 }
 

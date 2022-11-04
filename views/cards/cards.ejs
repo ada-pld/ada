@@ -18,7 +18,7 @@
                 <div class="row row-cols-1 row-cols-md-3 g-5 mb-5">
                     <% for (const card of waitingApproval) { %>
                         <div class="col">
-                            <%- include("../partials/card.ejs", { card: card, canEdit: true, canApprove: true, canChangeStatus: false }) %>
+                            <%- include("../partials/card.ejs", { card: card, canEdit: true, canApprove: true, canChangeStatus: false, canDelete: true }) %>
                         </div>
                     <% } %>
                 </div>
@@ -37,13 +37,33 @@
                 <div class="row row-cols-1 row-cols-md-3 g-5">
                     <% for (const card of allApproved) { %>
                         <div class="col">
-                            <%- include("../partials/card.ejs", { card: card, canEdit: true, canApprove: false, canChangeStatus: false }) %>
+                            <%- include("../partials/card.ejs", { card: card, canEdit: true, canApprove: false, canChangeStatus: false, canDelete: false }) %>
                         </div>
                     <% } %>
                 </div>
                 <% if (allApproved == null || allApproved.length == 0) { %>
                     <div class="row text-center">
                         <h4 class="text-muted">No cards approved</h4>
+                    </div>
+                <% } %>
+                <div class="row mb-5 pt-5">
+                    <span class="border-top border-2"></span>
+                </div>
+                <div class="row mb-5 text-center">
+                    <h1>Cards rejected</h1>
+                    <h4 class="text-muted">Sprint: <%= wap.sprint.name %></h4>
+                    <h6 class="text-muted">Editing a card will send it back to approval</h6>
+                </div>
+                <div class="row row-cols-1 row-cols-md-3 g-5 mb-5">
+                    <% for (const card of rejectedCard) { %>
+                        <div class="col">
+                            <%- include("../partials/card.ejs", { card: card, canEdit: true, canApprove: false, canChangeStatus: false, canDelete: true }) %>
+                        </div>
+                    <% } %>
+                </div>
+                <% if (rejectedCard == null || rejectedCard.length == 0) { %>
+                    <div class="row text-center">
+                        <h4 class="text-muted">No cards rejecteds</h4>
                     </div>
                 <% } %>
             <% } else { %>

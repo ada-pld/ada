@@ -19,8 +19,13 @@ if (card.status == "FINISHED") {
                 <a class="nav-link" style="color: var(--bs-warning)" href="<%= currentPage + "/edit/" + card.id %>">Edit</a>
             </li>
         <% } %>
+        <% if (canDelete) { %>
+            <li class="nav-item <%= (!canEdit) ? 'ms-auto' : ''%>" role="presentation">
+                <a class="nav-link" style="color: var(--bs-danger)" href="<%= currentPage + "/delete/" + card.id %>">Delete</a>
+            </li>
+        <% } %>
         <% if (canApprove) { %>
-            <li class="nav-item <%= (!canEdit) ? 'ms-auto' : '' %>" role="presentation">
+            <li class="nav-item <%= (!canEdit && !canDelete) ? 'ms-auto' : '' %>" role="presentation">
                 <a class="nav-link" style="color: var(--bs-success)" href="<%= currentPage + "/approve/" + card.id %>">Approve</a>
             </li>
             <li class="nav-item" role="presentation">
@@ -29,13 +34,25 @@ if (card.status == "FINISHED") {
         <% } %>
         <% if (canChangeStatus) { %>
             <li class="nav-item <%= (!canEdit) ? 'ms-auto' : '' %>" role="presentation">
-                <a class="nav-link" style="color: var(--bs-success)" href="<%= currentPage + "/finished/" + card.id%>">Finished</a>
+                <% if (card.status == "FINISHED") { %>
+                    <span class="nav-link disabled" style="color: white; background-color: var(--bs-success)">Finished</span>
+                <% } else { %>
+                    <a class="nav-link" style="color: var(--bs-success)" href="<%= currentPage + "/finished/" + card.id%>">Finished</a>
+                <% } %>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link" style="color: var(--bs-warning)" href="<%= currentPage + "/inprogress/" + card.id%>">In Progress</a>
+                <% if (card.status == "STARTED") { %>
+                    <span class="nav-link disabled" style="color: white; background-color: var(--bs-warning)">In progress</span>
+                <% } else { %>
+                    <a class="nav-link" style="color: var(--bs-warning)" href="<%= currentPage + "/inprogress/" + card.id%>">In progress</a>
+                <% } %>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link" style="color: var(--bs-danger)" href="<%= currentPage + "/notstart/" + card.id%>">Not Started</a>
+                <% if (card.status == "NOT_STARTED") { %>
+                    <span class="nav-link disabled" style="color: white; background-color: var(--bs-danger)">Not started</span>
+                <% } else { %>
+                    <a class="nav-link" style="color: var(--bs-danger)" href="<%= currentPage + "/notstarted/" + card.id%>">Not started</a>
+                <% } %>
             </li>
         <% } %>
     </ul>

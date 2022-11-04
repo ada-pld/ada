@@ -73,7 +73,7 @@
                         <div class="row" style="float:none; flex-wrap: nowrap; overflow-x: auto;"">
                         <% for (const card of user.cards) { %>
                             <div class="col-md-4" style="display: inline-block; float: none;;">
-                                <%- include("../partials/card.ejs", { card: card, canEdit: false, canApprove: false, canChangeStatus: false}) %>
+                                <%- include("../partials/card.ejs", { card: card, canEdit: false, canApprove: false, canChangeStatus: false, canDelete: false}) %>
                             </div>
                         <% } %>
                         <% if (!user.cards || user.cards.length == 0) { %>
