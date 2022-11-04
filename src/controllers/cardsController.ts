@@ -158,6 +158,7 @@ class CardsController implements IController {
         await toEdit.save();
         await toEdit.$set('part', part);
         await toEdit.$set('assignees', assignees);
+        await toEdit.save();
 
         return res.redirect("/cards/?info=success");
     }

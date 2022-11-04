@@ -43,8 +43,8 @@ if (card.status == "FINISHED") {
         <div class="tab-pane fade show active" id="overview-<%= card.id %>" role="tabpanel" aria-labelledby="overview-tab-<%= card.id %>">
             <div class="card-body">
                 <h5 class="card-title text-<%= border %>"><%= wap.sprint.id %>.<%= card.part.id %>.<%= (card.idInSprint == -1) ? "U" : card.idInSprint %> <%= card.name %></h5>
-                <h6 class="card-subtitle mb-2 text-muted">Version: <%= card.version %></h6>
-                <p class="card-text"><%= card.task %></p>
+                <h6 class="card-subtitle mb-2 text-muted">Part: <%= card.part.name %> - Version: <%= card.version %></h6>
+                <p class="card-text">En temps que <%= card.asWho %>,<br>Je veux <%= card.task %></p>
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item border-<%= border %>">Infos:</li>
@@ -55,7 +55,7 @@ if (card.status == "FINISHED") {
         <div class="tab-pane fade" id="description-<%= card.id %>" role="tabpanel" aria-labelledby="description-tab-<%= card.id %>">
             <div class="card-body">
                 <h5 class="card-title text-<%= border %>"><%= wap.sprint.id %>.<%= card.part.id %>.<%= (card.idInSprint == -1) ? "U" : card.idInSprint %> <%= card.name %></h5>
-                <h6 class="card-subtitle mb-2 text-muted">Version: <%= card.version %></h6>
+                <h6 class="card-subtitle mb-2 text-muted">Part: <%= card.part.name %> - Version: <%= card.version %></h6>
                 <div class="card-text">
                     <%= card.description %>
                 </div>

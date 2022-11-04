@@ -129,6 +129,7 @@ class MycardsController implements IController {
         await card.$set('part', part);
         await card.$set('assignees', assignees);
         await card.$set('sprint', req.wap.sprint);
+        await card.save();
         
         const editorAndAdmins = await User.getEditorAndAdmins();
         for (const user of editorAndAdmins) {
@@ -234,6 +235,7 @@ class MycardsController implements IController {
         await toEdit.save();
         await toEdit.$set('part', part);
         await toEdit.$set('assignees', assignees);
+        await toEdit.save();
 
         return res.redirect("/mycards/?info=success");
     }
