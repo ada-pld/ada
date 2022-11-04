@@ -149,8 +149,8 @@ class CardsController implements IController {
         toEdit.name = req.body.name;
         toEdit.asWho = req.body.who;
         toEdit.task = req.body.task;
-        toEdit.description = req.body.description.replace(/[\r]+/g, '');
-        toEdit.dods = req.body.dods.replace(/[\r]+/g, '');
+        toEdit.description = req.body.description.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '');
+        toEdit.dods = req.body.dods.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '');
         toEdit.workingDays = workingDays;
         if (toEdit.status != "REJECTED" && toEdit.status != "WAITING_APPROVAL") {
             toEdit.version = toEdit.version + 1;

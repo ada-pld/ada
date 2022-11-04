@@ -81,7 +81,6 @@ class MycardsController implements IController {
     }
 
     private createPOST = async (req: Request, res: Response) => {
-        console.log(req.body)
         if (!req.body.name || !req.body.who || !req.body.task || !req.body.description || !req.body.workingDays || !req.body.dods || !req.body.part)
             return res.redirect("/mycards/create?error=invalid_body");
         let workingDays = 0;
@@ -122,8 +121,8 @@ class MycardsController implements IController {
         card.name = req.body.name;
         card.asWho = req.body.who;
         card.task = req.body.task;
-        card.description = req.body.description.replace(/[\r]+/g, '');
-        card.dods = req.body.dods.replace(/[\r]+/g, '')
+        card.description = req.body.description.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '');
+        card.dods = req.body.dods.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '');
         card.workingDays = workingDays;
         await card.save();
         await card.$set('part', part);
@@ -229,8 +228,8 @@ class MycardsController implements IController {
         toEdit.name = req.body.name;
         toEdit.asWho = req.body.who;
         toEdit.task = req.body.task;
-        toEdit.description = req.body.description.replace(/[\r]+/g, '');
-        toEdit.dods = req.body.dods.replace(/[\r]+/g, '');
+        toEdit.description = req.body.description.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '');
+        toEdit.dods = req.body.dods.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '');
         toEdit.workingDays = workingDays;
         await toEdit.save();
         await toEdit.$set('part', part);
