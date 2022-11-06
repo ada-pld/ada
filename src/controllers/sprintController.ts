@@ -25,6 +25,7 @@ class SprintController implements IController {
     private getSprint = async (req: Request, res: Response) => {
         const allSprints = await Sprint.findAll();
         const allUsers = await User.findAll({
+            order: [['firstname', 'ASC'], ['lastname', 'ASC']],
             include: [
                 Card
             ]

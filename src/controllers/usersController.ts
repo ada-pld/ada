@@ -83,7 +83,9 @@ class UserController implements IController {
                 sendCreationEmail(created, req.user, password);
             }
             await created.save();
-            req.wap.users = await User.findAll();
+            req.wap.users = await User.findAll({
+                order: [['firstname', 'ASC'], ['lastname', 'ASC']]
+            });
             return res.redirect("/users/?info=success");
     }]
 
@@ -153,14 +155,18 @@ class UserController implements IController {
                 toEdit.password = await bcrypt.hash(process.env.PASS_SALT + req.body.password, 10);
             if (req.body.role != "")
                 toEdit.role = req.body.role;
-            req.wap.users = await User.findAll();
             await toEdit.save();
+            req.wap.users = await User.findAll({
+                order: [['firstname', 'ASC'], ['lastname', 'ASC']]
+            });
             return res.redirect("/users/?info=success");
         } else {
             if (req.body.password != "")
                 toEdit.password = await bcrypt.hash(process.env.SALT + req.body.password, 10);
-            req.wap.users = await User.findAll();
             await toEdit.save();
+            req.wap.users = await User.findAll({
+                order: [['firstname', 'ASC'], ['lastname', 'ASC']]
+            });
             return res.redirect("/dashboard?info=success");
         }
         

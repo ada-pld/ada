@@ -90,7 +90,9 @@ class LoginController implements IController {
                 role: "ADMIN",
                 isDefaultPassword: false
             });
-            req.wap.users = await User.findAll();
+            req.wap.users = await User.findAll({
+                order: [['firstname', 'ASC'], ['lastname', 'ASC']]
+            });
             req.session.user = user.id;
             req.session.save(() => {
                 return res.redirect("/config");
