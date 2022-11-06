@@ -51,7 +51,7 @@ if (card.status == "FINISHED") {
                 <% if (card.status == "NOT_STARTED") { %>
                     <span class="nav-link disabled" style="color: white; background-color: var(--bs-danger)">Not started</span>
                 <% } else { %>
-                    <a class="nav-link" style="color: var(--bs-danger)" href="<%= currentPage + "/notstarted/" + card.id%>">Not started</a>
+                    <a class="nav-link" style="color: var(--bs-danger)" href="<%= currentPage + "/notstart/" + card.id%>">Not started</a>
                 <% } %>
             </li>
         <% } %>
