@@ -47,6 +47,25 @@ export async function sendCreationEmail(newUser: User, creatorUser: User, tempor
     await transporter.sendMail(options);
 }
 
+export async function sendPasswordForgottenMail(user: User, temporaryPassword: string) {
+    if (!checkMailTransporter())
+        return;
+    const rendered = await ejs.renderFile('./mails/build/password_reset.ejs', {
+        firstname: user.firstname,
+        email: user.email,
+        password: temporaryPassword,
+        wapLink: wap.config.Hostname.value,
+        wapRepository: "https://github.com/theohemmer/wap"
+    });
+    const options = {
+        from: '"WAP" ' + wap.config.SMTP_User.value.toString(),
+        subject: "WAP - Password reset",
+        to: user.email,
+        html: rendered
+    }
+    await transporter.sendMail(options);
+}
+
 export async function sendRejectionEmail(user: User, card: Card, rejectionReason: string) {
     if (!checkMailTransporter())
         return;

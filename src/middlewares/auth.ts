@@ -32,6 +32,6 @@ export const authUser = async function (req: Request, res: Response, next: NextF
     if (!req.user)
         return res.redirect("/login");
     if (req.user.isDefaultPassword)
-        return res.redirect("/user/changeDefaultPassword");
+        return res.redirect("/users/changeDefaultPassword");
     next();
 }

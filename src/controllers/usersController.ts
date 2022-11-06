@@ -5,7 +5,7 @@ import { checkPerm } from "../middlewares/checkPerms";
 import User, {Role} from "../models/user";
 import * as bcrypt from "bcrypt";
 import { body, validationResult } from 'express-validator';
-import { checkMailTransporter, sendCreationEmail } from "../mails";
+import { checkMailTransporter, sendCreationEmail, sendPasswordForgottenMail } from "../mails";
 
 class UserController implements IController {
     public path = "/users";
@@ -23,6 +23,8 @@ class UserController implements IController {
         this.router.post("/edit", authUser, this.editUserPOST);
         this.router.get("/changeDefaultPassword", this.changeDefaultPasswordGET);
         this.router.post("/changeDefaultPassword", this.changeDefaultPasswordPOST);
+        this.router.get("/forgotPassword", this.forgotPasswordGET);
+        this.router.post("/forgotPassword", this.forgotPasswordPOST);
     }
 
     private getUsers = async (req: Request, res: Response) => {
@@ -192,6 +194,44 @@ class UserController implements IController {
             req.user.isDefaultPassword = false;
             await req.user.save();
             return res.redirect("/dashboard");
+        }
+    ]
+
+    private forgotPasswordGET = async (req: Request, res: Response) => {
+        return res.render("users/forgot_password", {
+            currentPage: '/users',
+            wap: req.wap,
+            user: req.user
+        })
+    }
+
+    private forgotPasswordPOST = [
+        body("email").normalizeEmail().isEmail(),
+        async (req: Request, res: Response) => {
+            if (!validationResult(res).isEmpty) {
+                return res.redirect("/?error=invalid_body");
+            }
+            const user = await User.findOne({
+                where: {
+                    email: req.body.email
+                }
+            });
+            if (!user) {
+                return res.redirect("/?error=invalid_email");
+            }
+            if (!checkMailTransporter) {
+                return res.redirect("/?error=no_mail_transporter");
+            }
+            if (user.isDefaultPassword) {
+                return res.redirect("/?error=cannot_reset_password");
+            }
+            let password = null;
+            password = User.generateRandomPassword();
+            user.password = await bcrypt.hash(process.env.PASS_SALT + password, 10);
+            user.isDefaultPassword = true;
+            await user.save();
+            await sendPasswordForgottenMail(user, password);
+            return res.redirect("/?info=success");
         }
     ]
 }
