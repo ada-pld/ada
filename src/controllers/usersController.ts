@@ -138,7 +138,7 @@ class UserController implements IController {
         if (req.user.role != "ADMIN" && req.user.role != "EDITOR") canEditInfos = false;
         if (canEditInfos) {
             if (req.body.role != "") {
-                if (req.body.role != "ADMIN" && req.body.role != "EDITOR" && req.body.role != "MAINTAINER" && req.body.role != "USER")
+                if (req.body.role != "ADMIN" && req.body.role != "EDITOR" && req.body.role != "MAINTENER" && req.body.role != "USER")
                     return res.redirect("/users/create/?error=invalid_body");
             }
             if (req.user.role == "EDITOR" && req.body.role == "ADMIN")

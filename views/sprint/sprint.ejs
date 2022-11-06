@@ -10,52 +10,51 @@
     <body>
         <%- include("../partials/navbar.ejs") %>
         <div class="container-fluid p-5">
-            <div class="row mb-5 text-center">
-                <h1>Sprints</h1>
-            </div>
-            <div class="container w-50 bd-gutter flex-wrap flex-lg-nowrap">
-                <div class="row">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Total cards</th>
-                                <th scope="col">Needed J/H</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% for (const sprint of allSprints) { %>
+            <% if (canEditSprint) { %>
+                <div class="row mb-5 text-center">
+                    <h1>Sprints</h1>
+                </div>
+                <div class="container w-50 bd-gutter flex-wrap flex-lg-nowrap">
+                    <div class="row">
+                        <table class="table table-striped">
+                            <thead>
                                 <tr>
-                                    <th scope="row"><%= sprint.id %></th>
-                                    <td><%= sprint.name %></td>
-                                    <td>DUMMY</td>
-                                    <td><%= sprint.workDaysNeeded %></td>
-                                    <% if (!sprint.active) { %>
-                                        <td><a type="button" class="btn btn-sm btn-outline-warning" href="/sprint/use/<%= sprint.id %>">Select this sprint</a></td>
-                                    <% } else { %>
-                                        <td></td>
-                                    <% } %>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Total cards</th>
+                                    <th scope="col">Needed J/H</th>
+                                    <th scope="col">Action</th>
                                 </tr>
-                            <% } %>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <% for (const sprint of allSprints) { %>
+                                    <tr>
+                                        <th scope="row"><%= sprint.id %></th>
+                                        <td><%= sprint.name %></td>
+                                        <td>DUMMY</td>
+                                        <td><%= sprint.workDaysNeeded %></td>
+                                        <% if (!sprint.active) { %>
+                                            <td><a type="button" class="btn btn-sm btn-outline-warning" href="/sprint/use/<%= sprint.id %>">Select this sprint</a></td>
+                                        <% } else { %>
+                                            <td></td>
+                                        <% } %>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <a type="button" class="btn btn-outline-success" href="/sprint/create">Configure a new sprint</a>
+                    </div>
                 </div>
-                <div class="row">
-                    <a type="button" class="btn btn-outline-success" href="/sprint/create">Configure a new sprint</a>
+                <div class="row mb-5 pt-5">
+                    <span class="border-top border-2"></span>
                 </div>
-            </div>
-            <div class="row mb-5 pt-5">
-                <span class="border-top border-2"></span>
-            </div>
+            <% } %>
             <% if (wap.sprint) { %>
                 <div class="row mb-5 text-center">
                     <h1>Users stats on this sprint</h1>
                     <h4 class="text-muted">Sprint: <%= wap.sprint.name %></h4>
-                </div>
-                <div class="row ms-auto me-auto w-75 mt-5 mb-5">
-                    <span class="border-2 border-top"></span>
                 </div>
                 <% for (const user of allUsers) { %>
                     <div class="row ms-auto me-auto w-75 mt-5 mb-5">
@@ -83,6 +82,9 @@
                     </div>
                 <% } %>
             <% } else { %>
+                <div class="row ms-auto me-auto w-75 mt-5 mb-5">
+                    <span class="border-2 border-top"></span>
+                </div>
                 <div class="row mb-5 text-center">
                     <h1>No active sprint</h1>
                     <h4 class="text-muted">Start a sprint to see some stats</h4>

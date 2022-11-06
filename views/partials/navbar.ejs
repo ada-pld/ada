@@ -30,9 +30,13 @@
                         <li class="nav-item">
                             <a class="nav-link <%= currentPage === '/cards' ? 'active' : '' %>" <%= currentPage === '/cards' ? 'aira-current="page"' : '' %> href="/cards">Cards</a>
                         </li>
+                    <% } %>
+                    <% if (user.role != "USER") { %>
                         <li class="nav-item">
                             <a class="nav-link <%= currentPage === '/sprint' ? 'active' : '' %>" <%= currentPage === '/sprint' ? 'aira-current="page"' : '' %> href="/sprint">Sprint</a>
                         </li>
+                    <% } %>
+                    <% if (user.role == "EDITOR" || user.role == "ADMIN") { %>
                         <li class="nav-item">
                             <a class="nav-link <%= currentPage === '/parts' ? 'active' : '' %>" <%= currentPage === '/parts' ? 'aira-current="page"' : '' %> href="/parts">Parts</a>
                         </li>

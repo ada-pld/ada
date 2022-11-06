@@ -16,7 +16,7 @@ class SprintController implements IController {
     }
 
     private initializeRoutes() {
-        this.router.get("/", authUser, checkPerm("EDITOR"), this.getSprint);
+        this.router.get("/", authUser, checkPerm("MAINTENER"), this.getSprint);
         this.router.get("/create", authUser, checkPerm("EDITOR"), this.createSprintGET);
         this.router.post("/create", authUser, checkPerm("EDITOR"), this.createSprintPOST);
         this.router.get("/use/:sprint", authUser, checkPerm("EDITOR"), this.useSprint);
@@ -57,6 +57,7 @@ class SprintController implements IController {
 
         return res.render("sprint/sprint", {
             currentPage: '/sprint',
+            canEditSprint: (req.user.role == "ADMIN" || req.user.role == "EDITOR"),
             wap: req.wap,
             user: req.user,
             allSprints: allSprints,
