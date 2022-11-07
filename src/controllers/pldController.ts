@@ -6,7 +6,8 @@ import makePld from "../../pldGenerator";
 import { Op } from "sequelize";
 import User from "../models/user";
 import Part from "../models/part";
-import generatePLD from "../defaultPldGenerator";
+import generatePLD, { requireImages } from "../defaultPldGenerator";
+import { checkPerm } from "../middlewares/checkPerms";
 
 class PLDController implements IController {
     public path = "/pld";
@@ -17,7 +18,8 @@ class PLDController implements IController {
     }
 
     private initializeRoutes() {
-        this.router.get("/", authUser, this.pld);
+        this.router.get("/", authUser, checkPerm("EDITOR"), this.pld);
+        this.router.post("/setImages", authUser, checkPerm("EDITOR"), this.setImages);
     }
 
     private async importGenerator(moduleName: string): Promise<any> {
@@ -26,6 +28,20 @@ class PLDController implements IController {
     }
 
     private pld = async (req: Request, res: Response) => {
+        return res.render("pld/pld", {
+            currentPage: '/pld',
+            wap: req.wap,
+            user: req.user,
+            requiredImages: requireImages,
+        })
+    }
+
+    private setImages = async (req: Request, res: Response) => {
+        console.log(req.body);
+        return res.redirect("/pld");
+    }
+
+    private pldGen = async (req: Request, res: Response) => {
         const allCards = await Card.findAll({
             where: {
                 idInSprint: {

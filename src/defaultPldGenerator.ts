@@ -69,6 +69,17 @@ function createATable(card: Card)
     }
 }
 
+export const requireImages = [
+    "domestia_logo.png",
+    "epitech_logo.png",
+    "global_schema.png",
+    "front_mobile.png",
+    "front_web.png",
+    "backend.png",
+    "recommandation_algorithm.png",
+    "security.png",
+]
+
 export default function generatePLD(allCards: Card[]) {
     let test :any[] = [];
     let links :any[] = [];

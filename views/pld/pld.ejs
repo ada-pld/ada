@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+        <title>WAP - Change default password</title>
+    </head>
+    <body>
+        <%- include("../partials/navbar.ejs") %>
+    </body>
+    <div class="container-xxl bd-gutter flex-wrap flex-lg-nowrap p-5">
+        <div class="row mb-5 text-center">
+            <h1>Check assets for the PLD</h1>
+        </div>
+        <div class="row">
+            <form method="post" action="/pld/setImages" enctype="multipart/form-data">
+                <% for (required of requiredImages) { %>
+                    <div class="mb-3">
+                        <label for="file-<%= required %>" class="form-label"><%= required %></label>
+                        <input class="form-control" type="file" id="file-<%= required %>" name="<%= required %>">
+                    </div>
+                <% } %>
+                <button type="submit" class="btn btn-success">Save Images</button> 
+            </form>
+        </div>
+    </div>
+</html>

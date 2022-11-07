@@ -2,7 +2,7 @@ FROM node:16
 
 WORKDIR /usr/src/app
 
-VOLUME [ "/usr/src/app/pldGenerator/custom/customGenerator", "/usr/src/app/pldGenerator/generated" ]
+VOLUME [ "/usr/src/app/pldGenerator/custom/customGenerator", "/usr/src/app/pldGenerator/generated", "/usr/src/app/pldGenerator/assets" ]
 
 COPY ./package*.json ./
 
