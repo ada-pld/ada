@@ -8,7 +8,7 @@ import User from "../models/user";
 import Part from "../models/part";
 import { checkPerm } from "../middlewares/checkPerms";
 import multer, { MulterError } from "multer";
-import { renameSync } from "fs";
+import { renameSync, rmSync } from "fs";
 
 class PLDController implements IController {
     public path = "/pld";
@@ -51,7 +51,7 @@ class PLDController implements IController {
         if (!imported.generatePLD || !imported.getRequired)
             return res.redirect("/setGenerator/?error=invalid_or_missing_generator");
         this.importedGenerator = {
-            generatePld: imported.generatedPLD,
+            generatePld: imported.getGenerator(),
             requireImages: imported.getRequired()
         }
         next();
@@ -75,8 +75,9 @@ class PLDController implements IController {
                 console.log(err);
                 return res.redirect("/pld/setGenerator?error=invalid_file_type");
             }
-            if (req.file)
+            if (req.file) {
                 renameSync(req.file.path, "pldGenerator/custom/customGenerator/customPldGenerator.js");
+            }
             return res.redirect("/pld/setImages");
         })
     }
