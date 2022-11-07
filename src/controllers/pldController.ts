@@ -1,12 +1,11 @@
 import IController from "./controller";
-import express, {Request, Response, text} from "express";
+import express, {NextFunction, Request, Response, text} from "express";
 import { authUser } from "../middlewares/auth";
 import Card from "../models/card";
 import makePld from "../../pldGenerator";
 import { Op } from "sequelize";
 import User from "../models/user";
 import Part from "../models/part";
-import generatePLD, { requireImages } from "../defaultPldGenerator";
 import { checkPerm } from "../middlewares/checkPerms";
 import multer, { MulterError } from "multer";
 import { renameSync } from "fs";
@@ -14,7 +13,11 @@ import { renameSync } from "fs";
 class PLDController implements IController {
     public path = "/pld";
     public router = express.Router();
-    private importedGenerator = null;
+    private importedGenerator : {
+        generatePld: Function,
+        requireImages: string[]
+    } = null;
+
     private upload = multer({
         dest: "tmp_uploads/",
         fileFilter(req, file, callback) {
@@ -22,8 +25,9 @@ class PLDController implements IController {
                 return callback(null, true);
             if (file.mimetype == "image/png" && (req.baseUrl + req.path == '/pld/setImages'))
                 return callback(null, true);
-            if (file.mimetype == "text/javascript" && (req.baseUrl + req.path == '/pld/setGenerator'))
-            callback(new Error("Invalid file"));
+            if ((file.mimetype == "text/javascript" || file.mimetype == "application/x-javascript") && (req.baseUrl + req.path == '/pld/setGenerator'))
+                return callback(null, true);
+            callback(new Error("Invalid file: " + file.mimetype));
         },
         limits: {
             fileSize: 10 * 1000 * 1000 // 10 MB
@@ -37,14 +41,20 @@ class PLDController implements IController {
     private initializeRoutes() {
         this.router.get("/", authUser, checkPerm("EDITOR"), this.pld);
         this.router.get("/setGenerator", authUser, checkPerm("EDITOR"), this.setGeneratorGET);
-        this.router.get("/setGenerator", authUser, checkPerm("EDITOR"), this.setGeneratorPOST);
-        this.router.get("/setImages", authUser, checkPerm("EDITOR"), this.setImagesGET);
-        this.router.post("/setImages", authUser, checkPerm("EDITOR"), this.setImagesPOST);
+        this.router.post("/setGenerator", authUser, checkPerm("EDITOR"), this.setGeneratorPOST);
+        this.router.get("/setImages", authUser, checkPerm("EDITOR"), this.importGenerator, this.setImagesGET);
+        this.router.post("/setImages", authUser, checkPerm("EDITOR"), this.importGenerator, this.setImagesPOST);
     }
 
-    private async importGenerator(moduleName: string): Promise<any> {
-        this.importedGenerator = await import(moduleName);
-        return this.importedGenerator;
+    private async importGenerator(req: Request, res: Response, next: NextFunction): Promise<any> {
+        const imported = await import("../../pldGenerator/custom");
+        if (!imported.generatePLD || !imported.getRequired)
+            return res.redirect("/setGenerator/?error=invalid_or_missing_generator");
+        this.importedGenerator = {
+            generatePld: imported.generatedPLD,
+            requireImages: imported.getRequired()
+        }
+        next();
     }
 
     private pld = async (req: Request, res: Response) => {
@@ -56,7 +66,6 @@ class PLDController implements IController {
             currentPage: '/pld',
             wap: req.wap,
             user: req.user,
-            requiredImages: requireImages,
         })
     }
 
@@ -64,54 +73,40 @@ class PLDController implements IController {
         this.upload.single("generator.js")(req, res, async function (err) {
             if (err) {
                 console.log(err);
-                return;
+                return res.redirect("/pld/setGenerator?error=invalid_file_type");
             }
-            renameSync(req.file.path, "pldGenerator/customGenerator/customPldGenerator.js");
+            if (req.file)
+                renameSync(req.file.path, "pldGenerator/custom/customGenerator/customPldGenerator.js");
             return res.redirect("/pld/setImages");
         })
     }
 
     private setImagesGET = async (req: Request, res: Response) => {
-        try {
-            const test = await this.importGenerator("../../pldGenerator/custom");
-            if (!test.default || ! test.requireImages) {
-                return res.redirect("/pld/setGenerator?error=invalid_generator");
-            }
-        } catch (err) {
-            return res.redirect("/pld/setGenerator?error=invalid_or_missing_generator");
-        }
         return res.render("pld/set_images", {
             currentPage: '/pld',
             wap: req.wap,
             user: req.user,
-            requiredImages: requireImages,
+            requiredImages: this.importedGenerator.requireImages,
         })
     }
 
     private setImagesPOST = async (req: Request, res: Response) => {
-        try {
-            const test = await this.importGenerator("../../pldGenerator/custom");
-            if (!test.default || ! test.requireImages) {
-                return res.redirect("/pld/setGenerator?error=invalid_generator");
-            }
-        } catch (err) {
-            return res.redirect("/pld/setGenerator?error=invalid_or_missing_generator");
-        }
-
+        const requireImages = this.importedGenerator.requireImages;
         const fields = requireImages.map(x => { return { name: x, maxCount: 1} });
         const filesMiddleware = this.upload.fields(fields);
         filesMiddleware(req, res, async function (err) {
             if (err) {
                 console.log(err);
-                return;
+                return res.redirect("/pld/setImages?error=invalid_file_type");
             }
             for (const required of requireImages) {
                 if (req.files[required]) {
                     renameSync(req.files[required].path, "pldGenerator/assets/" + req.files[required]);
                 }
             }
+            // TODO: redirect to a summary page before generating preview
+            return res.redirect("/setImages?info=succes");
         })
-        return res.redirect("/pld");
     }
 
     private pldGen = async (req: Request, res: Response) => {
@@ -129,15 +124,7 @@ class PLDController implements IController {
             ]
         });
         let dd: any = null;
-        if (req.wap.config.UsingCustomGenerator.value == "true") {
-            try {
-                dd = (await this.importGenerator("../../pldGenerator/custom")).default(allCards);
-            } catch (e) {
-                return res.redirect("/dashboard/?error=error_using_custom_generator");
-            }
-        } else {
-            dd = generatePLD(allCards);
-        }
+        //dd = generatePLD(allCards);
         makePld(dd, {}, "./pldGenerator/generated/test.pdf");
         return res.redirect("/dashboard/?info=success");
     }
