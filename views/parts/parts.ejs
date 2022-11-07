@@ -19,13 +19,17 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Name</th>
+                            <th scope="col">Cards in sprint</th>
+                            <th scope="col">Total cards</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (const part of wap.parts) { %>
+                        <% for (const part of allParts) { %>
                             <tr>
                                 <th scope="row"><%= part.id %></th>
                                 <td><%= part.name %></td>
+                                <td><%= part.totalInSprint %></td>
+                                <td><%= part.totalCards %></td>
                             </tr>
                         <% } %>
                     </tbody>

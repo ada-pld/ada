@@ -3,6 +3,7 @@ import express, {Request, Response} from "express";
 import { checkPerm } from "../middlewares/checkPerms";
 import { authUser } from "../middlewares/auth";
 import Part from "../models/part";
+import Card from "../models/card";
 
 class PartsController implements IController {
     public path = "/parts";
@@ -19,7 +20,17 @@ class PartsController implements IController {
     }
 
     private getParts = async (req: Request, res: Response) => {
-        const allParts = req.wap.parts;
+        const allParts = await Part.findAll({
+            include: [
+                Card
+            ]
+        })
+        
+        allParts.forEach((x) => {
+            const resultObject = x as any;
+            resultObject.totalInSprint = x.cards.filter(x => x.sprintId == req.wap.sprint.id).length;
+            resultObject.totalCards = x.cards.length;
+        });
 
         return res.render("parts/parts", {
             currentPage: '/parts',

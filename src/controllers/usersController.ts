@@ -6,6 +6,7 @@ import User, {Role} from "../models/user";
 import * as bcrypt from "bcrypt";
 import { body, validationResult } from 'express-validator';
 import { checkMailTransporter, sendCreationEmail, sendPasswordForgottenMail } from "../mails";
+import Card from "../models/card";
 
 class UserController implements IController {
     public path = "/users";
@@ -28,7 +29,23 @@ class UserController implements IController {
     }
 
     private getUsers = async (req: Request, res: Response) => {
-        const allUsers = req.wap.users;
+        const allUsers = await User.findAll({
+            include: [
+                Card
+            ]
+        });
+
+        allUsers.forEach((x) => {
+            const resultObject = x as any;
+            resultObject.totalCards = 0;
+            resultObject.totalWorkDays = 0;
+            x.cards.forEach((x) => {
+                if (x.status != "REJECTED" && x.status != "WAITING_APPROVAL") {
+                    resultObject.totalCards++;
+                    resultObject.totalWorkDays += x.workingDays;
+                }
+            })
+        })
 
         return res.render("users/users", {
             currentPage: '/users',

@@ -2,6 +2,7 @@ import IController from "./controller";
 import express, {Request, Response} from "express";
 import { checkPerm } from "../middlewares/checkPerms";
 import { authUser } from "../middlewares/auth";
+import { Op } from "sequelize";
 import Sprint from "../models/sprint";
 import User from "../models/user";
 import Card from "../models/card";
@@ -30,11 +31,24 @@ class SprintController implements IController {
                 Card
             ]
         })
+
+        allSprints.forEach(async (x) => {
+            const resultObject = x as any;
+            resultObject.totalCards = await x.$count("Cards", {
+                where: {
+                    status: {
+                        [Op.notIn]: ["REJECTED", "WAITING_APPROVAL"]
+                    }
+                }
+            });
+        })
+
         for (const user of allUsers) {
             user.cards = user.cards.filter((cards) => {
                 return (cards.sprintId == req.wap.sprint.id) && !(cards.status == "REJECTED" || cards.status == "WAITING_APPROVAL");
             })
-            let totalJH = 0
+            let totalJH = 0;
+            let intendedJH = 0;
             let totalDones = 0;
             let totalProgress = 0;
             let totalNotStarted = 0;
@@ -49,8 +63,10 @@ class SprintController implements IController {
                 } else if (card.status == "NOT_STARTED") {
                     totalNotStarted++;
                 }
+                intendedJH += card.workingDays;
             }
             user["totalJH"] = totalJH;
+            user["intendedJH"] = intendedJH;
             user["totalDones"] = totalDones;
             user["totalProgress"] = totalProgress;
             user["totalNotStarted"] = totalNotStarted;
