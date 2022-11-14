@@ -33,6 +33,13 @@ interface Card {
     dods: string;
 }
 
+interface report {
+    userId: string;
+    firstname: string;
+    lastname: string;
+    report: string;
+}
+
 function createATable(card: Card)
 {
     const cardVersion: string = card.sprintId + '.' + card.partId + '.' + card.idInSprint + ((card.version != 1) ? '.' + card.version : '');
@@ -69,10 +76,10 @@ function createATable(card: Card)
     }
 }
 
-function addTitleAndToc(content :any[], name: string, nest :number) {
+function addTitleAndToc(content :any[], name: string, nest: number, pageBreak: boolean) {
     const title = name.replace(/ /g, ' ');
     let points = '';
-    let spaces = '';
+    let spaces = '|';
     for (let i = 0; i < nest; i++) {
         spaces += "  "
     }
@@ -89,7 +96,7 @@ function addTitleAndToc(content :any[], name: string, nest :number) {
             font: "Anonymous"
         }
     }
-    if (nest == 0) {
+    if (pageBreak) {
         tocItem['pageBreak'] = 'before'
     }
     content.push(tocItem);
@@ -127,11 +134,15 @@ function addHeaderPage(sprintName: string) {
 function addAllCards(allCards: Card[]) {
     let cards :any[] = [];
     let last_part = -1;
+    let first = true;
+
+    addTitleAndToc(cards, "Carte User-Stories", 0, true)
 
     for (const card of allCards) {
         if (card.partId != last_part) {
             last_part = card.partId;
-            addTitleAndToc(cards, card.part.name, 0);
+            addTitleAndToc(cards, card.part.name, 1, !first);
+            first = false;
         }
         cards.push(createATable(card));
     }
@@ -140,9 +151,9 @@ function addAllCards(allCards: Card[]) {
 
 function addAllSchemas() {
     let allSchemas :any[] = [];
-    addTitleAndToc(allSchemas, "Schémas", 0);
+    addTitleAndToc(allSchemas, "Schémas", 0, true);
 
-    addTitleAndToc(allSchemas, "Schéma global", 1);
+    addTitleAndToc(allSchemas, "Schéma global", 1, false);
     allSchemas.push({
         image: "pldGenerator/assets/global_schema.png",
         width: 450,
@@ -151,13 +162,54 @@ function addAllSchemas() {
     return allSchemas;
 }
 
-function addAllAdvancementReports() {
-    let allAdvancementReports: any[] = [];
-    addTitleAndToc(allAdvancementReports, "Rapports d'avancements", 0);
+function addChangelogPage(changelog: string) {
+    let changelogPage: any[] = [];
+    addTitleAndToc(changelogPage, "Changements sur le PLD", 0, true);
 
-    allAdvancementReports.push({
-        text: "Faut que je fasse l'ajout des raports d'avancements",
-    });
+    const changelogBody = changelog.split('\n').map((x) => {
+        const to_ret = {
+            text: x
+        }
+        return to_ret;
+    })
+    changelogPage.push({
+        color: '#444',
+        style: 'tableMargin',
+        table: {
+            widths: ['*'],
+            headerRows: 0,
+            body: [changelogBody],
+            unbreakable: true
+        },
+        unbreakable: true
+    })
+    return changelogPage;
+}
+
+function addAllAdvancementReportsPage(advancementReports :report[]) {
+    let allAdvancementReports: any[] = [];
+    addTitleAndToc(allAdvancementReports, "Rapports d'avancements", 0, true);
+
+    for (const report of advancementReports) {
+        addTitleAndToc(allAdvancementReports, report.firstname + " " + report.lastname, 1, false);
+        const reportBody = report.report.split('\n').map((x) => {
+            const to_ret = {
+                text: x
+            }
+            return [to_ret];
+        })
+        allAdvancementReports.push({
+            color: '#444',
+            style: 'tableMargin',
+            table: {
+                widths: ['*'],
+                headerRows: 0,
+                body: reportBody,
+                unbreakable: true
+            },
+            unbreakable: true
+        })
+    }
     return allAdvancementReports;
 }
 
@@ -167,11 +219,12 @@ export const requireImages = [
     "global_schema.png",
 ]
 
-export function generatePLD(allCards: Card[]) {
+export function generatePLD(allCards: Card[], changelog: string, advancementReports :report[]) {
     const headerPage = addHeaderPage(allCards[0].sprint.name);
-    const cards = addAllCards(allCards);
+    const changelogPage = addChangelogPage(changelog);
     const schemas = addAllSchemas();
-    const advancementReports = addAllAdvancementReports();
+    const cards = addAllCards(allCards);
+    const advancementReportsPage = addAllAdvancementReportsPage(advancementReports);
     let dd = {
         content: [
             ...headerPage,
@@ -181,9 +234,10 @@ export function generatePLD(allCards: Card[]) {
                     title: {text: 'Index'}
                 }
             },
+            ...changelogPage,
             ...schemas,
             ...cards,
-            ...advancementReports
+            ...advancementReportsPage
         ],
         styles: {
             subHeaders: {

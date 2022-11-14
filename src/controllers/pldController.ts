@@ -57,7 +57,8 @@ class PLDController implements IController {
         this.router.post("/setGenerator", authUser, checkPerm("EDITOR"), this.setGeneratorPOST);
         this.router.get("/setImages", authUser, checkPerm("EDITOR"), this.importGenerator, this.setImagesGET);
         this.router.post("/setImages", authUser, checkPerm("EDITOR"), this.importGenerator, this.setImagesPOST);
-        this.router.get("/generate", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.pldGen);
+        this.router.get("/setChanges", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.setChangesGET);
+        this.router.post("/setChanges", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.setChangesPOST);
     }
 
     private pld = async (req: Request, res: Response) => {
@@ -139,11 +140,120 @@ class PLDController implements IController {
                 }
             }
             // TODO: redirect to a summary page before generating preview
-            return res.redirect("/pld/generate");
+            return res.redirect("/pld/setChanges");
         })
     }
 
-    private pldGen = async (req: Request, res: Response) => {
+    private setChangesGET = async (req: Request, res: Response) => {
+        const allCards = await Card.findAll({
+            where: {
+                idInSprint: {
+                    [Op.ne]: -1
+                },
+                sprintId: req.wap.sprint.id,
+            },
+            order: [['sprintId', 'ASC'], ['partId', 'ASC'], ['idInSprint', 'ASC']],
+            include: [
+                User,
+                Part,
+                Sprint
+            ]
+        });
+        const allUsers = await User.findAll({
+            where: {
+                role: {
+                    [Op.ne]: "USER"
+                }
+            }
+        });
+
+        let advancementReports :{
+            userId: string,
+            firstname: string,
+            lastname: string,
+            report: string
+        }[] = [];
+        for (const user of allUsers) {
+            advancementReports.push({
+                userId: user.id,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                report: "Pas d'avancements connu\n"
+            });
+        }
+
+        let cardAdded = '';
+        let cardModified = '';
+        for (const card of allCards) {
+            const cardVersion = card.sprintId + '.' + card.partId + '.' + card.idInSprint + ((card.version != 1) ? '.' + card.version : '');
+            if (card.actPLD == 0) {
+                cardAdded += ((cardAdded != '') ? ', ' : '') + cardVersion;
+            } else if (card.actPLD == card.lastPLDEdit) {
+                cardModified += ((cardModified != '') ? ', ' : '') + cardVersion;
+            }
+            if (card.lastPLDStatus != card.status) {
+                if (card.status == "FINISHED" || card.status == "STARTED") {
+                    for (const user of card.assignees) {
+                        let report = advancementReports.find(x => x.userId == user.id);
+                        if (report.report == "Pas d'avancements connu\n")
+                            report.report = "";
+                        if (card.status == "FINISHED")
+                            report.report += "Carte terminée: " + cardVersion + ", " + card.workingDays + "J/H\n";
+                        if (card.status == "STARTED")
+                            report.report += "Carte en cours: " + cardVersion + "\n";
+                    }
+                }
+            }
+        }
+        advancementReports.forEach(x => x.report.trimEnd());
+        cardAdded = (cardAdded != '') ? "Cartes ajoutées: " + cardAdded : '';
+        cardModified = (cardModified != '') ? "Cartes modifiées: " + cardModified : '';
+
+        return res.render("pld/set_changes", {
+            currentPage: '/pld',
+            wap: req.wap,
+            user: req.user,
+            cardAdded: cardAdded,
+            cardModified: cardModified,
+            advancementReports: advancementReports,
+        })
+    }
+
+    private setChangesPOST = async (req: Request, res: Response) => {
+        if (!req.body.pldChanges) {
+            return res.redirect("/pld/setChanges?error=invalid_body");
+        }
+        const changelog = req.body.pldChanges.replace(/[\r+]/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd();
+
+        const allUsers = await User.findAll({
+            where: {
+                role: {
+                    [Op.ne]: "USER"
+                }
+            }
+        });
+
+        let advancementReports :{
+            userId: string,
+            firstname: string,
+            lastname: string,
+            report: string
+        }[] = [];
+        for (const user of allUsers) {
+            if (!req.body["report-" + user.id]) {
+                return res.redirect("/pld/setChanges?error=missing_user_report");
+            }
+            advancementReports.push({
+                userId: user.id,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                report: req.body["report-" + user.id].replace(/[\r+]/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd()
+            });
+        }
+        return this.generatePreview(req, res, changelog, advancementReports);
+    }
+
+    private generatePreview = async (req: Request, res: Response, changelog: string, advancementReports: any[]) => {
         const allCards = await Card.findAll({
             where: {
                 idInSprint: {
@@ -158,8 +268,7 @@ class PLDController implements IController {
                 Sprint
             ]
         });
-        console.log(this.importedGenerator.generatePld);
-        const dd = this.importedGenerator.generatePld(allCards);
+        const dd = this.importedGenerator.generatePld(allCards, changelog, advancementReports);
         await makePld(dd, {}, "./pldGenerator/generated/test.pdf");
 
         // Watermarking
