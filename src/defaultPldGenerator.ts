@@ -69,6 +69,30 @@ function createATable(card: Card)
     }
 }
 
+function addTitleAndToc(content :any[], name: string, nest :number) {
+    const title = name.replace(/ /g, ' ');
+    let points = '';
+    let spaces = '';
+    for (let i = 0; i < nest; i++) {
+        spaces += "  "
+    }
+    spaces = (spaces.length > 0) ? spaces + "- " : "";
+    for (let i = title.length + spaces.length; i < 70; i++) {
+        points += '.';
+    }
+    content.push({
+        text: spaces + title + points,
+        pageBreak: 'before',
+        style: 'invisible',
+        id: title,
+        tocItem: 'mainToc',
+        tocStyle: {
+            font: "Anonymous"
+        }
+    });
+    content.push({ text: title, style: 'subHeaders' });
+}
+
 function addHeaderPage(sprintName: string) {
     const headerPage :any[] = [];
     headerPage.push({
@@ -82,14 +106,18 @@ function addHeaderPage(sprintName: string) {
         alignment: 'center'
     });
     headerPage.push({
-        text: "LOGO DOMESTIA",
+        image: "pldGenerator/assets/domestia_logo.png",
+        width: 350,
+        margin: [ 0, 150, 0, 0 ],
         alignment: 'center'
-    })
+    });
     headerPage.push({
-        text: "LOGO EPITECH",
+        image: "pldGenerator/assets/epitech_logo.png",
+        width: 350,
+        margin: [ 0, 150, 0, 0 ],
         pageBreak: "after",
         alignment: 'center'
-    })
+    });
     return headerPage;
 }
 
@@ -100,21 +128,7 @@ function addAllCards(allCards: Card[]) {
     for (const card of allCards) {
         if (card.partId != last_part) {
             last_part = card.partId;
-            let points = '';
-            for (let i = card.part.name.length; i < 70; i++) {
-                points += '.';
-            }
-            cards.push({
-                text: card.part.name.replace(/ /g, ' ') + points,
-                pageBreak: 'before',
-                style: 'invisible',
-                id: card.part.name,
-                tocItem: 'mainToc',
-                tocStyle: {
-                    font: "Anonymous"
-                }
-            });
-            cards.push({ text: card.part.name.replace(/ /g, ' '), style: 'subHeaders' });
+            addTitleAndToc(cards, card.part.name, 0);
         }
         cards.push(createATable(card));
     }
@@ -123,50 +137,21 @@ function addAllCards(allCards: Card[]) {
 
 function addAllSchemas() {
     let allSchemas :any[] = [];
-    const title = "Schéma";
+    addTitleAndToc(allSchemas, "Schémas", 0);
 
-    let points = '';
-    for (let i = title.length; i < 70; i++) {
-        points += '.';
-    }
-
+    addTitleAndToc(allSchemas, "Schéma global", 1);
     allSchemas.push({
-        text: title + points,
-        pageBreak: 'before',
-        style: 'invisible',
-        id: title,
-        tocItem: 'mainToc',
-        tocStyle: {
-            font: "Anonymous"
-        }
-    });
-    allSchemas.push({ text: title, style: 'subHeaders' });
-    allSchemas.push({
-        text: "Faut que je fasse l'ajout de schémas",
-    });
+        image: "pldGenerator/assets/global_schema.png",
+        width: 450,
+        alignment: "center"
+    })
     return allSchemas;
 }
 
 function addAllAdvancementReports() {
     let allAdvancementReports: any[] = [];
-    const title = "Rapports d'avancements";
+    addTitleAndToc(allAdvancementReports, "Rapports d'avancements", 0);
 
-    let points = '';
-    for (let i = title.length; i < 70; i++) {
-        points += '.';
-    }
-
-    allAdvancementReports.push({
-        text: title + points,
-        pageBreak: 'before',
-        style: 'invisible',
-        id: title,
-        tocItem: 'mainToc',
-        tocStyle: {
-            font: "Anonymous"
-        }
-    });
-    allAdvancementReports.push({ text: title, style: 'subHeaders' });
     allAdvancementReports.push({
         text: "Faut que je fasse l'ajout des raports d'avancements",
     });
@@ -177,11 +162,6 @@ export const requireImages = [
     "domestia_logo.png",
     "epitech_logo.png",
     "global_schema.png",
-    "front_mobile.png",
-    "front_web.png",
-    "backend.png",
-    "recommandation_algorithm.png",
-    "security.png",
 ]
 
 export function generatePLD(allCards: Card[]) {

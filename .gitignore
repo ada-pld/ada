@@ -2,6 +2,7 @@ build/
 node_modules/
 pldGenerator/node_modules/
 pldGenerator/generated/
+pldGenerator/assets/
 pldGenerator/custom/customGenerator/customPldGenerator.js
 .env
 docker-compose.yml

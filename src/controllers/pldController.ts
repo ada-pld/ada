@@ -1,5 +1,5 @@
 import IController from "./controller";
-import express, {NextFunction, Request, Response, text} from "express";
+import express, {NextFunction, Request, Response } from "express";
 import { authUser } from "../middlewares/auth";
 import Card from "../models/card";
 import makePld from "../../pldGenerator";
@@ -8,8 +8,7 @@ import User from "../models/user";
 import Part from "../models/part";
 import { checkPerm } from "../middlewares/checkPerms";
 import multer, { MulterError } from "multer";
-import { renameSync, rmSync } from "fs";
-import { writeFileSync, readFileSync } from "fs";
+import { renameSync, writeFileSync, readFileSync, existsSync, mkdirSync } from "fs";
 import { rgb, degrees, PDFDocument } from "pdf-lib";
 import Sprint from "../models/sprint";
 
@@ -41,6 +40,14 @@ class PLDController implements IController {
     })
 
     constructor() {
+        try {
+            mkdirSync("./pldGenerator/generated");
+            mkdirSync("./pldGenerator/assets");
+        } catch (e) {
+            if (e.code !== "EEXIST") {
+                throw e;
+            }
+        }
         this.initializeRoutes();
     }
 
@@ -50,6 +57,7 @@ class PLDController implements IController {
         this.router.post("/setGenerator", authUser, checkPerm("EDITOR"), this.setGeneratorPOST);
         this.router.get("/setImages", authUser, checkPerm("EDITOR"), this.importGenerator, this.setImagesGET);
         this.router.post("/setImages", authUser, checkPerm("EDITOR"), this.importGenerator, this.setImagesPOST);
+        this.router.get("/generate", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.pldGen);
     }
 
     private pld = async (req: Request, res: Response) => {
@@ -71,7 +79,11 @@ class PLDController implements IController {
     }
 
     private checkAssets = async (req: Request, res: Response, next: NextFunction) => {
-
+        const requiredImages = this.importedGenerator.requireImages;
+        for (const image of requiredImages)
+            if (!existsSync("pldGenerator/assets/" + image))
+                return res.redirect("/pld/setImages?error=missing_assets");
+        return next();
     }
 
     private setGeneratorGET = async (req: Request, res: Response) => {
@@ -104,13 +116,12 @@ class PLDController implements IController {
     }
 
     private setImagesGET = async (req: Request, res: Response) => {
-        return this.pldGen(req, res);
-        /*return res.render("pld/set_images", {
+        return res.render("pld/set_images", {
             currentPage: '/pld',
             wap: req.wap,
             user: req.user,
             requiredImages: this.importedGenerator.requireImages,
-        })*/
+        })
     }
 
     private setImagesPOST = async (req: Request, res: Response) => {
@@ -123,12 +134,12 @@ class PLDController implements IController {
                 return res.redirect("/pld/setImages?error=invalid_file_type");
             }
             for (const required of requireImages) {
-                if (req.files[required]) {
-                    renameSync(req.files[required].path, "pldGenerator/assets/" + req.files[required]);
+                if (req.files[required] && req.files[required][0] && req.files[required][0].path) {
+                    renameSync(req.files[required][0].path, "pldGenerator/assets/" + required);
                 }
             }
             // TODO: redirect to a summary page before generating preview
-            return res.redirect("/pld/setImages?info=succes");
+            return res.redirect("/pld/generate");
         })
     }
 

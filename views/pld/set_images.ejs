@@ -18,6 +18,7 @@
             <form method="post" action="/pld/setImages" enctype="multipart/form-data">
                 <% for (required of requiredImages) { %>
                     <div class="mb-3">
+                        <img src="/pldAssets/<%= required %>" style="max-height: 50px" class="mb-2 me-2"/>
                         <label for="file-<%= required %>" class="form-label"><%= required %></label>
                         <input class="form-control" type="file" id="file-<%= required %>" name="<%= required %>">
                     </div>

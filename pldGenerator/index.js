@@ -17,14 +17,8 @@ module.exports = function makePld(docDefinition, options, fileName)
 {
     var printer = new PdfPrinter(fonts);
     var pdfDoc = printer.createPdfKitDocument(docDefinition, options);
-    try {
-        fs.mkdirSync("./pldGenerator/generated");
-    } catch (e) {
-        if (e.code !== "EEXIST") {
-            throw e;
-        }
-    }
-    const stream = pdfDoc.pipe(fs.createWriteStream(fileName))
+    const stream = pdfDoc.pipe(fs.createWriteStream(fileName));
+
     pdfDoc.end();
     const promise = new Promise((resolve, reject) => {
         stream.on("finish", () => {
