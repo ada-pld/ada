@@ -74,6 +74,16 @@ class Card extends Model<Card> {
     @BelongsTo(() => Part)
     part: Part;
 
+    @Column(DataType.INTEGER)
+    lastPLDEdit: number;
+
+    @Column(DataType.INTEGER)
+    actPLD: number;
+
+    @Default("WAITING_APPROVAL")
+    @Column(DataType.ENUM("REJECTED", "WAITING_APPROVAL", "NOT_STARTED", "STARTED", "FINISHED"))
+    lastPLDStatus: Status;
+
 }
 
 export default Card;

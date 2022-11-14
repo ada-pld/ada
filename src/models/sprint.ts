@@ -1,5 +1,6 @@
 import { Model, Column, DataType, Default, AllowNull, Unique, Table, HasMany } from 'sequelize-typescript';
 import Card from './card';
+import PLD from './pld';
 
 @Table({
     modelName: "Sprint",
@@ -29,6 +30,9 @@ class Sprint extends Model<Sprint> {
 
     @HasMany(() => Card)
     cards: Card[];
+
+    @HasMany(() => PLD)
+    plds: PLD[];
 
 }
 

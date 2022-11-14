@@ -3,6 +3,7 @@ import Card from "./card";
 import CardUser from "./cardUser";
 import Config from "./config";
 import Part from "./part";
+import PLD from "./pld";
 import Sprint from "./sprint";
 import User from "./user";
 
@@ -21,6 +22,7 @@ const sequelize = new Sequelize({
         Card,
         CardUser,
         Config,
+        PLD,
     ]
 });
 
