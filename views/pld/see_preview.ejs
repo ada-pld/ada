@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+        <title>WAP - Set Images for the PLD</title>
+    </head>
+    <body>
+        <%- include("../partials/navbar.ejs") %>
+    </body>
+    <div class="container-xxl bd-gutter flex-wrap flex-lg-nowrap p-5">
+        <div class="row mb-5 text-center">
+            <h1>Check preview for the PLD</h1>
+        </div>
+        <div class="row mb-5">
+            <a href="/pldGenerated/PLD_Preview.pdf" class="mb-2">Download PLD Preview</a>
+            <iframe src="/pldGenerated/PLD_Preview.pdf" height="1000px"></iframe>
+        </div>
+        <div class="row">
+            <form method="post" action="/pld/generateFinal">
+                <label class="form-check-label" for="sure">By checking this box, I confirm that I'm 100% sure I want to generate the PLD, I understand that's this action is one-way only, this can't be undone and this will not be undone. I know that reverting the changes made to the database will be a nightmare and that it's likely not possible. I'm really 100% sure, as I was never this sure in my life that I want this PLD to be generated.</label>
+                <input class="form-check-input" type="checkbox" name="sure" id="sure">
+                <br />
+                <button type="submit" class="mt-3 btn btn-success">Generate the PLD</button>
+            </form>
+            <script type="text/javascript">
+                document.getElementById("sure").checked = false;
+            </script>
+        </div>
+    </div>
+</html>

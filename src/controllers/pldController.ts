@@ -11,6 +11,7 @@ import multer, { MulterError } from "multer";
 import { renameSync, writeFileSync, readFileSync, existsSync, mkdirSync } from "fs";
 import { rgb, degrees, PDFDocument } from "pdf-lib";
 import Sprint from "../models/sprint";
+import PLD from "../models/pld";
 
 class PLDController implements IController {
     public path = "/pld";
@@ -22,6 +23,8 @@ class PLDController implements IController {
         generatePld: null,
         requireImages: null
     };
+    private lastPreview :any = null;
+    private lastChangelog :any = null;
 
     private upload = multer({
         dest: "tmp_uploads/",
@@ -59,6 +62,8 @@ class PLDController implements IController {
         this.router.post("/setImages", authUser, checkPerm("EDITOR"), this.importGenerator, this.setImagesPOST);
         this.router.get("/setChanges", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.setChangesGET);
         this.router.post("/setChanges", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.setChangesPOST);
+        this.router.get("/seePreview", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.seePreviewGET);
+        this.router.post("/generateFinal", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.generateFinalPOST);
     }
 
     private pld = async (req: Request, res: Response) => {
@@ -224,6 +229,7 @@ class PLDController implements IController {
             return res.redirect("/pld/setChanges?error=invalid_body");
         }
         const changelog = req.body.pldChanges.replace(/[\r+]/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd();
+        this.lastChangelog = changelog;
 
         const allUsers = await User.findAll({
             where: {
@@ -253,6 +259,58 @@ class PLDController implements IController {
         return this.generatePreview(req, res, changelog, advancementReports);
     }
 
+    private seePreviewGET = async (req: Request, res: Response) => {
+        if (this.lastPreview == null)
+            return res.redirect("/pld/?error=no_preview");
+        if (!existsSync("./pldGenerator/generated/PLD_Preview.pdf"))
+            return res.redirect("/pld/?error=no_preview_file");
+        return res.render("pld/see_preview", {
+            currentPage: '/pld',
+            wap: req.wap,
+            user: req.user
+        });
+    }
+
+    private generateFinalPOST = async (req: Request, res: Response) => {
+        if (this.lastPreview == null)
+            return res.redirect("/pld/?error=no_pld_to_generate");
+        
+        const allPldsCounts = await PLD.count({
+            where: {
+                sprintId: req.wap.sprint.id
+            }
+        });
+        let newPldCount = allPldsCounts + 1;
+        const fileName = "WAP_PLD_SPRINT" + req.wap.sprint.id + "_VERSION" + newPldCount + ".pdf";
+        const path = "./pldGenerator/generated/" + fileName;
+        const downloadPath = "/pldGenerated/" + fileName;
+        await makePld(this.lastPreview, {}, path);
+        
+        const newPLD = PLD.build({
+            versionInSprint: newPldCount,
+            path: path,
+            downloadPath: downloadPath,
+            changesToPLD: this.lastChangelog
+        });
+        newPLD.$set("sprint", req.wap.sprint);
+        await newPLD.save();
+
+        const allCards = await Card.findAll({
+            where: {
+                idInSprint: {
+                    [Op.ne]: -1
+                },
+                sprintId: req.wap.sprint.id,
+            }
+        })
+        for (const card of allCards) {
+            card.actPLD = newPldCount;
+            card.lastPLDStatus = card.status;
+            await card.save();
+        }
+        return res.redirect("/pld/?info=success");
+    }
+
     private generatePreview = async (req: Request, res: Response, changelog: string, advancementReports: any[]) => {
         const allCards = await Card.findAll({
             where: {
@@ -269,14 +327,15 @@ class PLDController implements IController {
             ]
         });
         const dd = this.importedGenerator.generatePld(allCards, changelog, advancementReports);
-        await makePld(dd, {}, "./pldGenerator/generated/test.pdf");
+        this.lastPreview = dd;
+        await makePld(dd, {}, "./pldGenerator/generated/PLD_Preview.pdf");
 
         // Watermarking
-        const document = await PDFDocument.load(readFileSync("./pldGenerator/generated/test.pdf"));
+        const document = await PDFDocument.load(readFileSync("./pldGenerator/generated/PLD_Preview.pdf"));
         const pages = document.getPages();
         for (const page of pages) {
             const { width, height } = page.getSize();
-            page.drawText("SREVIEW", {
+            page.drawText("PREVIEW", {
                 x: (width / 2) - 200,
                 y: (height / 2) - 750,
                 size: 150,
@@ -301,10 +360,10 @@ class PLDController implements IController {
                 opacity: 0.1
             })
         }
-        writeFileSync("./pldGenerator/generated/test.pdf", await document.save());
+        writeFileSync("./pldGenerator/generated/PLD_Preview.pdf", await document.save());
 
         // Success
-        return res.redirect("/dashboard/?info=success");
+        return res.redirect("/pld/seePreview");
     }
 }
 

@@ -168,17 +168,18 @@ function addChangelogPage(changelog: string) {
 
     const changelogBody = changelog.split('\n').map((x) => {
         const to_ret = {
-            text: x
+            text: x || ""
         }
-        return to_ret;
+        return [to_ret];
     })
+    console.log(changelogBody);
     changelogPage.push({
         color: '#444',
         style: 'tableMargin',
         table: {
             widths: ['*'],
             headerRows: 0,
-            body: [changelogBody],
+            body: changelogBody,
             unbreakable: true
         },
         unbreakable: true
