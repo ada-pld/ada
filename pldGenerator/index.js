@@ -7,6 +7,9 @@ var fonts = {
         bold: './pldGenerator/fonts/Roboto-Medium.ttf',
         italics: './pldGenerator/fonts/Roboto-Itatlic.ttf',
         bolditalics: './pldGenerator/fonts/Roboto-MediumItalic.ttf'
+    },
+    Anonymous: {
+        normal: './pldGenerator/fonts/Anonymous_Pro.ttf'
     }
 }
 
@@ -14,8 +17,22 @@ module.exports = function makePld(docDefinition, options, fileName)
 {
     var printer = new PdfPrinter(fonts);
     var pdfDoc = printer.createPdfKitDocument(docDefinition, options);
-    fs.mkdir("./pldGenerator/generated", () => {
-        pdfDoc.pipe(fs.createWriteStream(fileName));
-        pdfDoc.end();
-    });
+    try {
+        fs.mkdirSync("./pldGenerator/generated");
+    } catch (e) {
+        if (e.code !== "EEXIST") {
+            throw e;
+        }
+    }
+    const stream = pdfDoc.pipe(fs.createWriteStream(fileName))
+    pdfDoc.end();
+    const promise = new Promise((resolve, reject) => {
+        stream.on("finish", () => {
+            resolve();
+        })
+        stream.on("error", () => {
+            reject();
+        })
+    })
+    return promise;
 }

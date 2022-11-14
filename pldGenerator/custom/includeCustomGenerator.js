@@ -4,7 +4,7 @@ module.exports = {
         if (require.cache[name])
             delete require.cache[name];
         let generator = require("./customGenerator/customPldGenerator");
-        return generator.generatePld;
+        return generator.generatePLD;
     },
     getRequired() {
         const name = require.resolve("./customGenerator/customPldGenerator");

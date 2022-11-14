@@ -12,15 +12,23 @@
     </body>
     <div class="container-xxl bd-gutter flex-wrap flex-lg-nowrap p-5">
         <div class="row mb-5 text-center">
-            <h1>Set the Generator for the PLD</h1>
+            <h1>Set the generator for the PLD</h1>
+        </div>
+        <div class="row mb-4">
+            <h3>Actual generator:</h3>
+            <textarea disabled style="height: 200px" class="mb-2"><%= actualCode %></textarea>
+            <% if (generatorExist) { %>
+                <a class="btn btn-primary mb-3" href="/pld/setImages">Continue with this generator</a>
+            <% } %>
         </div>
         <div class="row">
+            <h3>Import generator:</h3>
             <form method="post" action="/pld/setGenerator" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="file-generator" class="form-label">generator.js</label>
                     <input class="form-control" type="file" id="file-generator" name="generator.js">
                 </div>
-                <button type="submit" class="btn btn-success">Save Images</button> 
+                <button type="submit" class="btn btn-success">Save Generator</button> 
             </form>
         </div>
     </div>

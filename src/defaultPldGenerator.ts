@@ -69,6 +69,110 @@ function createATable(card: Card)
     }
 }
 
+function addHeaderPage(sprintName: string) {
+    const headerPage :any[] = [];
+    headerPage.push({
+        text: "Project Log Document",
+        style: 'mainHeader',
+        alignment: "center"
+    });
+    headerPage.push({
+        text: sprintName + " - Domestia",
+        style: 'sprintName',
+        alignment: 'center'
+    });
+    headerPage.push({
+        text: "LOGO DOMESTIA",
+        alignment: 'center'
+    })
+    headerPage.push({
+        text: "LOGO EPITECH",
+        pageBreak: "after",
+        alignment: 'center'
+    })
+    return headerPage;
+}
+
+function addAllCards(allCards: Card[]) {
+    let cards :any[] = [];
+    let last_part = -1;
+
+    for (const card of allCards) {
+        if (card.partId != last_part) {
+            last_part = card.partId;
+            let points = '';
+            for (let i = card.part.name.length; i < 70; i++) {
+                points += '.';
+            }
+            cards.push({
+                text: card.part.name.replace(/ /g, ' ') + points,
+                pageBreak: 'before',
+                style: 'invisible',
+                id: card.part.name,
+                tocItem: 'mainToc',
+                tocStyle: {
+                    font: "Anonymous"
+                }
+            });
+            cards.push({ text: card.part.name.replace(/ /g, ' '), style: 'subHeaders' });
+        }
+        cards.push(createATable(card));
+    }
+    return cards;
+}
+
+function addAllSchemas() {
+    let allSchemas :any[] = [];
+    const title = "Schéma";
+
+    let points = '';
+    for (let i = title.length; i < 70; i++) {
+        points += '.';
+    }
+
+    allSchemas.push({
+        text: title + points,
+        pageBreak: 'before',
+        style: 'invisible',
+        id: title,
+        tocItem: 'mainToc',
+        tocStyle: {
+            font: "Anonymous"
+        }
+    });
+    allSchemas.push({ text: title, style: 'subHeaders' });
+    allSchemas.push({
+        text: "Faut que je fasse l'ajout de schémas",
+    });
+    return allSchemas;
+}
+
+function addAllAdvancementReports() {
+    let allAdvancementReports: any[] = [];
+    const title = "Rapports d'avancements";
+
+    let points = '';
+    for (let i = title.length; i < 70; i++) {
+        points += '.';
+    }
+
+    allAdvancementReports.push({
+        text: title + points,
+        pageBreak: 'before',
+        style: 'invisible',
+        id: title,
+        tocItem: 'mainToc',
+        tocStyle: {
+            font: "Anonymous"
+        }
+    });
+    allAdvancementReports.push({ text: title, style: 'subHeaders' });
+    allAdvancementReports.push({
+        text: "Faut que je fasse l'ajout des raports d'avancements",
+    });
+    return allAdvancementReports;
+}
+
 export const requireImages = [
     "domestia_logo.png",
     "epitech_logo.png",
@@ -80,29 +184,23 @@ export const requireImages = [
     "security.png",
 ]
 
-export default function generatePLD(allCards: Card[]) {
-    let test :any[] = [];
-    let links :any[] = [];
-    let last_part = -1;
-    for (const card of allCards) {
-        if (card.partId != last_part) {
-            last_part = card.partId;
-            test.push({text: card.part.name, pageBreak: 'before', style: 'subHeaders', id: card.part.name, tocItem: 'mainToc'});
-            links.push({text: card.part.name, linkToDestination: card.part.name});
-        }
-        test.push(createATable(card));
-    }
-    links.push({text: '', pageBreak: 'after'});
+export function generatePLD(allCards: Card[]) {
+    const headerPage = addHeaderPage(allCards[0].sprint.name);
+    const cards = addAllCards(allCards);
+    const schemas = addAllSchemas();
+    const advancementReports = addAllAdvancementReports();
     let dd = {
         content: [
+            ...headerPage,
             {
                 toc: {
                     id: 'mainToc',
                     title: {text: 'Index'}
                 }
             },
-            ...links,
-            ...test
+            ...schemas,
+            ...cards,
+            ...advancementReports
         ],
         styles: {
             subHeaders: {
@@ -112,6 +210,18 @@ export default function generatePLD(allCards: Card[]) {
             },
             tableMargin: {
                 margin: [10, 10, 10, 10]
+            },
+            invisible: {
+                fontSize: 0,
+                margin: [0, 0, 0, 0]
+            },
+            mainHeader: {
+                fontSize: 32,
+                bold: true,
+            },
+            sprintName: {
+                fontSize: 16,
+                bold: true,
             }
         }
     }

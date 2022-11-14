@@ -9,6 +9,9 @@ import Part from "../models/part";
 import { checkPerm } from "../middlewares/checkPerms";
 import multer, { MulterError } from "multer";
 import { renameSync, rmSync } from "fs";
+import { writeFileSync, readFileSync } from "fs";
+import { rgb, degrees, PDFDocument } from "pdf-lib";
+import Sprint from "../models/sprint";
 
 class PLDController implements IController {
     public path = "/pld";
@@ -16,7 +19,10 @@ class PLDController implements IController {
     private importedGenerator : {
         generatePld: Function,
         requireImages: string[]
-    } = null;
+    } = {
+        generatePld: null,
+        requireImages: null
+    };
 
     private upload = multer({
         dest: "tmp_uploads/",
@@ -46,26 +52,41 @@ class PLDController implements IController {
         this.router.post("/setImages", authUser, checkPerm("EDITOR"), this.importGenerator, this.setImagesPOST);
     }
 
-    private async importGenerator(req: Request, res: Response, next: NextFunction): Promise<any> {
-        const imported = await import("../../pldGenerator/custom");
-        if (!imported.generatePLD || !imported.getRequired)
-            return res.redirect("/setGenerator/?error=invalid_or_missing_generator");
-        this.importedGenerator = {
-            generatePld: imported.getGenerator(),
-            requireImages: imported.getRequired()
-        }
-        next();
-    }
-
     private pld = async (req: Request, res: Response) => {
         return res.redirect("/pld/setGenerator");
     }
 
+    private importGenerator = async (req: Request, res: Response, next: NextFunction) => {
+        const imported = await import("../../pldGenerator/custom");
+        if (!imported.getGenerator || !imported.getRequired)
+            return res.redirect("/pld/setGenerator/?error=invalid_or_missing_generator");
+        try {
+            this.importedGenerator.generatePld = imported.default.getGenerator();
+            this.importedGenerator.requireImages = imported.default.getRequired();
+        } catch (ex) {
+            console.log(ex);
+            return res.redirect("/pld/setGenerator/?error=invalid_generator");
+        }
+        next();
+    }
+
+    private checkAssets = async (req: Request, res: Response, next: NextFunction) => {
+
+    }
+
     private setGeneratorGET = async (req: Request, res: Response) => {
+        let actualCode = "No custom generator.";
+        let generatorExist = false
+        try {
+            actualCode = readFileSync("pldGenerator/custom/customGenerator/customPldGenerator.js").toString();
+            generatorExist = true
+        } catch (e) {}
         return res.render("pld/set_generator", {
             currentPage: '/pld',
             wap: req.wap,
             user: req.user,
+            actualCode: actualCode,
+            generatorExist: generatorExist
         })
     }
 
@@ -83,12 +104,13 @@ class PLDController implements IController {
     }
 
     private setImagesGET = async (req: Request, res: Response) => {
-        return res.render("pld/set_images", {
+        return this.pldGen(req, res);
+        /*return res.render("pld/set_images", {
             currentPage: '/pld',
             wap: req.wap,
             user: req.user,
             requiredImages: this.importedGenerator.requireImages,
-        })
+        })*/
     }
 
     private setImagesPOST = async (req: Request, res: Response) => {
@@ -106,7 +128,7 @@ class PLDController implements IController {
                 }
             }
             // TODO: redirect to a summary page before generating preview
-            return res.redirect("/setImages?info=succes");
+            return res.redirect("/pld/setImages?info=succes");
         })
     }
 
@@ -121,12 +143,47 @@ class PLDController implements IController {
             order: [['sprintId', 'ASC'], ['partId', 'ASC'], ['idInSprint', 'ASC']],
             include: [
                 User,
-                Part
+                Part,
+                Sprint
             ]
         });
-        let dd: any = null;
-        //dd = generatePLD(allCards);
-        makePld(dd, {}, "./pldGenerator/generated/test.pdf");
+        console.log(this.importedGenerator.generatePld);
+        const dd = this.importedGenerator.generatePld(allCards);
+        await makePld(dd, {}, "./pldGenerator/generated/test.pdf");
+
+        // Watermarking
+        const document = await PDFDocument.load(readFileSync("./pldGenerator/generated/test.pdf"));
+        const pages = document.getPages();
+        for (const page of pages) {
+            const { width, height } = page.getSize();
+            page.drawText("SREVIEW", {
+                x: (width / 2) - 200,
+                y: (height / 2) - 750,
+                size: 150,
+                color: rgb(0.86, 0.21, 0.27),
+                rotate: degrees(45),
+                opacity: 0.1
+            })
+            page.drawText("PREVIEW", {
+                x: (width / 2) - 200,
+                y: (height / 2) - 325,
+                size: 150,
+                color: rgb(0.86, 0.21, 0.27),
+                rotate: degrees(45),
+                opacity: 0.1
+            })
+            page.drawText("PREVIEW", {
+                x: (width / 2) - 200,
+                y: (height / 2) + 100,
+                size: 150,
+                color: rgb(0.86, 0.21, 0.27),
+                rotate: degrees(45),
+                opacity: 0.1
+            })
+        }
+        writeFileSync("./pldGenerator/generated/test.pdf", await document.save());
+
+        // Success
         return res.redirect("/dashboard/?info=success");
     }
 }
