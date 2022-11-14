@@ -80,16 +80,19 @@ function addTitleAndToc(content :any[], name: string, nest :number) {
     for (let i = title.length + spaces.length; i < 70; i++) {
         points += '.';
     }
-    content.push({
+    let tocItem = {
         text: spaces + title + points,
-        pageBreak: 'before',
         style: 'invisible',
         id: title,
         tocItem: 'mainToc',
         tocStyle: {
             font: "Anonymous"
         }
-    });
+    }
+    if (nest == 0) {
+        tocItem['pageBreak'] = 'before'
+    }
+    content.push(tocItem);
     content.push({ text: title, style: 'subHeaders' });
 }
 
