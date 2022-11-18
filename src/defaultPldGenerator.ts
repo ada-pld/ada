@@ -159,6 +159,42 @@ function addAllSchemas() {
         width: 450,
         alignment: "center"
     })
+    addTitleAndToc(allSchemas, "Schéma Algorithme", 1, false);
+    allSchemas.push({
+        image: "pldGenerator/assets/Algo.png",
+        width: 450,
+        alignment: "center"
+    })
+    addTitleAndToc(allSchemas, "Schéma API - Backoffice", 1, false);
+    allSchemas.push({
+        image: "pldGenerator/assets/Api_BackOffice.png",
+        width: 450,
+        alignment: "center"
+    })
+    addTitleAndToc(allSchemas, "Schéma API - Backend", 1, false);
+    allSchemas.push({
+        image: "pldGenerator/assets/Backend.png",
+        width: 450,
+        alignment: "center"
+    })
+    addTitleAndToc(allSchemas, "Schéma FrontEnds - Client", 1, false);
+    allSchemas.push({
+        image: "pldGenerator/assets/Client.png",
+        width: 450,
+        alignment: "center"
+    })
+    addTitleAndToc(allSchemas, "Schéma FrontEnds - Professionnel", 1, false);
+    allSchemas.push({
+        image: "pldGenerator/assets/Pro.png",
+        width: 450,
+        alignment: "center"
+    })
+    addTitleAndToc(allSchemas, "Schéma FrontEnd - Backoffice", 1, false);
+    allSchemas.push({
+        image: "pldGenerator/assets/Front_BackOffice.png",
+        width: 450,
+        alignment: "center"
+    })
     return allSchemas;
 }
 
@@ -218,6 +254,12 @@ export const requireImages = [
     "domestia_logo.png",
     "epitech_logo.png",
     "global_schema.png",
+    "Algo.png",
+    "Api_BackOffice.png",
+    "Backend.png",
+    "Client.png",
+    "Front_BackOffice.png",
+    "Pro.png"
 ]
 
 export function generatePLD(allCards: Card[], changelog: string, advancementReports :report[]) {

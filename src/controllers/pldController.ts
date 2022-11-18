@@ -8,7 +8,7 @@ import User from "../models/user";
 import Part from "../models/part";
 import { checkPerm } from "../middlewares/checkPerms";
 import multer, { MulterError } from "multer";
-import { renameSync, writeFileSync, readFileSync, existsSync, mkdirSync } from "fs";
+import { writeFileSync, readFileSync, existsSync, mkdirSync, copyFileSync, rmSync } from "fs";
 import { rgb, degrees, PDFDocument } from "pdf-lib";
 import Sprint from "../models/sprint";
 import PLD from "../models/pld";
@@ -126,7 +126,8 @@ class PLDController implements IController {
                 return res.redirect("/pld/setGenerator?error=invalid_file_type");
             }
             if (req.file) {
-                renameSync(req.file.path, "pldGenerator/custom/customGenerator/customPldGenerator.js");
+                copyFileSync(req.file.path, "pldGenerator/custom/customGenerator/customPldGenerator.js");
+                rmSync(req.file.path);
             }
             return res.redirect("/pld/setImages");
         })
@@ -152,7 +153,8 @@ class PLDController implements IController {
             }
             for (const required of requireImages) {
                 if (req.files[required] && req.files[required][0] && req.files[required][0].path) {
-                    renameSync(req.files[required][0].path, "pldGenerator/assets/" + required);
+                    copyFileSync(req.files[required][0].path, "pldGenerator/assets/" + required);
+                    rmSync(req.files[required][0].path);
                 }
             }
             // TODO: redirect to a summary page before generating preview
