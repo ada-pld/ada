@@ -19,17 +19,21 @@
             <textarea disabled style="height: 200px" class="mb-2"><%= actualCode %></textarea>
             <% if (generatorExist) { %>
                 <a class="btn btn-primary mb-3" href="/pld/setImages">Continue with this generator</a>
+            <% } else { %>
+                <h5>No generator exists. Contact your WAP administrator, or upload one.</h5>
             <% } %>
         </div>
-        <div class="row">
-            <h3>Import generator:</h3>
-            <form method="post" action="/pld/setGenerator" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label for="file-generator" class="form-label">generator.js</label>
-                    <input class="form-control" type="file" id="file-generator" name="generator.js">
-                </div>
-                <button type="submit" class="btn btn-success">Save Generator</button> 
-            </form>
-        </div>
+        <% if (isAdmin) { %>
+            <div class="row">
+                <h3>Import generator:</h3>
+                <form method="post" action="/pld/setGenerator" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="file-generator" class="form-label">generator.js</label>
+                        <input class="form-control" type="file" id="file-generator" name="generator.js">
+                    </div>
+                    <button type="submit" class="btn btn-success">Save Generator</button> 
+                </form>
+            </div>
+        <% } %>
     </div>
 </html>

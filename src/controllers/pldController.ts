@@ -57,7 +57,7 @@ class PLDController implements IController {
     private initializeRoutes() {
         this.router.get("/", authUser, checkPerm("EDITOR"), this.pld);
         this.router.get("/setGenerator", authUser, checkPerm("EDITOR"), this.setGeneratorGET);
-        this.router.post("/setGenerator", authUser, checkPerm("EDITOR"), this.setGeneratorPOST);
+        this.router.post("/setGenerator", authUser, checkPerm("ADMIN"), this.setGeneratorPOST);
         this.router.get("/setImages", authUser, checkPerm("EDITOR"), this.importGenerator, this.setImagesGET);
         this.router.post("/setImages", authUser, checkPerm("EDITOR"), this.importGenerator, this.setImagesPOST);
         this.router.get("/setChanges", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.setChangesGET);
@@ -67,7 +67,17 @@ class PLDController implements IController {
     }
 
     private pld = async (req: Request, res: Response) => {
-        return res.redirect("/pld/setGenerator");
+        const allPLDs = await PLD.findAll({
+            include: [
+                Sprint
+            ]
+        });
+        return res.render("pld/plds", {
+            currentPage: '/pld',
+            wap: req.wap,
+            user: req.user,
+            allPLDs: allPLDs
+        });
     }
 
     private importGenerator = async (req: Request, res: Response, next: NextFunction) => {
@@ -104,7 +114,8 @@ class PLDController implements IController {
             wap: req.wap,
             user: req.user,
             actualCode: actualCode,
-            generatorExist: generatorExist
+            generatorExist: generatorExist,
+            isAdmin: (req.user.role == "ADMIN")
         })
     }
 
@@ -226,10 +237,24 @@ class PLDController implements IController {
 
     private setChangesPOST = async (req: Request, res: Response) => {
         if (!req.body.pldChanges) {
-            return res.redirect("/pld/setChanges?error=invalid_body");
+            req.body["pldChanges"] = "Pas de modifications apportés aux cartes du PLD";
         }
         const changelog = req.body.pldChanges.replace(/[\r+]/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd();
         this.lastChangelog = changelog;
+
+        let changelogOnPLD = "";
+
+        const allPLDs = await PLD.findAll({
+            where: {
+                sprintId: req.wap.sprint.id
+            }
+        });
+        for (const pld of allPLDs) {
+            changelogOnPLD += "PLD Version " + pld.versionInSprint + "\n";
+            changelogOnPLD += pld.changesToPLD + "\n";
+        }
+        changelogOnPLD += "PLD Version " + (allPLDs.length + 1) + "\n";
+        changelogOnPLD += changelog;
 
         const allUsers = await User.findAll({
             where: {
@@ -256,7 +281,7 @@ class PLDController implements IController {
                 report: req.body["report-" + user.id].replace(/[\r+]/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd()
             });
         }
-        return this.generatePreview(req, res, changelog, advancementReports);
+        return this.generatePreview(req, res, changelogOnPLD, advancementReports);
     }
 
     private seePreviewGET = async (req: Request, res: Response) => {
@@ -286,7 +311,7 @@ class PLDController implements IController {
         const downloadPath = "/pldGenerated/" + fileName;
         await makePld(this.lastPreview, {}, path);
         
-        const newPLD = PLD.build({
+        const newPLD = await PLD.create({
             versionInSprint: newPldCount,
             path: path,
             downloadPath: downloadPath,
