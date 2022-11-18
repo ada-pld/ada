@@ -162,7 +162,10 @@ class CardsController implements IController {
         toEdit.dods = req.body.dods.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd();
         toEdit.workingDays = workingDays;
         if (toEdit.status != "REJECTED" && toEdit.status != "WAITING_APPROVAL") {
-            toEdit.version = toEdit.version + 1;
+            if (toEdit.lastPLDEdit != toEdit.actPLD) {
+                toEdit.lastPLDEdit = toEdit.actPLD;
+                toEdit.version = toEdit.version + 1;
+            }
         }
         if (toEdit.status == "REJECTED") {
             toEdit.status = "WAITING_APPROVAL";

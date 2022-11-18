@@ -2,7 +2,10 @@ build/
 node_modules/
 pldGenerator/node_modules/
 pldGenerator/generated/
+pldGenerator/assets/
+pldGenerator/custom/customGenerator/customPldGenerator.js
 .env
 docker-compose.yml
 src/seed_data.ts
 mails/build/
+tmp_uploads/

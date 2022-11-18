@@ -4,6 +4,7 @@ import { authUser } from "../middlewares/auth";
 import { checkPerm } from "../middlewares/checkPerms";
 import Card from "../models/card";
 import Part from "../models/part";
+import PLD from "../models/pld";
 import User from "../models/user";
 import IController from "./controller";
 
@@ -41,6 +42,11 @@ class DashboardController implements IController {
                 return element.assignees.map(a => a.id).includes(req.user.id);
             })
         }
+        const lastPLD :PLD = await PLD.findOne({
+            order: [
+                [ 'createdAt', 'DESC' ]
+            ]
+        });
         let finished = 0;
         let inpPogress = 0;
         let notStarted = 0;
@@ -66,7 +72,8 @@ class DashboardController implements IController {
             totalFinishedCards: finished,
             totalCardInProgress: inpPogress,
             totalCardNotStarted: notStarted,
-            totalWorkingDays: workingDays
+            totalWorkingDays: workingDays,
+            lastPLD: lastPLD
         });
     }
 

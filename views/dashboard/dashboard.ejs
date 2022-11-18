@@ -18,11 +18,13 @@
                 <% } %>
             </div>
             <% if (wap.sprint) { %>
-                <div class="row mb-5">
-                    <div class="col mx-auto col-12">
-                        <button type="button" class="d-grid btn btn-outline-primary btn-lg col-5 mx-auto">Download last PLD</button>
+                <% if (lastPLD) { %>
+                    <div class="row mb-5">
+                        <div class="col mx-auto col-12">
+                            <a type="button" class="d-grid btn btn-outline-primary btn-lg col-5 mx-auto" href="<%= lastPLD.downloadPath %>">Download last PLD (<%= lastPLD.downloadPath %>)</a>
+                        </div>
                     </div>
-                </div>
+                <% } %>
                 <div class="row border-top border-2 mb-5"></div>
                 <div class="row text-center mb-2">
                     <h3>Your infos:</h3>

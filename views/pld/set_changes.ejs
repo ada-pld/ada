@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+        <title>WAP - Set Changes for the PLD</title>
+    </head>
+    <body>
+        <%- include("../partials/navbar.ejs") %>
+    </body>
+    <div class="container-xxl bd-gutter flex-wrap flex-lg-nowrap p-5">
+        <div class="row mb-5 text-center">
+            <h1>Check changelog and reports for the PLD</h1>
+        </div>
+        <div class="row">
+            <form method="post" action="/pld/setChanges">
+                <h3>Edit PLD Changelog:</h3>
+                <div class="mb-5">
+                    <label for="pldChanges" class="form-label">PLD changelog:</label>
+                    <textarea class="form-control" id="pldChanges" name="pldChanges"><%= cardAdded + (cardAdded != '' ? '\n' : '') + cardModified %></textarea>
+                </div>
+                <h3>Edit users advancements reports:</h3>
+                <% for (const report of advancementReports) { %>
+                    <div class="mb-3">
+                        <label for="report-<%= report.userId %>"><%= report.firstname + " " + report.lastname %></label>
+                        <textarea class="form-control" id="report-<%= report.userId %>" name="report-<%= report.userId %>"><%= report.report %></textarea>
+                    </div>
+                <% } %>
+                <button type="submit" class="btn btn-success">Save Reports and Preview PLD</button> 
+            </form>
+        </div>
+    </div>
+</html>

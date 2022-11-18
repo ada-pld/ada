@@ -68,8 +68,15 @@ USER:
 
 The pld is generated using a default generator that format the card as we do on my team. But once completly implemented, you will be able to change the default generator to switch on a custom one.
 
-This is usefull if you don't want your PLD to have the same look as ours, and want to use you're own, if this is the case, you will be able to see all informations about switching to a custom generator on the PLD tab once the feature will be finished, if you're curious, you can already take a look inside [The customPldGenerator.js file](pldGenerator/custom/customGenerator/customPldGenerator.js`)
+This is usefull if you don't want your PLD to have the same look as ours, and want to use you're own, if this is the case, you will be able to see all informations about switching to a custom generator on the PLD tab once the feature will be finished, if you're curious, you can already take a look inside [The custom generator example](pldGenerator/custom/customGenerator/example.js`)
 
+## Warning: 
+For the moment, anyone with the EDITOR role is able to upload a custom generator.
+The custom generator is a JS file that get hot-loaded and executed by the server, this can potentially cause some security issues since any code in this file will be executed on the server, with the same permissions as the server process.
+I HIGLY recommand the following:
+- Do not use this feature in production until I've set the permission for the generator upload to ADMIN only
+- Do not use your production environment to test your generator, test your generator locally before uploading it to the production environment
+- When creating a custom generator, only code it to work the intended way (i.e: a script that takes Cards, and format them as wanted), only implements other logic if you're sure about what you're doing
 
 # Installation
 

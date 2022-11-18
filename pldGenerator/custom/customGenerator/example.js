@@ -1,3 +1,8 @@
+/**
+ * This is a list of string used to tell the front-end what images are required on the final PLD
+ */
+module.exports.requireImages = []
+
 module.exports.generatePld = function generatePld(cards) {
     /**
      * You get the cards here, you can generate the PLD as you want with them
