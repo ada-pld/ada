@@ -21,7 +21,8 @@ class CardsController implements IController {
         this.router.get("/edit/:id", authUser, checkPerm("EDITOR"), this.editGET);
         this.router.post("/edit", authUser, checkPerm("EDITOR"), this.editPOST);
         this.router.get("/approve/:id", authUser, checkPerm("EDITOR"), this.approve);
-        this.router.get("/reject/:id", authUser, checkPerm("EDITOR"), this.reject);
+        this.router.get("/reject/:id", authUser, checkPerm("EDITOR"), this.rejectGET);
+        this.router.post("/reject", authUser, checkPerm("EDITOR"), this.rejectPOST)
         this.router.get("/delete/:id", authUser, checkPerm("EDITOR"), this.delete);
     }
 
@@ -220,7 +221,7 @@ class CardsController implements IController {
         return res.redirect("/cards/?info=success");
     }
 
-    private reject = async (req: Request, res: Response) => {
+    private rejectGET = async (req: Request, res: Response) => {
         if (!req.params.id)
             return res.redirect("/cards/?error=no_id");
         const toEdit = await Card.findOne({
@@ -235,10 +236,35 @@ class CardsController implements IController {
             return res.redirect("/cards/?error=invalid_id");
         if (toEdit.status != "WAITING_APPROVAL")
             return res.redirect("/cards/?error=already_assigned");
+        
+        return res.render("cards/reject_card", {
+            currentPage: '/cards',
+            wap: req.wap,
+            user: req.user,
+            toEdit: toEdit,
+        })
+    }
+
+    private rejectPOST = async (req: Request, res: Response) => {
+        if (!req.body.id)
+            return res.redirect("/cards/?error=no_id");
+        const toEdit = await Card.findOne({
+            where: {
+                id: req.params.id
+            },
+            include: [
+                User
+            ]
+        })
+        if (!toEdit)
+            return res.redirect("/cards/?error=invalid_id");
+        if (toEdit.status != "WAITING_APPROVAL")
+            return res.redirect("/cards/?error=already_assigned");
+
         toEdit.status = "REJECTED";
         await toEdit.save();
         for (const user of toEdit.assignees) {
-            sendRejectionEmail(user, toEdit, "");
+            sendRejectionEmail(user, toEdit, req.body.reason);
         }
         return res.redirect("/cards/?info=success");
     }

@@ -11,16 +11,17 @@
         <%- include("../partials/navbar.ejs") %>
         <div class="container-xxl bd-gutter flex-wrap flex-lg-nowrap p-5">
             <div class="row mb-5 text-center">
-                <h1>Reject card: Insert card name here</h1>
+                <h1>Reject card: <%= toEdit.name %></h1>
             </div>
             <div class="row">
-                <form>
+                <form method="post" action="/cards/reject">
                     <div class="row">
                         <div class="col mb-3">
                             <label for="reason" class="form-label">Reason</label>
                             <textarea type="text" class="form-control" id="reason" name="reason"></textarea>
                         </div>
                     </div>
+                    <input type="text" hidden value="<%= toEdit.id %>" name="id">
                     <button type="submit" class="btn btn-danger">Reject card</button>
                 </form>
             </div>
