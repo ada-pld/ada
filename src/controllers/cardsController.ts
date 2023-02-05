@@ -250,7 +250,7 @@ class CardsController implements IController {
             return res.redirect("/cards/?error=no_id");
         const toEdit = await Card.findOne({
             where: {
-                id: req.params.id
+                id: req.body.id
             },
             include: [
                 User
