@@ -80,6 +80,9 @@ class Card extends Model<Card> {
     @Column(DataType.INTEGER)
     actPLD: number;
 
+    @Column(DataType.TEXT)
+    rejectionReason: string;
+
     @Default("WAITING_APPROVAL")
     @Column(DataType.ENUM("REJECTED", "WAITING_APPROVAL", "NOT_STARTED", "STARTED", "FINISHED"))
     lastPLDStatus: Status;

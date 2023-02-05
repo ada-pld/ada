@@ -262,6 +262,7 @@ class CardsController implements IController {
             return res.redirect("/cards/?error=already_assigned");
 
         toEdit.status = "REJECTED";
+        toEdit.rejectionReason = req.body.reason;
         await toEdit.save();
         for (const user of toEdit.assignees) {
             sendRejectionEmail(user, toEdit, req.body.reason);
