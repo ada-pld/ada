@@ -62,7 +62,7 @@ if (card.status == "FINISHED") {
         <% } %>
     </ul>
     <% if (card.status == "REJECTED") { %>
-        <div class="card border-danger" style="padding: 10px 10px 5px 10px;">
+        <div class="card border-danger" style="padding: 10px 10px 5px 10px; border-radius: 0px;">
             <h6 style="color: var(--bs-danger); font-weight: bold;">This card as been rejected for the folowing reason:</h6>
             <h6 style="color: var(--bs-danger);"><%= card.rejectionReason %></h6>
         </div>
