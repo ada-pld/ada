@@ -38,6 +38,9 @@ class CardsController implements IController {
                 include: [
                     User,
                     Part,
+                ],
+                order: [
+                    ['partId', 'DESC']
                 ]
             });
             rejectedCard = await Card.findAll({
@@ -48,6 +51,9 @@ class CardsController implements IController {
                 include: [
                     User,
                     Part,
+                ],
+                order: [
+                    ['partId', 'DESC']
                 ]
             })
             allApproved = await Card.findAll({
@@ -60,6 +66,9 @@ class CardsController implements IController {
                 include: [
                     User,
                     Part,
+                ],
+                order: [
+                    ['partId', 'DESC']
                 ]
             })
         }
