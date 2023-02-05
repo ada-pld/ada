@@ -71,6 +71,9 @@ class MycardsController implements IController {
             allApproved = allApproved.filter((element) => {
                 return element.assignees.map(a => a.id).includes(req.user.id);
             })
+            rejectedCard = rejectedCard.filter((element) => {
+                return element.assignees.map(a => a.id).includes(req.user.id);
+            })
         }
         return res.render("mycards/mycards", {
             currentPage: '/mycards',
