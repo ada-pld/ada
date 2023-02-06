@@ -23,6 +23,14 @@ module.exports = {
                     },
                     sheduling: {
                         type: DataTypes.ENUM("PLANNED", "PASSED")
+                    },
+                    createdAt: {
+                        type: DataTypes.DATE,
+                        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP")
+                    },
+                    updatedAt: {
+                        type: DataTypes.DATE,
+                        defaultValue: Sequelize.fn("NOW")
                     }
                 }, { transaction: transaction })
             ])

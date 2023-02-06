@@ -3,6 +3,7 @@ import ejs from 'ejs';
 import User from '../models/user';
 import { wap } from "../app";
 import Card from '../models/card';
+import dayjs from 'dayjs';
 
 let transporter :Transporter = null;
 
@@ -119,6 +120,45 @@ export async function sendCardAwaitingApprovalEmail(user: User, creator: User, c
     const options = {
         from: '"WAP" ' + wap.config.SMTP_User.value.toString(),
         subject: "WAP - Card awaiting approval",
+        to: user.email,
+        html: rendered
+    }
+    await transporter.sendMail(options);
+}
+
+export async function sendRendezVousCreatedMail(user: User, date: Date, agenda: string) {
+    if (!checkMailTransporter())
+        return;
+    const rendered = await ejs.renderFile('./mails/build/rendez_vous_created.ejs', {
+        firstname: user.firstname,
+        date: dayjs(date).format("DD/MM/YYYY [à] HH:MM [(UTC+2)]"),
+        agenda: ejs.escapeXML(agenda).replace(/\n/g, '<br>'),
+        wapCardsLink: wap.config.Hostname.value + "/cards",
+        wapRepository: "https://github.com/theohemmer/wap"
+    });
+    const options = {
+        from: '"WAP" ' + wap.config.SMTP_User.value.toString(),
+        subject: "WAP - Rendez-Vous created",
+        to: user.email,
+        html: rendered
+    }
+    await transporter.sendMail(options);
+}
+
+export async function sendRendezVousPassedMail(user: User, date: Date, report: string, attendance: string) {
+    if (!checkMailTransporter())
+        return;
+    const rendered = await ejs.renderFile('./mails/build/report_posted.ejs', {
+        firstname: user.firstname,
+        date: dayjs(date).format("DD/MM/YYYY [à] HH:MM [(UTC+2)]"),
+        report: ejs.escapeXML(report).replace(/\n/g, '<br>'),
+        attendance: attendance,
+        wapCardsLink: wap.config.Hostname.value + "/cards",
+        wapRepository: "https://github.com/theohemmer/wap"
+    });
+    const options = {
+        from: '"WAP" ' + wap.config.SMTP_User.value.toString(),
+        subject: "WAP - Rendez-Vous report published",
         to: user.email,
         html: rendered
     }

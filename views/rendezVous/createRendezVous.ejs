@@ -8,27 +8,24 @@
         <title>WAP - Create Rendez-Vous</title>
     </head>
     <body>
-        <div class="row mb-5 text-center">
-            <h1>Création de Rendez-Vous</h1>
-        </div>
-        <div class="row mb-5">
-            <form>
-                <div class="mb-3 form-group">
-                    <label for="date" class="form-label">Date</label>
-                    <input type="datetime-local" class="form-control" id="date" name="date">
-                </div>
-                <div class="mb-3 form-group">
-                    <label for="agenda" class="form-label">Ordre du jour</label>
-                    <textarea class="form-control" id="agenda" name="agenda"></textarea>
-                </div>
-                <div class="mb-3 form-group">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="passed" name="passed" disabled checked>
-                        <label class="form-check-label" for="passed">Le rendez-vous est visible par les utilisateurs <span style="color: var(--bs-danger);">(attention: ne peux pas être décoché)</span></label>
+        <%- include("../partials/navbar.ejs") %>
+        <div class="container-xxl bd-gutter flex-wrap flex-lg-nowrap p-5">
+            <div class="row mb-5 text-center">
+                <h1>Création de Rendez-Vous</h1>
+            </div>
+            <div class="row mb-5">
+                <form action="/rendezVous/create" method="POST">
+                    <div class="mb-3 form-group">
+                        <label for="date" class="form-label">Date (heure française)</label>
+                        <input type="datetime-local" class="form-control" id="date" name="date">
                     </div>
-                </div>
-                <button type="submit" class="btn btn-success">Créer</button>
-            </form>
+                    <div class="mb-3 form-group">
+                        <label for="agenda" class="form-label">Ordre du jour</label>
+                        <textarea class="form-control" id="agenda" name="agenda"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Créer</button>
+                </form>
+            </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
     </body>

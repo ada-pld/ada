@@ -19,6 +19,14 @@ module.exports = {
                     },
                     attendance: {
                         type: DataTypes.ENUM("UNDEFINED", "PRESENT", "ABSENT")
+                    },
+                    createdAt: {
+                        type: DataTypes.DATE,
+                        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP")
+                    },
+                    updatedAt: {
+                        type: DataTypes.DATE,
+                        defaultValue: Sequelize.fn("NOW")
                     }
                 }, { transaction: transaction })
             ])
