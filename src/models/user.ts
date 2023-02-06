@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import { Model, Column, DataType, Default, AllowNull, Unique, Table, HasMany, BelongsToMany } from 'sequelize-typescript';
 import Card from './card';
 import CardUser from './cardUser';
+import RendezVousUserAttendance from './rendezVousUserAttendance';
 
 export type Role = "ADMIN"|"EDITOR"|"MAINTENER"|"USER";
 
@@ -46,6 +47,9 @@ class User extends Model<User> {
     @Default(true)
     @Column(DataType.BOOLEAN)
     isDefaultPassword: boolean;
+
+    @HasMany(() => RendezVousUserAttendance)
+    rendezVousAttendances: RendezVousUserAttendance[];
 
     static generateRandomPassword() {
         const characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";

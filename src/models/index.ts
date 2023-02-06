@@ -4,6 +4,8 @@ import CardUser from "./cardUser";
 import Config from "./config";
 import Part from "./part";
 import PLD from "./pld";
+import RendezVous from "./rendezVous";
+import RendezVousUserAttendance from "./rendezVousUserAttendance";
 import Sprint from "./sprint";
 import User from "./user";
 
@@ -23,6 +25,8 @@ const sequelize = new Sequelize({
         CardUser,
         Config,
         PLD,
+        RendezVous,
+        RendezVousUserAttendance,
     ]
 });
 
