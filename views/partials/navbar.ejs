@@ -18,9 +18,7 @@
                             <a class="nav-link <%= currentPage === '/mycards' ? 'active' : '' %>" <%= currentPage === '/mycards' ? 'aira-current="page"' : '' %> href="/mycards">My Cards</a>
                         </li>
                         <li class="nav-item">
-                            <div class="tooltip-wrapper" data-toogle="tooltip" data-placement="bootom" title="Not done yet.">
-                                <a class="nav-link disabled <%= currentPage === '/rdv' ? 'active' : '' %>" <%= currentPage === '/rdv' ? 'aira-current="page"' : '' %> href="/rdv">Rendez-vous</a>
-                            </div> 
+                            <a class="nav-link <%= currentPage === '/rendezvous' ? 'active' : '' %>" <%= currentPage === '/rrendezvousdv' ? 'aira-current="page"' : '' %> href="/rendezVous">Rendez-vous</a>
                         </li>
                     <% } %>
                     <% if (user.role == "EDITOR" || user.role == "ADMIN") { %>

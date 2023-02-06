@@ -13,7 +13,6 @@ import WAP from "./WAP";
 import Sprint from "./models/sprint";
 import PartsController from "./controllers/partsController";
 import Part from "./models/part";
-import RDVController from "./controllers/rdvController";
 import PLDController from "./controllers/pldController";
 import CardsController from "./controllers/cardsController";
 import { authUser, checkDefaultPassword } from "./middlewares/auth";
@@ -22,6 +21,7 @@ import Config from "./models/config";
 import ConfigController from "./controllers/configController";
 import { setupMailTransporter } from "./mails";
 import { checkMaintenance } from "./middlewares/maintenance";
+import RendezVousController from "./controllers/rendezVousController";
 
 const app = express();
 const wap = new WAP();
@@ -92,7 +92,7 @@ const controllers : IController[] = [
     new UserController(),
     new SprintController(),
     new PartsController(),
-    new RDVController(),
+    new RendezVousController(),
     new PLDController(),
     new CardsController(),
     new MycardsController(),
