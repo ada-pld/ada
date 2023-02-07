@@ -51,8 +51,8 @@ class AuthController implements IController {
             userId: user.id,
             accessToken: accessToken,
             refreshToken: refreshToken,
-            accessTokenExpires: (date + (1 * 60 * 2)),
-            refreshTokenExpires: (date + (1 * 60 * 4)),
+            accessTokenExpires: (date + (1 * 60 * 15)),
+            refreshTokenExpires: (date + (1 * 60 * 60 * 24)),
         });
 
         req.wap.sessions = await Session.findAll();
@@ -89,8 +89,8 @@ class AuthController implements IController {
 
         session.accessToken = accessToken;
         session.refreshToken = refreshToken;
-        session.accessTokenExpires = date + (1 * 60 * 2);
-        session.refreshTokenExpires = date + (1 * 60 * 4);
+        session.accessTokenExpires = date + (1 * 60 * 15);
+        session.refreshTokenExpires = date + (1 * 60 * 60 * 24);
         await session.save();
 
         req.wap.sessions = await Session.findAll();
