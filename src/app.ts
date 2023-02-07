@@ -24,6 +24,7 @@ import { checkMaintenance } from "./middlewares/maintenance";
 import RendezVousController from "./controllers/rendezVousController";
 import AuthController from "./api/authController";
 import Session from "./models/session";
+import cors from "cors";
 
 const app = express();
 const wap = new WAP();
@@ -38,6 +39,7 @@ async function checkDatabaseConnection() {
     }
 }
 
+app.use(cors());
 app.set("views", "./views");
 app.set("view engine", "ejs");
 app.use(express.static("public"));
