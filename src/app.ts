@@ -88,7 +88,6 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
     }
     req.wap = wap;
 
-    console.log(req.wap.sessions);
     next();
 })
 
