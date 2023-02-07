@@ -22,6 +22,8 @@ import ConfigController from "./controllers/configController";
 import { setupMailTransporter } from "./mails";
 import { checkMaintenance } from "./middlewares/maintenance";
 import RendezVousController from "./controllers/rendezVousController";
+import AuthController from "./api/authController";
+import Session from "./models/session";
 
 const app = express();
 const wap = new WAP();
@@ -67,6 +69,10 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
         const users = await User.findAll();
         wap.users = users;
     }
+    if (wap.sessions == null) {
+        const sessions = await Session.findAll();
+        wap.sessions = sessions;
+    }
     if (wap.config.SMTP_Host == null) {
         wap.config.SMTP_Host = await Config.getSMTPHost();
         wap.config.SMTP_User = await Config.getSMTPUser();
@@ -79,6 +85,8 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
         await setupMailTransporter();
     }
     req.wap = wap;
+
+    console.log(req.wap.sessions);
     next();
 })
 
@@ -100,6 +108,13 @@ const controllers : IController[] = [
 ];
 for (let controller of controllers) {
     app.use(controller.path, controller.router);
+}
+
+const apiControllers :IController[] = [
+    new AuthController()
+];
+for (let controller of apiControllers) {
+    app.use("/api" + controller.path, controller.router);
 }
 
 app.get('/', authUser, (req, res) => {

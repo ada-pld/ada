@@ -6,6 +6,7 @@ import Part from "./part";
 import PLD from "./pld";
 import RendezVous from "./rendezVous";
 import RendezVousUserAttendance from "./rendezVousUserAttendance";
+import Session from "./session";
 import Sprint from "./sprint";
 import User from "./user";
 
@@ -27,6 +28,7 @@ const sequelize = new Sequelize({
         PLD,
         RendezVous,
         RendezVousUserAttendance,
+        Session,
     ]
 });
 
