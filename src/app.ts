@@ -22,7 +22,7 @@ import ConfigController from "./controllers/configController";
 import { setupMailTransporter } from "./mails";
 import { checkMaintenance } from "./middlewares/maintenance";
 import RendezVousController from "./controllers/rendezVousController";
-import AuthController from "./api/authController";
+import { apiControllers } from "./apiControllers";
 import Session from "./models/session";
 import cors from "cors";
 
@@ -111,9 +111,6 @@ for (let controller of controllers) {
     app.use(controller.path, controller.router);
 }
 
-const apiControllers :IController[] = [
-    new AuthController()
-];
 for (let controller of apiControllers) {
     app.use("/api" + controller.path, controller.router);
 }
