@@ -113,12 +113,6 @@ class AuthController implements IController {
                 message: "Invalid token"
             });
         }
-        const date = Math.floor(new Date().getTime() / 1000);
-        if (date > session.accessTokenExpires) {
-            return res.status(401).send({
-                message: "Access token expired."
-            });
-        }
         
         await Session.destroy({
             where: {

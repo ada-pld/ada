@@ -3,6 +3,7 @@ import express, { Request, Response } from "express";
 import User from "../models/user";
 import * as bcrypt from "bcrypt";
 import { body, validationResult } from "express-validator";
+import Config from "../models/config";
 
 class LoginController implements IController {
     public path = "/login";
@@ -90,6 +91,7 @@ class LoginController implements IController {
                 role: "ADMIN",
                 isDefaultPassword: false
             });
+            await Config.enableFailSafe();
             req.wap.users = await User.findAll({
                 order: [['firstname', 'ASC'], ['lastname', 'ASC']]
             });

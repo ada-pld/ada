@@ -39,6 +39,15 @@ async function checkDatabaseConnection() {
     }
 }
 
+async function closeDatabaseConnection() {
+    try {
+        db.close()
+    } catch (e) {
+        console.error(e);
+        process.exit(1);
+    }
+}
+
 app.use(cors());
 app.set("views", "./views");
 app.set("view engine", "ejs");
@@ -129,4 +138,4 @@ app.use((req, res) => {
     });
 })
 
-export { app, checkDatabaseConnection, wap }
+export { app, checkDatabaseConnection, closeDatabaseConnection, wap }

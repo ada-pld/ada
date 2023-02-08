@@ -87,6 +87,23 @@ class Config extends Model<Config> {
         }))[0];
     }
 
+    static async enableFailSafe() {
+        if (!Config.checkFailSafe()) {
+            await Config.create({
+                name: "TESTS_FAILSAFE",
+                value: "true"
+            });
+        }
+    }
+
+    static async checkFailSafe() {
+        return (await Config.findOne({
+            where: {
+                name: "TESTS_FAILSAFE"
+            }
+        }));
+    }
+
 }
 
 export default Config;

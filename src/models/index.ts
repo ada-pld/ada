@@ -1,3 +1,4 @@
+import * as db_config from "../database_configs/db_config";
 import { Sequelize} from "sequelize-typescript";
 import Card from "./card";
 import CardUser from "./cardUser";
@@ -11,12 +12,12 @@ import Sprint from "./sprint";
 import User from "./user";
 
 const sequelize = new Sequelize({
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT),
+    host: db_config[process.env.NODE_ENV].host,
+    port: db_config[process.env.NODE_ENV].port,
+    database: db_config[process.env.NODE_ENV].database,
+    username: db_config[process.env.NODE_ENV].username,
+    password: db_config[process.env.NODE_ENV].password,
     dialect: "mysql",
-    database: process.env.DB_NAME,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
     logging: process.env.ENVIRONMENT != "dev" ? false : console.log,
     models: [
         User,
