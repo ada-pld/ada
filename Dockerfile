@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 RUN mkdir -p /usr/src/app/pldGenerator
 
-COPY ./pldGenerator/package*.json /usr/src/app/pldGenerator
+COPY ./pldGenerator/package*.json /usr/src/app/pldGenerator/
 
 RUN cd /usr/src/app/pldGenerator && \
     npm install --omit=dev && \
