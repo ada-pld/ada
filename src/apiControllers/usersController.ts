@@ -20,7 +20,7 @@ class UserController implements IController {
         this.router.get("/list", authBearer, checkPermAPI("EDITOR"), this.listUsers);
         this.router.post("/create", authBearer, checkPermAPI("EDITOR"), this.createUser);
         this.router.post("/edit", authBearer, this.editUser);
-        this.router.post("/forgotPassword", authBearer, checkPermAPI("EDITOR"), this.forgotPassword);
+        this.router.post("/forgotPassword", this.forgotPassword);
     }
 
     private listUsers = async (req: Request, res: Response) => {
@@ -61,6 +61,11 @@ class UserController implements IController {
                     message: "Email already in use."
                 });
             }
+            if (req.body.role == "ADMIN" && req.user.role != "ADMIN") {
+                return res.status(403).send({
+                    message: "You don't have the permission to perform this action."
+                })
+            }
             const created = User.build({
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
@@ -81,67 +86,77 @@ class UserController implements IController {
         }
     ]
 
-    private editUser = async (req: Request, res: Response) => {
-        if (!req.body.id) {
-            return res.status(400).send({
-                message: "Missing id"
-            });
-        }
-        const user = await User.findOne({
-            where: {
-                id: req.body.id
+    private editUser = [
+        body("role").isIn(["ADMIN", "EDITOR", "MAINTENER", "USER"]).optional(),
+        async (req: Request, res: Response) => {
+            if (!validationResult(req).isEmpty()) {
+                return res.status(400).send({
+                    message: "Invalid body."
+                });
             }
-        })
-        if (!user) {
-            return res.status(400).send({
-                message: "Invalid id"
-            });
-        }
-        if (req.user.role != "ADMIN" && req.user.role != "EDITOR") {
-            if (req.user.id != user.id) {
+            if (!req.body.id) {
+                return res.status(400).send({
+                    message: "Missing id"
+                });
+            }
+            const user = await User.findOne({
+                where: {
+                    id: req.body.id
+                }
+            })
+            if (!user) {
+                return res.status(400).send({
+                    message: "Invalid id"
+                });
+            }
+            if (req.user.role != "ADMIN" && req.user.role != "EDITOR") {
+                if (req.user.id != user.id) {
+                    return res.status(403).send({
+                        message: "You don't have the permission to perform this action."
+                    });
+                }
+                if (req.body.password) {
+                    user.isDefaultPassword = false;
+                    user.password = await bcrypt.hash(process.env.PASS_SALT + req.body.password, 10);
+                    await req.user.save();
+                }
+                return res.status(200).send({
+                    message: "Success."
+                });
+            }
+            if (req.user.role == "EDITOR" && user.role == "ADMIN") {
                 return res.status(403).send({
                     message: "You don't have the permission to perform this action."
                 });
             }
+            if (req.body.role) {
+                if (req.user.role == "EDITOR" && req.body.role == "ADMIN") {
+                    return res.status(403).send({
+                        message: "You don't have the permission to upgrade your role."
+                    })
+                }
+            }
             if (req.body.password) {
                 user.isDefaultPassword = false;
                 user.password = await bcrypt.hash(process.env.PASS_SALT + req.body.password, 10);
-                await req.user.save();
             }
+            user.set({
+                firstname: req.body.firstname ?? user.firstname,
+                lastname: req.body.lastname ?? user.lastname,
+                email: req.body.email ?? user.email,
+                role: req.body.role ?? user.role
+            });
+            await user.save();
             return res.status(200).send({
                 message: "Success."
             });
         }
-        if (req.user.role == "EDITOR" && user.role == "ADMIN") {
-            return res.status(403).send({
-                message: "You don't have the permission to perform this action."
-            });
-        }
-        if (req.body.role) {
-            if (req.user.role == "EDITOR" && req.body.role == "ADMIN") {
-                req.body.role = undefined;
-            }
-        }
-        if (req.body.password) {
-            user.isDefaultPassword = false;
-            user.password = await bcrypt.hash(process.env.PASS_SALT + req.body.password, 10);
-        }
-        user.set({
-            firstname: req.body.firstname ?? undefined,
-            lastname: req.body.lastname ?? undefined,
-            email: req.body.email ?? undefined,
-            role: req.body.role ?? undefined
-        });
-        await user.save();
-        return res.status(200).send({
-            message: "Success."
-        });
-    }
+    ]
 
     private forgotPassword = [
         body("email").normalizeEmail().isEmail(),
         async (req: Request, res: Response) => {
-            if (!validationResult(res).isEmpty) {
+            if (!validationResult(res).isEmpty()) {
                 return res.status(400).send({
                     message: "Invalid email"
                 });

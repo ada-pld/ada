@@ -19,28 +19,28 @@ module.exports = async () => {
     await Session.destroy({ truncate: { cascade: true, force: true }});
 
     await User.create({
-        email: "ci_admin_account",
+        email: "ci_admin_account@domestia.fr",
         firstname: "CI",
         lastname: "ADMIN",
         password: await bcrypt.hash(process.env.PASS_SALT + "ci", 10),
         role: "ADMIN"
     });
     await User.create({
-        email: "ci_editor_account",
+        email: "ci_editor_account@domestia.fr",
         firstname: "CI",
         lastname: "EDITOR",
         password: await bcrypt.hash(process.env.PASS_SALT + "ci", 10),
         role: "EDITOR"
     });
     await User.create({
-        email: "ci_maintener_account",
+        email: "ci_maintener_account@domestia.fr",
         firstname: "CI",
         lastname: "MAINTENER",
         password: await bcrypt.hash(process.env.PASS_SALT + "ci", 10),
         role: "MAINTENER"
     });
     await User.create({
-        email: "ci_user_account",
+        email: "ci_user_account@domestia.fr",
         firstname: "CI",
         lastname: "MAINTENER",
         password: await bcrypt.hash(process.env.PASS_SALT + "ci", 10),

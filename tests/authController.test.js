@@ -1,5 +1,5 @@
 const request = require("supertest");
-const { app, checkDatabaseConnection, closeDatabaseConnection } = require("../build/app");
+const { app, checkDatabaseConnection, closeDatabaseConnection } = require("../src/app");
 
 describe("AuthController", () => {
 
@@ -42,7 +42,7 @@ describe("AuthController", () => {
                 res = await request(app)
                     .post("/api/auth/login")
                     .send({
-                        email: "ci_admin_account",
+                        email: "ci_admin_account@domestia.fr",
                         password: "invalid_password"
                     });
                 expect(res.statusCode).toBe(401);
@@ -53,7 +53,7 @@ describe("AuthController", () => {
             let res = await request(app)
                 .post("/api/auth/login")
                 .send({
-                    email: "ci_admin_account",
+                    email: "ci_admin_account@domestia.fr",
                     password: "ci"
                 });
             expect(res.statusCode).toBe(200);
@@ -71,7 +71,7 @@ describe("AuthController", () => {
             let res = await request(app)
                 .post("/api/auth/login")
                 .send({
-                    email: "ci_admin_account",
+                    email: "ci_admin_account@domestia.fr",
                     password: "ci"
                 });
             userId = res.body.userId;
@@ -148,7 +148,7 @@ describe("AuthController", () => {
             let res = await request(app)
                 .post("/api/auth/login")
                 .send({
-                    email: "ci_admin_account",
+                    email: "ci_admin_account@domestia.fr",
                     password: "ci"
                 })
             userId = res.body.userId;
@@ -193,7 +193,7 @@ describe("AuthController", () => {
             let res = await request(app)
                 .post("/api/auth/login")
                 .send({
-                    email: "ci_admin_account",
+                    email: "ci_admin_account@domestia.fr",
                     password: "ci"
                 })
             userId = res.body.userId;
