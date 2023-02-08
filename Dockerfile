@@ -15,7 +15,7 @@ RUN cd /usr/src/app/pldGenerator && \
 COPY ./package*.json /usr/src/app/
 
 RUN cd /usr/src/app && \
-    npm install --omit=dev && \
+    npm install && \
     npm cache clean --force
 
 COPY ./ /usr/src/app/
