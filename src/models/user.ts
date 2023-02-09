@@ -75,7 +75,7 @@ class User extends Model<User> {
 
     static async findAllSafe(options: FindOptions<Attributes<User>>) {
         return this.findAll({
-            attributes: ['firstname', 'lastname', 'email', 'role'],
+            attributes: ['id', 'firstname', 'lastname', 'email', 'role'],
             ...options
         });
     }

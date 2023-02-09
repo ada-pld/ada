@@ -60,7 +60,7 @@ class UserController implements IController {
                 message: "Invalid user id"
             });
         }
-        return res.status(200).send(user);
+        return res.status(200).send(user[0]);
     }
 
     private createUser = [
