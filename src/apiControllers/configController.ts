@@ -32,34 +32,36 @@ class ConfigController implements IController {
     }
 
     private edit = async (req: Request, res: Response) => {
+        let allPromises = [];
         if (req.body.smtphost) {
             req.wap.config.SMTP_Host.value = req.body.smtphost;
-            await req.wap.config.SMTP_Host.save();
+            allPromises.push(req.wap.config.SMTP_Host.save());
         }
         if (req.body.smtpuser) {
             req.wap.config.SMTP_User.value = req.body.smtpuser;
-            await req.wap.config.SMTP_User.save();
+            allPromises.push(await req.wap.config.SMTP_User.save());
         }
         if (req.body.smtpport) {
             req.wap.config.SMTP_Port.value = req.body.smtpport;
-            await req.wap.config.SMTP_Port.save();
+            allPromises.push(await req.wap.config.SMTP_Port.save());
         }
         if (req.body.smtppassword) {
             req.wap.config.SMTP_Password.value = req.body.smtppassword;
-            await req.wap.config.SMTP_Password.save();
+            allPromises.push(await req.wap.config.SMTP_Password.save());
         }
         if (req.body.hostname) {
             req.wap.config.Hostname.value = req.body.hostname;
-            await req.wap.config.Hostname.save();
+            allPromises.push(await req.wap.config.Hostname.save());
         }
         if (req.body.defaultPassword) {
             req.wap.config.Default_Password.value = req.body.defaultPassword;
-            await req.wap.config.Default_Password.save();
+            allPromises.push(await req.wap.config.Default_Password.save());
         }
         if (req.body.underMaintenance) {
             req.wap.config.UnderMaintenance.value = req.body.underMaintenance;
-            await req.wap.config.UnderMaintenance.save();
+            allPromises.push(await req.wap.config.UnderMaintenance.save());
         }
+        await Promise.all(allPromises);
         await setupMailTransporter();
         return res.status(200).send({
             message: "Success."
@@ -68,25 +70,38 @@ class ConfigController implements IController {
 
     private refresh = async (req: Request, res: Response) => {
         const wap = req.wap;
-        const parts = await Part.findAll();
-        const users = await User.findAll();
-        const sessions = await Session.findAll();
-        const sprint = await Sprint.findOne({
-            where: {
-                active: true
-            }
-        });
-        wap.config.SMTP_Host = await Config.getSMTPHost();
-        wap.config.SMTP_User = await Config.getSMTPUser();
-        wap.config.SMTP_Port = await Config.getSMTPPort();
-        wap.config.SMTP_Password = await Config.getSMTPPassword();
-        wap.config.Default_Password = await Config.getDefaultPassword();
-        wap.config.Hostname = await Config.getHostname();
-        wap.config.UsingCustomGenerator = await Config.getUsingCustomGenerator();
-        wap.config.UnderMaintenance = await Config.getUnderMaintenance();
+        const [parts, users, sessions, sprint, SMTP_Host, SMTP_User,
+        SMTP_Port, SMTP_Password, Default_Password, Hostname,
+        UsingCustomGenerator, UnderMaintenance] = await Promise.all([
+            Part.findAll(),
+            User.findAll(),
+            Session.findAll(),
+            Sprint.findOne({
+                where: {
+                    active: true
+                }
+            }),
+            Config.getSMTPHost(),
+            Config.getSMTPUser(),
+            Config.getSMTPPort(),
+            Config.getSMTPPassword(),
+            Config.getDefaultPassword(),
+            Config.getHostname(),
+            Config.getUsingCustomGenerator(),
+            Config.getUnderMaintenance()
+        ]);
+        wap.config.SMTP_Host = SMTP_Host
+        wap.config.SMTP_User = SMTP_User
+        wap.config.SMTP_Port = SMTP_Port
+        wap.config.SMTP_Password = SMTP_Password
+        wap.config.Default_Password = Default_Password
+        wap.config.Hostname = Hostname
+        wap.config.UsingCustomGenerator = UsingCustomGenerator
+        wap.config.UnderMaintenance = UnderMaintenance
         wap.sprint = sprint;
         wap.parts = parts;
         wap.users = users;
+        wap.sessions = sessions;
         await setupMailTransporter();
         
         return res.status(200).send({
