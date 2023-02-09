@@ -1,8 +1,9 @@
-const { checkDatabaseConnection, closeDatabaseConnection } = require("../../build/app");
-const { default: Config } = require("../../build/models/config");
-const { default: User } = require("../../build/models/user");
-const { default: Session } = require("../../build/models/session");
+const { checkDatabaseConnection, closeDatabaseConnection } = require("../../src/app");
+const { default: Config } = require("../../src/models/config");
+const { default: User } = require("../../src/models/user");
+const { default: Session } = require("../../src/models/session");
 const bcrypt = require("bcrypt");
+const { default: Part } = require("../../src/models/part");
 
 module.exports = async () => {
     await checkDatabaseConnection();
@@ -45,6 +46,10 @@ module.exports = async () => {
         lastname: "MAINTENER",
         password: await bcrypt.hash(process.env.PASS_SALT + "ci", 10),
         role: "USER"
+    });
+
+    await Part.create({
+        name: "TEST"
     });
 
     await closeDatabaseConnection();

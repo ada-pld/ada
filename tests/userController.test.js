@@ -1,7 +1,7 @@
 const request = require("supertest");
 const { app, checkDatabaseConnection, closeDatabaseConnection } = require("../src/app");
 
-describe("AuthController", () => {
+describe("UsersController", () => {
 
     let admin_token, admin_id;
     let editor_token, editor_id;

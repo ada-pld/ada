@@ -1,6 +1,6 @@
 {
   "name": "wap",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Web Administration Panel",
   "main": "build/app.js",
   "repository": "https://github.com/theohemmer/wap",
