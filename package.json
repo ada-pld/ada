@@ -12,7 +12,7 @@
     "test": "jest --coverage"
   },
   "author": "Théo HEMMER",
-  "license": "MIT",
+  "license": "GPLv3",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
