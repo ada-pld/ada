@@ -18,6 +18,7 @@ module.exports = async () => {
 
     await User.destroy({ truncate: { cascade: true, force: true }});
     await Session.destroy({ truncate: { cascade: true, force: true }});
+    await Part.destroy({ truncate: { cascade: true, force: true }});
 
     await User.create({
         email: "ci_admin_account@domestia.fr",

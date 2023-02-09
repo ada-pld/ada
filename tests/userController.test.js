@@ -334,6 +334,36 @@ describe("UsersController", () => {
         });
     })
 
+    describe("Test one", () => {
+
+        describe("Test errors", () => {
+            it("should fail because of no connection", async () => {
+                await checkAuthGET("/api/users/1", app, []);
+            });
+            it("should fail because of no id", async () => {
+                let res = await request(app)
+                    .get("/api/users/")
+                    .set("Authorization", `Bearer ${user_token}`)
+                expect(res.statusCode).toBe(404);
+            })
+            it("should fail because of invalid id", async () => {
+                let res = await request(app)
+                    .get("/api/users/fhdjskfd")
+                    .set("Authorization", `Bearer ${user_token}`)
+                expect(res.statusCode).toBe(400);
+            })
+        })
+
+        it("should return an user", async () => {
+            let res = await request(app)
+                .get(`/api/users/${admin_id}`)
+                .set("Authorization", `Bearer ${user_token}`)
+            expect(res.statusCode).toBe(200)
+            console.log(res.body)
+            expect(res.body.id).toBe(admin_id)
+        })
+    })
+
     afterAll(async () => {
         await closeDatabaseConnection();
     })
