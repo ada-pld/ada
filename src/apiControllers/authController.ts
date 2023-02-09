@@ -44,8 +44,9 @@ class AuthController implements IController {
                 message: "Invalid credentials."
             });
         }
-        const accessToken = await generateRandomString(48);
-        const refreshToken = await generateRandomString(48);
+        const [accessToken, refreshToken] = await Promise.all([
+            generateRandomString(48), generateRandomString(48)
+        ])
         const date = Math.floor(new Date().getTime() / 1000);
         await Session.create({
             userId: user.id,
@@ -84,8 +85,9 @@ class AuthController implements IController {
             });
         }
 
-        const accessToken = await generateRandomString(48);
-        const refreshToken = await generateRandomString(48);
+        const [accessToken, refreshToken] = await Promise.all([
+            generateRandomString(48), generateRandomString(48)
+        ])
 
         session.accessToken = accessToken;
         session.refreshToken = refreshToken;
