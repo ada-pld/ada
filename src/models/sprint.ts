@@ -34,6 +34,13 @@ class Sprint extends Model<Sprint> {
     @HasMany(() => PLD)
     plds: PLD[];
 
+    toJSON() {
+        const values = super.toJSON()
+        delete values.deletedAt;
+        delete values.createdAt;
+        return values;
+    }
+
 }
 
 export default Sprint;

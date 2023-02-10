@@ -22,6 +22,13 @@ class Part extends Model<Part> {
     @HasMany(() => Card)
     cards: Card[];
 
+    toJSON() {
+        const values = super.toJSON()
+        delete values.deletedAt;
+        delete values.createdAt;
+        return values;
+    }
+
 }
 
 export default Part;

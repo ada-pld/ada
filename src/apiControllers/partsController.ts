@@ -4,6 +4,7 @@ import { checkPerm, checkPermAPI } from "../middlewares/checkPerms";
 import { authBearer, authUser } from "../middlewares/auth";
 import Part from "../models/part";
 import Card from "../models/card";
+import Sprint from "../models/sprint";
 
 class PartController implements IController {
     public path = "/parts";
@@ -21,12 +22,17 @@ class PartController implements IController {
     private listParts = async (req: Request, res: Response) => {
         const allParts = await Part.findAll({
             include: [
-                Card
+                {
+                    model: Card,
+                    include: [
+                        Sprint
+                    ]
+                }
             ]
         })
         
         allParts.forEach((x) => {
-            const resultObject = x as any;
+            const resultObject = x.toJSON() as (Part & {totalInSprint: number, totalCards: number});
             resultObject.totalInSprint = x.cards.filter(x => x.sprintId == req.wap.sprint.id).length;
             resultObject.totalCards = x.cards.length;
         });

@@ -73,7 +73,7 @@ class User extends Model<User> {
         })
     }
 
-    static async findAllSafe(options: FindOptions<Attributes<User>>) {
+    static async findAllSafe(options?: FindOptions<Attributes<User>>) {
         return this.findAll({
             attributes: ['id', 'firstname', 'lastname', 'email', 'role'],
             ...options
@@ -98,6 +98,15 @@ class User extends Model<User> {
                 id: id
             }
         });
+    }
+
+    toJSON() {
+        const values = super.toJSON();
+        delete values.password;
+        delete values.isDefaultPassword;
+        delete values.deletedAt;
+        delete values.createdAt
+        return values;
     }
 
 }

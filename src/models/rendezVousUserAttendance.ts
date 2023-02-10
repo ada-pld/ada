@@ -37,6 +37,13 @@ class RendezVousUserAttendance extends Model<RendezVousUserAttendance> {
     @Column(DataType.ENUM("UNDEFINED", "PRESENT", "ABSENT"))
     attendance: Attendance;
 
+    toJSON() {
+        const values = super.toJSON()
+        delete values.deletedAt;
+        delete values.createdAt;
+        return values;
+    }
+
 }
 
 export default RendezVousUserAttendance;

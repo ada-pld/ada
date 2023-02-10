@@ -7,6 +7,8 @@ import * as bcrypt from "bcrypt";
 import { body, validationResult } from 'express-validator';
 import { checkMailTransporter, sendCreationEmail, sendPasswordForgottenMail } from "../mails";
 import Card from "../models/card";
+import Part from "../models/part";
+import Sprint from "../models/sprint";
 
 class UserController implements IController {
     public path = "/users";
@@ -19,20 +21,21 @@ class UserController implements IController {
     private initializeRoutes() {
         this.router.get("/list", authBearer, checkPermAPI("EDITOR"), this.listUsers);
         this.router.get("/:id", authBearer, this.getOne);
+        this.router.get("/:id/cards", authBearer, checkPermAPI("MAINTENER"), this.getCards);
         this.router.post("/create", authBearer, checkPermAPI("EDITOR"), this.createUser);
         this.router.post("/edit", authBearer, this.editUser);
         this.router.post("/forgotPassword", this.forgotPassword);
     }
 
     private listUsers = async (req: Request, res: Response) => {
-        const allUsers = await User.findAllSafe({
+        const allUsers = await User.findAll({
             include: [
                 Card
             ]
         });
 
         allUsers.forEach((x) => {
-            const resultObject = x as (User & {totalCards: number, totalWorkDays: number});
+            const resultObject = x.toJSON() as User & {totalCards: number, totalWorkDays: number};
             resultObject.totalCards = 0;
             resultObject.totalWorkDays = 0;
             x.cards.forEach((x: Card) => {
@@ -41,19 +44,17 @@ class UserController implements IController {
                     resultObject.totalWorkDays += x.workingDays;
                 }
             })
+            delete resultObject.cards;
         });
 
         return res.status(200).send(allUsers);
     }
 
     private getOne = async (req: Request, res: Response) => {
-        const user = await User.findAllSafe({
+        const user = await User.findAll({
             where: {
                 id: req.params.id
-            },
-            include: [
-                Card
-            ]
+            }
         });
         if (!user || !user[0]) {
             return res.status(400).send({
@@ -61,6 +62,30 @@ class UserController implements IController {
             });
         }
         return res.status(200).send(user[0]);
+    }
+
+    private getCards = async (req: Request, res: Response) => {
+        const user = await User.findOne({
+            where: {
+                id: req.params.id
+            },
+            include: [
+                {
+                    model: Card,
+                    include: [
+                        Part,
+                        Sprint,
+                        User
+                    ]
+                }
+            ]
+        });
+        if (!user) {
+            return res.status(400).send({
+                message: "Invalid id"
+            });
+        }
+        return res.status(200).send(user.cards);
     }
 
     private createUser = [

@@ -65,8 +65,6 @@ describe("UsersController", () => {
                 editor_token,
                 admin_token
             ], (res, token) => {
-                console.log(token)
-                console.log(res.body)
                 expect(res.statusCode).toBe(200)
                 expect(res.body.length).toBeGreaterThanOrEqual(4)
             });
@@ -359,8 +357,45 @@ describe("UsersController", () => {
                 .get(`/api/users/${admin_id}`)
                 .set("Authorization", `Bearer ${user_token}`)
             expect(res.statusCode).toBe(200)
-            console.log(res.body)
             expect(res.body.id).toBe(admin_id)
+        })
+    })
+
+    describe("Test cards", () => {
+        describe("Test errors", () => {
+            it("should fail because of no connection", async () => {
+                await checkAuthGET("/api/users/1/cards", app, []);
+            });
+            it ("should fail because of invalid permissions", async () => {
+                await checkAuthGET("/api/users/1/cards", app, [
+                    user_token,
+                ]);
+            })
+            it("should fail because of no id", async () => {
+                let res = await request(app)
+                    .get(`/api/users//cards`)
+                    .set("Authorization", `Bearer ${admin_token}`)
+                expect(res.statusCode).toBe(400);
+            })
+            it("should fail because of invalid id", async () => {
+                let res = await request(app)
+                    .get("/api/users/fhdjskfd/cards")
+                    .set("Authorization", `Bearer ${admin_token}`)
+                expect(res.statusCode).toBe(400);
+            })
+        })
+
+        it("should return the cards of the admin user", async () => {
+            let res = await request(app)
+                .get(`/api/users/${admin_id}/cards`)
+                .set("Authorization", `Bearer ${admin_token}`)
+            expect(res.body.length).toBe(1);
+            expect(res.body[0].name).toBe("Test name");
+            expect(res.body[0].part.name).toBe("TEST");
+            expect(res.body[0].sprint.workDaysNeeded).toBe(12);
+            expect(res.body[0].assignees.length).toBe(2);
+            expect(res.body[0].assignees[0].id).toBe(admin_id);
+            expect(res.body[0].assignees[1].id).toBe(user_id);
         })
     })
 

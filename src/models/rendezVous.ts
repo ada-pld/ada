@@ -35,6 +35,12 @@ class RendezVous extends Model<RendezVous> {
     @HasMany(() => RendezVousUserAttendance)
     userAttendances: RendezVousUserAttendance[];
 
+    toJSON() {
+        const values = super.toJSON()
+        delete values.deletedAt;
+        delete values.createdAt;
+        return values;
+    }
 }
 
 export default RendezVous;

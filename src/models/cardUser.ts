@@ -24,6 +24,13 @@ class CardUser extends Model<CardUser> {
     @Column(DataType.INTEGER)
     cardId: number;
 
+    toJSON() {
+        const values = super.toJSON()
+        delete values.deletedAt;
+        delete values.createdAt;
+        return values;
+    }
+
 }
 
 export default CardUser;
