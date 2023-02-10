@@ -199,7 +199,7 @@ class UserController implements IController {
     private forgotPassword = [
         body("email").normalizeEmail().isEmail(),
         async (req: Request, res: Response) => {
-            if (!validationResult(res).isEmpty()) {
+            if (!validationResult(req).isEmpty()) {
                 return res.status(400).send({
                     message: "Invalid email"
                 });

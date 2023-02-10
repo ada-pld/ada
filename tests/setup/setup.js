@@ -6,10 +6,14 @@ const bcrypt = require("bcrypt");
 const { default: Part } = require("../../src/models/part");
 const { default: Card } = require("../../src/models/card");
 const { default: Sprint } = require("../../src/models/sprint");
+const { default: RendezVous } = require("../../src/models/rendezVous");
+const { default: RendezVousUserAttendance } = require("../../src/models/rendezVousUserAttendance");
+const { default: db } = require("../../src/models")
 
 module.exports = async () => {
     console.log("Setting up tests.");
     await checkDatabaseConnection();
+    await db.sync({force: true})
 
     if (await Config.checkFailSafe()) {
         console.warn("");
@@ -18,12 +22,6 @@ module.exports = async () => {
         console.warn("/!\\ To delete the failsafe, connect to the database and delete the TESTS_FAILSAFE row from the Configs table.");
         process.exit(1);
     }
-
-    await User.destroy({ truncate: { cascade: true, force: true }});
-    await Session.destroy({ truncate: { cascade: true, force: true }, restartIdentity: true});
-    await Part.destroy({ truncate: { cascade: true, force: true }, restartIdentity: true});
-    await Sprint.destroy({ truncate: { cascade: true, force: true }, restartIdentity: true});
-    await Card.destroy({ truncate: { cascade: true, force: true }, restartIdentity: true});
 
     let testAdmin = await User.create({
         email: "ci_admin_account@domestia.fr",
@@ -76,6 +74,34 @@ module.exports = async () => {
         sprintId: testSprint.id,
         partId: testPart.id
     })
+
+    let rdv = await RendezVous.create({
+        date: new Date(),
+        agenda: "Test !",
+        sheduling: "PLANNED"
+    });
+
+    for (const user of [testAdmin, testEditor, testMaintener]) {
+        const userAppointment = await RendezVousUserAttendance.create();
+        await Promise.all([
+            userAppointment.$set('rendezVous', rdv),
+            userAppointment.$set('user', user)
+        ])
+    }
+
+    let rdv2 = await RendezVous.create({
+        date: new Date(),
+        agenda: "Test 2!",
+        sheduling: "PASSED"
+    })
+
+    for (const user of [testAdmin, testEditor, testMaintener]) {
+        const userAppointment = await RendezVousUserAttendance.create();
+        await Promise.all([
+            userAppointment.$set('rendezVous', rdv2),
+            userAppointment.$set('user', user)
+        ])
+    }
 
     await testCard.$add('assignees', testAdmin);
     await testCard.$add('assignees', testUser);

@@ -196,7 +196,7 @@ describe("UsersController", () => {
 
         describe("Test errors", () => {
             it("should fail because of no connection", async () => {
-                await checkAuthPOST("/api/users/create", app, []);
+                await checkAuthPOST("/api/users/edit", app, []);
             });
 
             it("should fail because of invalid body", async () => {
@@ -307,8 +307,15 @@ describe("UsersController", () => {
                 res = await request(app)
                     .post("/api/users/forgotPassword")
                     .send({
-                        email: "testmail"
+                        email: "invalid_email@email.com"
                     })
+                expect(res.statusCode).toBe(400);
+                res = await request(app)
+                    .post("/api/users/forgotPassword")
+                    .send({
+                        email: "dsfsdfsdfqsdqsv"
+                    })
+                expect(res.body.message).toBe("Invalid email")
                 expect(res.statusCode).toBe(400);
             })
 

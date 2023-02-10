@@ -20,11 +20,11 @@ class RendezVousController implements IController {
         this.router.get("/list", authBearer, checkPermAPI("MAINTENER"), this.list);
         this.router.get("/:id", authBearer, checkPermAPI("MAINTENER"), this.getOne);
         this.router.post("/create", authBearer, checkPermAPI("EDITOR"), this.create);
-        this.router.post("/edit/:id", authBearer, checkPermAPI("EDITOR"), this.edit);
+        this.router.post("/edit", authBearer, checkPermAPI("EDITOR"), this.edit);
     }
 
     private list = async (req: Request, res: Response) => {
-        const rendezVouss = await RendezVous.findAll({
+        let rendezVouss = await RendezVous.findAll({
             include: [
                 RendezVousUserAttendance
             ],
@@ -33,21 +33,28 @@ class RendezVousController implements IController {
             ]
         });
         let arrOfPromises = [];
-        for (const rendezVous of rendezVouss) {
+        rendezVouss = rendezVouss.map((rendezVous) => {
+            if (req.user.role == "MAINTENER" && rendezVous.sheduling != "PASSED") {
+                rendezVous = rendezVous.toJSON();
+                delete rendezVous.userAttendances;
+                delete rendezVous.report;
+                return rendezVous;
+            }
             rendezVous.userAttendances.forEach((x) => {
                 arrOfPromises.push(new Promise(async (resolve, reject) => {
                     x.user = await x.$get("user");
                     resolve(true);
                 }));
             })
-        }
+            return rendezVous;
+        })
         await Promise.all(arrOfPromises);
 
         return res.status(200).send(rendezVouss);
     }
 
     private getOne = async (req: Request, res: Response) => {
-        const rendezVous = await RendezVous.findOne({
+        let rendezVous = await RendezVous.findOne({
             include: [
                 RendezVousUserAttendance
             ],
@@ -60,15 +67,20 @@ class RendezVousController implements IController {
                 message: "Invalid id."
             });
         }
-
-        let arrOfPromises = [];
-        rendezVous.userAttendances.forEach((x) => {
-            arrOfPromises.push(new Promise(async (resolve, reject) => {
-                x.user = await x.$get("user");
-                resolve(true);
-            }));
-        })
-        await Promise.all(arrOfPromises);
+        if (req.user.role == "MAINTENER" && rendezVous.sheduling != "PASSED") {
+            rendezVous = rendezVous.toJSON();
+            delete rendezVous.userAttendances;
+            delete rendezVous.report;
+        } else {
+            let arrOfPromises = [];
+            rendezVous.userAttendances.forEach((x) => {
+                arrOfPromises.push(new Promise(async (resolve, reject) => {
+                    x.user = await x.$get("user");
+                    resolve(true);
+                }));
+            })
+            await Promise.all(arrOfPromises);
+        }
 
         return res.status(200).send(rendezVous);
     }
@@ -80,6 +92,11 @@ class RendezVousController implements IController {
             });
         }
         const date = new Date(req.body.date);
+        if (date.toString() === "Invalid Date") {
+            return res.status(400).send({
+                message: "Invalid date."
+            })
+        }
         const [allUsers, rendezVous] = await Promise.all([
             User.findAll({
                 where: {
@@ -113,9 +130,14 @@ class RendezVousController implements IController {
 
     private edit = async (req: Request, res: Response) => {
         let newPassed = false;
+        if (!req.body.id) {
+            return res.status(400).send({
+                message: "Invalid body."
+            })
+        }
         const rendezVous = await RendezVous.findOne({
             where: {
-                id: req.params.id
+                id: req.body.id
             },
             include: [
                 {
@@ -131,8 +153,17 @@ class RendezVousController implements IController {
                 message: "Invalid id."
             });
         }
+        let date = undefined;
+        if (req.body.date) {
+            date = new Date(req.body.date)
+            if (date.toString() === "Invalid Date") {
+                return res.status(400).send({
+                    message: "Invalid date."
+                })
+            }
+        }
         rendezVous.set({
-            date: req.body.date ?? rendezVous.date,
+            date: date ?? rendezVous.date,
             agenda: req.body.agenda ? req.body.agenda.replace(/[\r]+/g, '') : rendezVous.agenda,
             report: req.body.report ? req.body.report.replace(/[\r]+/g, '') : rendezVous.report
         })
