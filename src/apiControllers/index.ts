@@ -1,7 +1,7 @@
 import IController from "../controllers/controller";
 import AuthController from "./authController";
 import ConfigController from "./configController";
-import PartController from "./partsController";
+import PartController from "./partController";
 import RendezVousController from "./rendezVousController";
 import UserController from "./usersController";
 
