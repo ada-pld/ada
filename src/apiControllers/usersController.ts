@@ -176,6 +176,11 @@ class UserController implements IController {
                     });
                 }
                 if (req.body.password) {
+                    if (req.body.password.length < 4) {
+                        return res.status(400).send({
+                            message: "Password must be at least 4 characters long."
+                        });
+                    }
                     user.isDefaultPassword = false;
                     user.password = await bcrypt.hash(process.env.PASS_SALT + req.body.password, 10);
                     await req.user.save();
@@ -197,6 +202,11 @@ class UserController implements IController {
                 }
             }
             if (req.body.password) {
+                if (req.body.password.length < 4) {
+                    return res.status(400).send({
+                        message: "Password must be at least 4 characters long."
+                    });
+                }
                 user.isDefaultPassword = false;
                 user.password = await bcrypt.hash(process.env.PASS_SALT + req.body.password, 10);
             }
