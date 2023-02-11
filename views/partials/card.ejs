@@ -67,7 +67,7 @@ if (card.status == "FINISHED") {
             <div class="card-body">
                 <h5 class="card-title text-<%= border %>"><%= wap.sprint.id %>.<%= card.part.id %>.<%= (card.idInSprint == -1) ? "U" : card.idInSprint %> <%= card.name %></h5>
                 <h6 class="card-subtitle mb-2 text-muted">Part: <%= card.part.name %> - Version: <%= card.version %></h6>
-                <p class="card-text">En temps que <%= card.asWho %>,<br>Je veux <%= card.task %></p>
+                <p class="card-text">En tant que <%= card.asWho %>,<br>Je veux <%= card.task %></p>
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item border-<%= border %>">Infos:</li>
