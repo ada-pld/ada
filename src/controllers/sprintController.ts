@@ -57,13 +57,13 @@ class SprintController implements IController {
                 card.assignees = await card.$get('assignees');
                 if (card.status == "FINISHED") {
                     totalDones++;
-                    totalJH += card.workingDays;
+                    totalJH += (card.workingDays / card.assignees.length);
                 } else if (card.status == "STARTED") {
                     totalProgress++;
                 } else if (card.status == "NOT_STARTED") {
                     totalNotStarted++;
                 }
-                intendedJH += card.workingDays;
+                intendedJH += (card.workingDays / card.assignees.length);
             }
             user["totalJH"] = totalJH;
             user["intendedJH"] = intendedJH;

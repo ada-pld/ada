@@ -55,7 +55,7 @@ class DashboardController implements IController {
             allApproved.forEach((element) => {
                 if (element.status == "FINISHED") {
                     finished++;
-                    workingDays += element.workingDays;
+                    workingDays += (element.workingDays / element.assignees.length);
                 } else if (element.status == "NOT_STARTED") {
                     notStarted++;
                 } else if (element.status == "STARTED") {
