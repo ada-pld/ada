@@ -120,6 +120,11 @@ class UserController implements IController {
                 created.password = await bcrypt.hash(process.env.PASS_SALT + password, 10);
                 sendCreationEmail(created, req.user, password);
             } else {
+                if (!req.wap.config.Default_Password.value) {
+                    return res.status(400).send({
+                        message: "Default password is not set in the config."
+                    });
+                }
                 created.password = await bcrypt.hash(process.env.PASS_SALT + req.wap.config.Default_Password.value, 10);
             }
             await created.save();
