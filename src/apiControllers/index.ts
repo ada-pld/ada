@@ -3,6 +3,7 @@ import AuthController from "./authController";
 import ConfigController from "./configController";
 import PartController from "./partController";
 import RendezVousController from "./rendezVousController";
+import SprintController from "./sprintController";
 import UserController from "./usersController";
 
 export const apiControllers :IController[] = [
@@ -11,4 +12,5 @@ export const apiControllers :IController[] = [
     new PartController(),
     new ConfigController(),
     new RendezVousController(),
+    new SprintController(),
 ]

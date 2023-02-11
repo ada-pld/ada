@@ -1,7 +1,7 @@
 const request = require("supertest");
 const { app, checkDatabaseConnection, closeDatabaseConnection } = require("../src/app");
 
-describe("PartsController", () => {
+describe("PartController", () => {
 
     let admin_token, admin_id;
     let editor_token, editor_id;
@@ -49,11 +49,11 @@ describe("PartsController", () => {
         describe("Test errors", () => {
 
             it("should fail because of no connection", async () => {
-                await checkAuthGET("/api/parts/list", app, []);
+                await checkAuthGET("/api/part/list", app, []);
             });
 
             it ("should fail because of invalid permissions", async () => {
-                await checkAuthGET("/api/parts/list", app, [
+                await checkAuthGET("/api/part/list", app, [
                     user_token,
                     maintener_token
                 ]);
@@ -61,7 +61,7 @@ describe("PartsController", () => {
         })
 
         it("should return a list of parts", async () => {
-            await performMultiplesAccountCheckGET("/api/parts/list", app, [
+            await performMultiplesAccountCheckGET("/api/part/list", app, [
                 editor_token,
                 admin_token
             ], (res, token) => {
@@ -77,11 +77,11 @@ describe("PartsController", () => {
         describe("Test errors", () => {
 
             it("should fail because of no connection", async () => {
-                await checkAuthPOST("/api/parts/create", app, []);
+                await checkAuthPOST("/api/part/create", app, []);
             });
 
             it ("should fail because of invalid permissions", async () => {
-                await checkAuthPOST("/api/parts/create", app, [
+                await checkAuthPOST("/api/part/create", app, [
                     user_token,
                     maintener_token
                 ]);
@@ -89,12 +89,12 @@ describe("PartsController", () => {
 
             it("should fail because of an invalid body", async () => {
                 let res = await request(app)
-                    .post("/api/parts/create")
+                    .post("/api/part/create")
                     .set("Authorization", `Bearer ${editor_token}`)
                     .send()
                 expect(res.statusCode).toBe(400);
                 res = await request(app)
-                    .post("/api/parts/create")
+                    .post("/api/part/create")
                     .set("Authorization", `Bearer ${editor_token}`)
                     .send({
                         name: ""
@@ -104,7 +104,7 @@ describe("PartsController", () => {
 
             it("should fail because name is already in use", async () => {
                 let res = await request(app)
-                    .post("/api/parts/create")
+                    .post("/api/part/create")
                     .set("Authorization", `Bearer ${editor_token}`)
                     .send({
                         name: "TEST"
@@ -115,7 +115,7 @@ describe("PartsController", () => {
 
         it("should create one part as admin", async () => {
             let res = await request(app)
-            .post("/api/parts/create")
+            .post("/api/part/create")
             .set("Authorization", `Bearer ${admin_token}`)
             .send({
                 name: "TEST1"
@@ -125,7 +125,7 @@ describe("PartsController", () => {
 
         it("should create one part as editor", async () => {
             let res = await request(app)
-                .post("/api/parts/create")
+                .post("/api/part/create")
                 .set("Authorization", `Bearer ${editor_token}`)
                 .send({
                     name: "TEST2"

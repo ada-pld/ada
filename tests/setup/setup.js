@@ -13,7 +13,6 @@ const { default: db } = require("../../src/models")
 module.exports = async () => {
     console.log("Setting up tests.");
     await checkDatabaseConnection();
-    await db.sync({force: true})
 
     if (await Config.checkFailSafe()) {
         console.warn("");
@@ -22,6 +21,8 @@ module.exports = async () => {
         console.warn("/!\\ To delete the failsafe, connect to the database and delete the TESTS_FAILSAFE row from the Configs table.");
         process.exit(1);
     }
+
+    await db.sync({force: true})
 
     let testAdmin = await User.create({
         email: "ci_admin_account@domestia.fr",
@@ -47,7 +48,7 @@ module.exports = async () => {
     let testUser = await User.create({
         email: "ci_user_account@domestia.fr",
         firstname: "CI",
-        lastname: "MAINTENER",
+        lastname: "USER",
         password: await bcrypt.hash(process.env.PASS_SALT + "ci", 10),
         role: "USER"
     });
@@ -62,18 +63,81 @@ module.exports = async () => {
         active: true
     })
 
+    await Sprint.create({
+        name: "Sprint test 2",
+        workDaysNeeded: 24,
+        active: false
+    })
+
     let testCard = await Card.create({
         name: "Test name",
         asWho: "Developer",
         task: "Test task",
         description: "Test description",
         dods: "Test dods",
+        status: "FINISHED",
         workingDays: 1,
         lastPLDEdit: 0,
         actPLD: 0,
         sprintId: testSprint.id,
         partId: testPart.id
-    })
+    });
+
+    await ((await Card.create({
+        name: "A",
+        asWho: "Developer",
+        task: "Test task",
+        description: "Test description",
+        dods: "Test dods",
+        status: "STARTED",
+        workingDays: 3,
+        lastPLDEdit: 0,
+        actPLD: 0,
+        sprintId: testSprint.id,
+        partId: testPart.id
+    })).$add("assignees", testAdmin))
+
+    await ((await Card.create({
+        name: "B",
+        asWho: "Developer",
+        task: "Test task",
+        description: "Test description",
+        dods: "Test dods",
+        status: "NOT_STARTED",
+        workingDays: 4,
+        lastPLDEdit: 0,
+        actPLD: 0,
+        sprintId: testSprint.id,
+        partId: testPart.id
+    })).$add("assignees", testAdmin))
+
+    await ((await Card.create({
+        name: "C",
+        asWho: "Developer",
+        task: "Test task",
+        description: "Test description",
+        dods: "Test dods",
+        status: "REJECTED",
+        workingDays: 5,
+        lastPLDEdit: 0,
+        actPLD: 0,
+        sprintId: testSprint.id,
+        partId: testPart.id
+    })).$add("assignees", testAdmin))
+
+    await ((await Card.create({
+        name: "D",
+        asWho: "Developer",
+        task: "Test task",
+        description: "Test description",
+        dods: "Test dods",
+        status: "WAITING_APPROVAL",
+        workingDays: 6,
+        lastPLDEdit: 0,
+        actPLD: 0,
+        sprintId: testSprint.id,
+        partId: testPart.id
+    })).$add("assignees", testAdmin))
 
     let rdv = await RendezVous.create({
         date: new Date(),
@@ -104,7 +168,7 @@ module.exports = async () => {
     }
 
     await testCard.$add('assignees', testAdmin);
-    await testCard.$add('assignees', testUser);
+    await testCard.$add('assignees', testMaintener);
 
     await closeDatabaseConnection();
     console.log("Starting.");

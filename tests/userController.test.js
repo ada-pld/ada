@@ -396,13 +396,13 @@ describe("UsersController", () => {
             let res = await request(app)
                 .get(`/api/users/${admin_id}/cards`)
                 .set("Authorization", `Bearer ${admin_token}`)
-            expect(res.body.length).toBe(1);
+            expect(res.body.length).toBe(5);
             expect(res.body[0].name).toBe("Test name");
             expect(res.body[0].part.name).toBe("TEST");
             expect(res.body[0].sprint.workDaysNeeded).toBe(12);
             expect(res.body[0].assignees.length).toBe(2);
             expect(res.body[0].assignees[0].id).toBe(admin_id);
-            expect(res.body[0].assignees[1].id).toBe(user_id);
+            expect(res.body[0].assignees[1].id).toBe(maintener_id);
         })
     })
 

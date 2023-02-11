@@ -2,10 +2,10 @@ import IController from "../controllers/controller";
 import express, {Request, Response} from "express";
 import { checkPerm, checkPermAPI } from "../middlewares/checkPerms";
 import { authBearer, authUser } from "../middlewares/auth";
-import Part from "../models/part";
 import Card from "../models/card";
 import Sprint from "../models/sprint";
 import User from "../models/user";
+import { Op } from "sequelize";
 
 class SprintController implements IController {
     public path = "/sprint";
@@ -17,9 +17,9 @@ class SprintController implements IController {
 
     private initializeRoutes() {
         this.router.get("/active", authBearer, this.active);
-        this.router.get("/cardsStats", authBearer, checkPermAPI("MAINTENER"), this.cardsStats);
+        this.router.get("/cardStats", authBearer, checkPermAPI("MAINTENER"), this.cardStats);
         this.router.get("/list", authBearer, checkPermAPI("EDITOR"), this.listSprint);
-        this.router.get("/use/:sprint", authBearer, checkPermAPI("EDITOR"), this.useSprint);
+        this.router.get("/use/:id", authBearer, checkPermAPI("EDITOR"), this.useSprint);
         this.router.post("/create", authBearer, checkPermAPI("EDITOR"), this.createSprint);
     }
 
@@ -27,7 +27,7 @@ class SprintController implements IController {
         return res.status(200).send(req.wap.sprint);
     }
 
-    private cardsStats = async (req: Request, res: Response) => {
+    private cardStats = async (req: Request, res: Response) => {
         let allUsers = await User.findAll({
             order: [['firstname', 'ASC'], ['lastname', 'ASC']],
             include: [
@@ -37,11 +37,16 @@ class SprintController implements IController {
                         sprintId: req.wap.sprint.id
                     },
                     include: [
-                        Card,
                         User
-                    ]
+                    ],
+                    required: false
                 }
-            ]
+            ],
+            where: {
+                id: {
+                    [Op.not]: "USER"
+                }
+            }
         })
         allUsers = allUsers.map(x => x.toJSON());
 
@@ -61,7 +66,7 @@ class SprintController implements IController {
             injected.JHNotAccepted = 0;
             injected.JHMissing = 0;
             for (const card of user.cards) {
-                if (card.status != "REJECTED" && card.status != "FINISHED") {
+                if (card.status != "REJECTED" && card.status != "WAITING_APPROVAL") {
                     injected.JHIntended += (card.workingDays / card.assignees.length);
                 } else {
                     injected.JHNotAccepted += (card.workingDays / card.assignees.length);
@@ -80,7 +85,7 @@ class SprintController implements IController {
     }
 
     private listSprint = async (req: Request, res: Response) => {
-        const allSprints = await Part.findAll({
+        const allSprints = await Sprint.findAll({
             include: [
                 Card
             ]
@@ -108,14 +113,19 @@ class SprintController implements IController {
         const sprints = await Sprint.findAll();
         let allPromises = [];
         sprints.forEach((x) => {
-            x.active = false;
-            if (sprint.id == req.params.id as any) {
-                x.active = true
+            if (x.id == req.params.id as any) {
+                allPromises.push(new Promise(async (resolve, reject) => {
+                    x.active = true;
+                    await x.save();
+                    resolve(true);
+                }))
+            } else {
+                allPromises.push(new Promise(async (resolve, reject) => {
+                    x.active = false;
+                    await x.save();
+                    resolve(true);
+                }))
             }
-            allPromises.push(new Promise(async (resolve, reject) => {
-                await x.save();
-                resolve(true);
-            }))
         })
         await Promise.all(allPromises);
         req.wap.sprint = sprint;
@@ -130,10 +140,8 @@ class SprintController implements IController {
                 message: "Invalid body."
             });
         }
-        let value :number = 0;
-        try {
-            value = parseInt(req.body.workDaysNeeded);
-        } catch (e) {
+        let value = parseInt(req.body.workDaysNeeded);
+        if (isNaN(value) || value < 0) {
             return res.status(400).send({
                 message: "Invalid workDays."
             })
