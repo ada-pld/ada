@@ -157,6 +157,18 @@ class UserController implements IController {
                     message: "Invalid id"
                 });
             }
+            if (req.body.email && req.body.email != user.email) {
+                const count_mail = await User.count({
+                    where: {
+                        email: req.body.email
+                    }
+                })
+                if (count_mail != 0) {
+                    return res.status(400).send({
+                        message: "Email already in use."
+                    })
+                }
+            }
             if (req.user.role != "ADMIN" && req.user.role != "EDITOR") {
                 if (req.user.id != user.id) {
                     return res.status(403).send({
