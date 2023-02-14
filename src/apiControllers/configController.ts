@@ -24,6 +24,9 @@ class ConfigController implements IController {
     }
 
     private show = async (req: Request, res: Response) => {
+        if (!req.wap.config.UnderMaintenance || req.wap.config.UnderMaintenance  != "true") {
+            req.wap.config.UnderMaintenance = "false";
+        }
         return res.status(200).send({
             config: req.wap.config,
             version: process.env.npm_package_version,
