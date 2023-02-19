@@ -85,6 +85,7 @@ class UserController implements IController {
                 message: "Invalid id"
             });
         }
+        user.cards.forEach(x => x.assignees = x.assignees.map(x => x.toJSON()))
         return res.status(200).send(user.cards);
     }
 
