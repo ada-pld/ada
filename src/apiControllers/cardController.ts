@@ -20,7 +20,7 @@ class CardController implements IController {
     private initializeRoutes() {
         this.router.post("/create", authBearer, checkPerm("MAINTENER"), this.create);
         this.router.post("/edit/:id", authBearer, checkPerm("MAINTENER"), this.edit);
-        this.router.get("/update/status/:id", authBearer, checkPerm("MAINTENER"), this.updateStatus)
+        this.router.get("/update/:status/:id", authBearer, checkPerm("MAINTENER"), this.updateStatus)
         this.router.get("/approve/:id", authBearer, checkPerm("EDITOR"), this.approve);
         this.router.post("/reject/:id", authBearer, checkPerm("EDITOR"), this.reject);
         this.router.get("/delete/:id", authBearer, checkPerm("MAINTENER"), this.delete);
