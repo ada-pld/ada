@@ -51,17 +51,17 @@ class UserController implements IController {
     }
 
     private getOne = async (req: Request, res: Response) => {
-        const user = await User.findAll({
+        const user = await User.findOne({
             where: {
                 id: req.params.id
             }
         });
-        if (!user || !user[0]) {
+        if (!user) {
             return res.status(400).send({
                 message: "Invalid user id"
             });
         }
-        return res.status(200).send(user[0]);
+        return res.status(200).send(user);
     }
 
     private getCards = async (req: Request, res: Response) => {
