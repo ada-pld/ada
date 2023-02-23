@@ -124,6 +124,12 @@ for (let controller of apiControllers) {
     app.use("/api" + controller.path, controller.router);
 }
 
+app.get("/makeItCrash", async (req, res) => {
+    await new Promise((r, e) => {
+        e(0)
+    });
+})
+
 app.get('/', authUser, (req, res) => {
     return res.redirect("/dashboard");
 })

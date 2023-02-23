@@ -74,7 +74,7 @@ class AuthController implements IController {
 
         return res.status(200).send({
             userId: user.id,
-            accessToken: accessToken,
+            accessToken: roleId + accessToken.substring(1),
             refreshToken: refreshToken
         });
     }
@@ -113,7 +113,7 @@ class AuthController implements IController {
         req.wap.sessions = await Session.findAll();
 
         return res.status(200).send({
-            accessToken: accessToken,
+            accessToken: roleId + accessToken.substring(1),
             refreshToken: refreshToken
         })
     }
