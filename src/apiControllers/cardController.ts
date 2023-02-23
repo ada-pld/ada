@@ -27,7 +27,7 @@ class CardController implements IController {
     }
 
     private create = async (req: Request, res: Response) => {
-        if (!req.body.name || !req.body.who || !req.body.task || !req.body.description || !req.body.workingDays || !req.body.dods || !req.body.part) {
+        if (!req.body.name || !req.body.asWho || !req.body.task || !req.body.description || !req.body.workingDays || !req.body.dods || !req.body.partId) {
             return res.status(400).send({
                 message: "Invalid body."
             });
@@ -36,7 +36,7 @@ class CardController implements IController {
         let assignees :User[] = [];
         let part: Part = await Part.findOne({
             where: {
-                id: req.body.part
+                id: req.body.partId
             }
         })
         if (!part) {
@@ -140,10 +140,10 @@ class CardController implements IController {
                 })
             }
         }
-        if (req.body.part) {
+        if (req.body.partId) {
             const part = await Part.findOne({
                 where: {
-                    id: req.body.part
+                    id: req.body.partId
                 }
             })
             if (!part) {
@@ -246,11 +246,11 @@ class CardController implements IController {
             statusToSet = "FINISHED";
         if (status == "inprogress")
             statusToSet = "STARTED";
-        if (status == "notstartes")
+        if (status == "notstarted")
             statusToSet = "NOT_STARTED";
         card.status = statusToSet;
         return res.status(200).send({
-            message: "Success.."
+            message: "Success."
         })
     }
     
@@ -341,7 +341,7 @@ class CardController implements IController {
         }
         if (toEdit.status != "REJECTED" && toEdit.status != "WAITING_APPROVAL") {
             return res.status(400).send({
-                message: "Card already approved."
+                message: "This card as already been approved."
             })
         }
         await toEdit.destroy();
