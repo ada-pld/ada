@@ -1,5 +1,6 @@
 import IController from "../controllers/controller";
 import AuthController from "./authController";
+import CardController from "./cardController";
 import ConfigController from "./configController";
 import PartController from "./partController";
 import RendezVousController from "./rendezVousController";
@@ -13,4 +14,5 @@ export const apiControllers :IController[] = [
     new ConfigController(),
     new RendezVousController(),
     new SprintController(),
+    new CardController(),
 ]
