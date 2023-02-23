@@ -218,7 +218,7 @@ class CardController implements IController {
                 User
             ]
         });
-        const status = req.body.status.toLowerCase();
+        const status = req.body.params.toLowerCase();
         if (status != "finished" && status != "started" && status != "notstarted") {
             return res.status(400).send({
                 message: "Invalid status."
