@@ -47,10 +47,24 @@ class AuthController implements IController {
         const [accessToken, refreshToken] = await Promise.all([
             generateRandomString(48), generateRandomString(48)
         ])
+        let roleId = 0;
+        switch (user.role) {
+            case "ADMIN":
+                roleId = 3;
+                break;
+            case "EDITOR":
+                roleId = 2;
+                break;
+            case "MAINTENER":
+                roleId = 1;
+                break;
+            default:
+                roleId = 0;
+        }
         const date = Math.floor(new Date().getTime() / 1000);
         await Session.create({
             userId: user.id,
-            accessToken: accessToken,
+            accessToken: roleId + accessToken.substring(1),
             refreshToken: refreshToken,
             accessTokenExpires: (date + (1 * 60 * 15)),
             refreshTokenExpires: (date + (1 * 60 * 60 * 24)),
@@ -88,8 +102,9 @@ class AuthController implements IController {
         const [accessToken, refreshToken] = await Promise.all([
             generateRandomString(48), generateRandomString(48)
         ])
+        const roleId = session.accessToken.at(0);
 
-        session.accessToken = accessToken;
+        session.accessToken = roleId + accessToken.substring(1);
         session.refreshToken = refreshToken;
         session.accessTokenExpires = date + (1 * 60 * 15);
         session.refreshTokenExpires = date + (1 * 60 * 60 * 24);
