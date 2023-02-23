@@ -28,9 +28,9 @@
     "nodemailer": "^6.8.0",
     "pdf-lib": "^1.17.1",
     "pdf-watermark": "^1.0.3",
-    "sequelize": "0.6.11",
+    "sequelize": "^6.28.2",
     "sequelize-cli": "^6.5.2",
-    "sequelize-typescript": "^0.6.11",
+    "sequelize-typescript": "^2.1.5",
     "uuid": "^9.0.0",
     "validator": "^13.7.0"
   },
