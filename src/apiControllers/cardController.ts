@@ -332,12 +332,22 @@ class CardController implements IController {
         const toEdit = await Card.findOne({
             where: {
                 id: req.params.id
-            }
+            },
+            include: [
+                User
+            ]
         });
         if (!toEdit) {
             return res.status(400).send({
                 message: "Invalid id."
             })
+        }
+        if (req.user.role != "ADMIN" && req.user.role != "EDITOR") {
+            if (toEdit.assignees.find(x => x.id == req.user.id)) {
+                return res.status(403).send({
+                    message: "You don't have the permission to perform this action."
+                })
+            }
         }
         if (toEdit.status != "REJECTED" && toEdit.status != "WAITING_APPROVAL") {
             return res.status(400).send({
