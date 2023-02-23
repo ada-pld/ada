@@ -249,6 +249,7 @@ class CardController implements IController {
         if (status == "notstarted")
             statusToSet = "NOT_STARTED";
         card.status = statusToSet;
+        await card.save();
         return res.status(200).send({
             message: "Success."
         })
