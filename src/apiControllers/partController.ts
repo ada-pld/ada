@@ -15,7 +15,7 @@ class PartController implements IController {
     }
 
     private initializeRoutes() {
-        this.router.get("/list", authBearer, checkPermAPI("EDITOR"), this.listParts);
+        this.router.get("/list", authBearer, checkPermAPI("MAINTENER"), this.listParts);
         this.router.post("/create", authBearer, checkPermAPI("EDITOR"), this.createPart);
     }
 
@@ -31,11 +31,13 @@ class PartController implements IController {
             ]
         })
         
-        allParts.forEach((x) => {
-            const resultObject = x.toJSON() as (Part & {totalInSprint: number, totalCards: number});
-            resultObject.totalInSprint = x.cards.filter(x => x.sprintId == req.wap.sprint.id).length;
-            resultObject.totalCards = x.cards.length;
-        });
+        if (req.user.role == "ADMIN" || req.user.role == "EDITOR") {
+            allParts.forEach((x) => {
+                const resultObject = x.toJSON() as (Part & {totalInSprint: number, totalCards: number});
+                resultObject.totalInSprint = x.cards.filter(x => x.sprintId == req.wap.sprint.id).length;
+                resultObject.totalCards = x.cards.length;
+            });
+        }
 
         return res.status(200).send(allParts);
     }
