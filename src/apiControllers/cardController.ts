@@ -136,7 +136,7 @@ class CardController implements IController {
                 })
             }
         }
-        let assignees :User[] = null;
+        let assignees :User[] = [];
         let name: string = req.body.name ? req.body.name : card.name;
         let asWho: string = req.body.asWho ? req.body.asWho : card.asWho;
         let task: string = req.body.task ? req.body.task : card.task;
