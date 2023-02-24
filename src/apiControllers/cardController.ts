@@ -154,6 +154,11 @@ class CardController implements IController {
             }
         }
         if (req.body.partId) {
+            if (card.status != "WAITING_APPROVAL" && card.status != "REJECTED") {
+                return res.status(400).send({
+                    message: "You cannot change the part of a card that as already been accepted."
+                });
+            }
             const part = await Part.findOne({
                 where: {
                     id: req.body.partId
