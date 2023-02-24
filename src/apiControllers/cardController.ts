@@ -198,6 +198,15 @@ class CardController implements IController {
                 }
                 assignees.push(one);
             }
+            if (req.user.role != "ADMIN" && req.user.role != "EDITOR") {
+                assignees.push(req.user);
+            }
+            assignees = Array.from(new Set(assignees));
+            if (assignees.length == 0) {
+                return res.status(400).send({
+                    message: "Assignees cannot be empty."
+                })
+            }
         }
         if (req.body.description) {
             description = req.body.description.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd();
@@ -214,7 +223,7 @@ class CardController implements IController {
             description: description,
             dods: dods
         })
-        if (assignees != null) {
+        if (assignees != null && assignees.length != 0) {
             await card.$set('assignees', assignees);
         }
         if (card.status != "REJECTED" && card.status != "WAITING_APPROVAL") {
