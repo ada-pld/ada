@@ -6,6 +6,7 @@ import Card from "../models/card";
 import Sprint from "../models/sprint";
 import User from "../models/user";
 import { Op } from "sequelize";
+import Part from "../models/part";
 
 class SprintController implements IController {
     public path = "/sprint";
@@ -37,10 +38,11 @@ class SprintController implements IController {
                         sprintId: req.wap.sprint.id
                     },
                     include: [
-                        User
+                        User,
+                        Part
                     ],
                     required: false
-                }
+                },
             ],
             where: {
                 id: {
