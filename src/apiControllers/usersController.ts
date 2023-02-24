@@ -19,7 +19,7 @@ class UserController implements IController {
     }
 
     private initializeRoutes() {
-        this.router.get("/list", authBearer, checkPermAPI("EDITOR"), this.listUsers);
+        this.router.get("/list", authBearer, checkPermAPI("MAINTENER"), this.listUsers);
         this.router.get("/:id", authBearer, this.getOne);
         this.router.get("/:id/cards", authBearer, checkPermAPI("MAINTENER"), this.getCards);
         this.router.post("/create", authBearer, checkPermAPI("EDITOR"), this.createUser);
@@ -28,24 +28,28 @@ class UserController implements IController {
     }
 
     private listUsers = async (req: Request, res: Response) => {
-        const allUsers = await User.findAll({
+        let allUsers = await User.findAll({
             include: [
                 Card
             ]
         });
 
-        allUsers.forEach((x) => {
-            const resultObject = x.toJSON() as User & {totalCards: number, totalWorkDays: number};
-            resultObject.totalCards = 0;
-            resultObject.totalWorkDays = 0;
-            x.cards.forEach((x: Card) => {
-                if (x.status != "REJECTED" && x.status != "WAITING_APPROVAL") {
-                    resultObject.totalCards++;
-                    resultObject.totalWorkDays += x.workingDays;
-                }
-            })
-            delete resultObject.cards;
-        });
+        if (req.user.role == "ADMIN" || req.user.role == "EDITOR") {
+            allUsers.forEach((x) => {
+                const resultObject = x.toJSON() as User & {totalCards: number, totalWorkDays: number};
+                resultObject.totalCards = 0;
+                resultObject.totalWorkDays = 0;
+                x.cards.forEach((x: Card) => {
+                    if (x.status != "REJECTED" && x.status != "WAITING_APPROVAL") {
+                        resultObject.totalCards++;
+                        resultObject.totalWorkDays += x.workingDays;
+                    }
+                })
+                delete resultObject.cards;
+            });
+        } else {
+            allUsers = allUsers.map(x => {x = x.toJSON(); delete x.cards; return x;});
+        }
 
         return res.status(200).send(allUsers);
     }

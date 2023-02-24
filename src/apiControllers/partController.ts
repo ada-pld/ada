@@ -20,7 +20,7 @@ class PartController implements IController {
     }
 
     private listParts = async (req: Request, res: Response) => {
-        const allParts = await Part.findAll({
+        let allParts = await Part.findAll({
             include: [
                 {
                     model: Card,
@@ -37,6 +37,8 @@ class PartController implements IController {
                 resultObject.totalInSprint = x.cards.filter(x => x.sprintId == req.wap.sprint.id).length;
                 resultObject.totalCards = x.cards.length;
             });
+        } else {
+            allParts = allParts.map(x => {x = x.toJSON(); delete x.cards; return x;});
         }
 
         return res.status(200).send(allParts);
