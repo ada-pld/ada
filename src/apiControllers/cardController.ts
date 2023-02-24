@@ -27,7 +27,15 @@ class CardController implements IController {
     }
 
     private create = async (req: Request, res: Response) => {
+        console.log(req.body);
         if (!req.body.name || !req.body.asWho || !req.body.task || !req.body.description || !req.body.workingDays || !req.body.dods || !req.body.partId) {
+            console.log(req.body.name)
+            console.log(req.body.asWho)
+            console.log(req.body.task)
+            console.log(req.body.description)
+            console.log(req.body.workingDays)
+            console.log(req.body.dods)
+            console.log(req.body.partId)
             return res.status(400).send({
                 message: "Invalid body."
             });
@@ -68,7 +76,12 @@ class CardController implements IController {
             for (const assigneeId of assArr) {
                 const one = await User.findOne({
                     where: {
-                        id: assigneeId
+                        id: {
+                            [Op.eq]: assigneeId
+                        },
+                        role: {
+                            [Op.not]: "USER"
+                        }
                     }
                 });
                 if (!one) {
@@ -79,7 +92,7 @@ class CardController implements IController {
                 assignees.push(one);
             }
         }
-        assignees.push(req.body.user);
+        assignees.push(req.user);
         const card = await Card.create({
             name: req.body.name,
             asWho: req.body.asWho,
@@ -165,7 +178,12 @@ class CardController implements IController {
             for (const assigneeId of assArr) {
                 const one = await User.findOne({
                     where: {
-                        id: assigneeId
+                        id: {
+                            [Op.eq]: assigneeId
+                        },
+                        role: {
+                            [Op.not]: "USER"
+                        }
                     }
                 })
                 if (!one) {
