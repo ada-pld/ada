@@ -345,7 +345,7 @@ class CardController implements IController {
                 message: "This card as already been approved."
             })
         }
-        if (req.body.reason) {
+        if (!req.body.reason) {
             return res.status(400).send({
                 message: "Missing rejection reason."
             })
