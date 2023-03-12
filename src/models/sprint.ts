@@ -38,6 +38,7 @@ class Sprint extends Model<Sprint> {
         const values = super.toJSON()
         delete values.deletedAt;
         delete values.createdAt;
+        delete values.updatedAt;
         return values;
     }
 

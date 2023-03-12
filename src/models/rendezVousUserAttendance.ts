@@ -41,6 +41,7 @@ class RendezVousUserAttendance extends Model<RendezVousUserAttendance> {
         const values = super.toJSON()
         delete values.deletedAt;
         delete values.createdAt;
+        delete values.updatedAt;
         return values;
     }
 

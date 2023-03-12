@@ -1,5 +1,6 @@
 import { Op } from 'sequelize';
-import { Model, Column, DataType, Default, AllowNull, Unique, Table, HasMany, BelongsToMany } from 'sequelize-typescript';
+import { Model, Column, DataType, Default, AllowNull, Unique, Table, HasMany, BelongsToMany, BelongsTo, ForeignKey } from 'sequelize-typescript';
+import RendezVousGroup from './rendezVousGroup';
 import RendezVousUserAttendance from './rendezVousUserAttendance';
 
 export type Sheduling = "PLANNED"|"PASSED";
@@ -39,6 +40,7 @@ class RendezVous extends Model<RendezVous> {
         const values = super.toJSON()
         delete values.deletedAt;
         delete values.createdAt;
+        delete values.updatedAt;
         return values;
     }
 }

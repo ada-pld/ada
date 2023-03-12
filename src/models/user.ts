@@ -106,6 +106,7 @@ class User extends Model<User> {
         delete values.isDefaultPassword;
         delete values.deletedAt;
         delete values.createdAt
+        delete values.updatedAt;
         return values;
     }
 

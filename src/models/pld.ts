@@ -43,6 +43,7 @@ class PLD extends Model<PLD> {
         const values = super.toJSON()
         delete values.deletedAt;
         delete values.createdAt;
+        delete values.updatedAt;
         return values;
     }
 
