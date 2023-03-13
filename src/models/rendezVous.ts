@@ -20,6 +20,10 @@ class RendezVous extends Model<RendezVous> {
     id: number;
 
     @AllowNull(false)
+    @Column(DataType.STRING)
+    title: string;
+
+    @AllowNull(false)
     @Column(DataType.DATE)
     date: Date;
 
