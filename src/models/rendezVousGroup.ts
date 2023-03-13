@@ -3,6 +3,10 @@ import { Model, Column, DataType, Default, AllowNull, Unique, Table, HasMany, Be
 import RendezVous from './rendezVous';
 import RendezVousUserAttendance from './rendezVousUserAttendance';
 
+@Table({
+    modelName: "RendezVousGroup",
+    tableName: "RendezVousGroups"
+})
 class RendezVousGroup extends Model<RendezVousGroup> {
 
     @Column({
