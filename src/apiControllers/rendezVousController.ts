@@ -115,17 +115,17 @@ class RendezVousController implements IController {
                 location: req.body.location,
             })
         ])
-        if (req.body.newGroup && req.body.newGroup === true) {
-            if (!req.body.newGroupName || !req.body.newGroupColor || !req.body.newGroupDuration || !req.body.newGroupLocation ) {
+        if (req.body.newGroup) {
+            if (!req.body.newGroup.name || !req.body.newGroup.color || !req.body.newGroup.duration || !req.body.newGroup.location ) {
                 return res.status(400).send({
                     message: "Invalid new group params"
                 });
             }
             const rendezVousGroup = await RendezVousGroup.create({
-                groupName: req.body.newGroupName,
-                groupColor: req.body.newGroupColor,
-                typicalDuration: req.body.newGroupDuration,
-                typicalLocation: req.body.newGroupLocation,
+                groupName: req.body.newGroup.name,
+                groupColor: req.body.newGroup.color,
+                typicalDuration: req.body.newGroup.duration,
+                typicalLocation: req.body.newGroup.location,
             });
             rendezVous.rendezVousGroupId = rendezVousGroup.id;
             await rendezVous.save();
