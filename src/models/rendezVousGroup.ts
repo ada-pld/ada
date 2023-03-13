@@ -33,7 +33,7 @@ class RendezVousGroup extends Model<RendezVousGroup> {
     @Column(DataType.STRING)
     typicalLocation: string;
 
-    @AllowNull(false)
+    @Default(false)
     @Column(DataType.BOOLEAN)
     PLDMustBeGenerated: boolean;
 
