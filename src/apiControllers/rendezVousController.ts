@@ -89,7 +89,7 @@ class RendezVousController implements IController {
     }
 
     private create = async (req: Request, res: Response) => {
-        if (!req.body.date || !req.body.agenda) {
+        if (!req.body.date || !req.body.agenda || !req.body.title || !req.body.location || !req.body.duration) {
             return res.status(400).send({
                 message: "Invalid body."
             });
@@ -98,6 +98,12 @@ class RendezVousController implements IController {
         if (date.toString() === "Invalid Date") {
             return res.status(400).send({
                 message: "Invalid date."
+            })
+        }
+        const duration = parseInt(req.body.duration);
+        if (isNaN(duration)) {
+            return res.status(400).send({
+                message: "Invalid duration."
             })
         }
         const [allUsers, rendezVous] = await Promise.all([
@@ -109,22 +115,30 @@ class RendezVousController implements IController {
                 }
             }),
             RendezVous.create({
+                title: req.body.title,
                 date: date,
                 agenda: req.body.agenda.replace(/[\r]+/g, ''),
-                duration: req.body.duration,
+                duration: duration,
                 location: req.body.location,
             })
         ])
         if (req.body.newGroup) {
-            if (!req.body.newGroup.name || !req.body.newGroup.color || !req.body.newGroup.duration || !req.body.newGroup.location ) {
+            if (!req.body.newGroup.name || !req.body.newGroup.color || !req.body.newGroup.duration || !req.body.newGroup.location) {
                 return res.status(400).send({
                     message: "Invalid new group params"
                 });
             }
+            const color = parseInt(req.body.newGroup.color);
+            const duration = parseInt(req.body.duration);
+            if (isNaN(duration) || isNaN(color)) {
+                return res.status(400).send({
+                    message: "Invalid duration or color in newGroup."
+                });
+            }
             const rendezVousGroup = await RendezVousGroup.create({
                 groupName: req.body.newGroup.name,
-                groupColor: req.body.newGroup.color,
-                typicalDuration: req.body.newGroup.duration,
+                groupColor: color,
+                typicalDuration: duration,
                 typicalLocation: req.body.newGroup.location,
             });
             rendezVous.rendezVousGroupId = rendezVousGroup.id;
