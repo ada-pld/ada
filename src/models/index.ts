@@ -10,6 +10,7 @@ import RendezVousUserAttendance from "./rendezVousUserAttendance";
 import Session from "./session";
 import Sprint from "./sprint";
 import User from "./user";
+import RendezVousGroup from "./rendezVousGroup";
 
 const sequelize = new Sequelize({
     host: db_config[process.env.NODE_ENV].host,
@@ -29,6 +30,7 @@ const sequelize = new Sequelize({
         PLD,
         RendezVous,
         RendezVousUserAttendance,
+        RendezVousGroup,
         Session,
     ]
 });
