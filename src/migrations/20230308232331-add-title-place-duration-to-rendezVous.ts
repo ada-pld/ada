@@ -5,9 +5,12 @@ module.exports = {
         async (transaction) => {
             return Promise.all([
                 queryInterface.addColumn('RendezVouss', 'duration', {
-                    type: DataTypes.STRING
+                    type: DataTypes.INTEGER
                 }),
                 queryInterface.addColumn('RendezVouss', 'location', {
+                    type: DataTypes.STRING
+                }),
+                queryInterface.addColumn('RendezVouss', 'title', {
                     type: DataTypes.STRING
                 }),
             ])
@@ -19,6 +22,7 @@ module.exports = {
             return Promise.all([
                 queryInterface.removeColumn('RendezVouss', 'duration'),
                 queryInterface.removeColumn('RendezVouss', 'location'),
+                queryInterface.removeColumn('RendezVouss', 'title'),
             ])
         }
     )
