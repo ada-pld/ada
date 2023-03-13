@@ -36,6 +36,19 @@ class RendezVous extends Model<RendezVous> {
     @HasMany(() => RendezVousUserAttendance)
     userAttendances: RendezVousUserAttendance[];
 
+    @ForeignKey(() => RendezVousGroup)
+    @Column(DataType.INTEGER)
+    rendezVousGroupId: number
+
+    @BelongsTo(() => RendezVousGroup)
+    rendezVousGroup: RendezVousGroup;
+
+    @Column(DataType.INTEGER)
+    duration: number;
+
+    @Column(DataType.STRING)
+    location: string;
+
     toJSON() {
         const values = super.toJSON()
         delete values.deletedAt;
