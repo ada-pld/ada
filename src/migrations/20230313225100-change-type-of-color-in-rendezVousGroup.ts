@@ -4,7 +4,7 @@ module.exports = {
     up: (queryInterface: QueryInterface): Promise<any> => queryInterface.sequelize.transaction(
         async (transaction) => {
             return Promise.all([
-                queryInterface.changeColumn('RendezVousGroups', 'color', {
+                queryInterface.changeColumn('RendezVousGroups', 'groupColor', {
                     type: DataTypes.STRING,
                     allowNull: false
                 })
@@ -15,7 +15,7 @@ module.exports = {
     down: (queryInterface: QueryInterface): Promise<any> => queryInterface.sequelize.transaction(
         async (transaction) => {
             return Promise.all([
-                queryInterface.changeColumn('RendezVousGroups', 'color', {
+                queryInterface.changeColumn('RendezVousGroups', 'groupColor', {
                     type: DataTypes.INTEGER,
                     allowNull: false
                 })
