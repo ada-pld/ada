@@ -4,8 +4,16 @@ module.exports = {
     up: (queryInterface: QueryInterface): Promise<any> => queryInterface.sequelize.transaction(
         async (transaction) => {
             return Promise.all([
-                queryInterface.changeColumn('Cards', 'workingDays', {
-                    type: DataTypes.FLOAT
+                queryInterface.addConstraint('RendezVouss', {
+                    fields: ['rendezVousGroupId'],
+                    type: 'foreign key',
+                    references: {
+                        table: 'RendezVousGroups',
+                        field: 'id'
+                    },
+                    onUpdate: "CASCADE",
+                    onDelete: "CASCADE",
+                    transaction: transaction
                 })
             ])
         }
@@ -14,9 +22,7 @@ module.exports = {
     down: (queryInterface: QueryInterface): Promise<any> => queryInterface.sequelize.transaction(
         async (transaction) => {
             return Promise.all([
-                queryInterface.changeColumn('Cards', 'workingDays', {
-                    type: DataTypes.INTEGER
-                })
+                queryInterface.removeColumn('RendezVouss', 'rendezVousGroupId', { transaction: transaction }),
             ])
         }
     )
