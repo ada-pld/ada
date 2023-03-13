@@ -5,6 +5,7 @@ import ConfigController from "./configController";
 import PartController from "./partController";
 import PLDController from "./pldController";
 import RendezVousController from "./rendezVousController";
+import RendezVousGroupController from "./rendezVousGroupController";
 import SprintController from "./sprintController";
 import UserController from "./usersController";
 
@@ -14,6 +15,7 @@ export const apiControllers :IController[] = [
     new PartController(),
     new ConfigController(),
     new RendezVousController(),
+    new RendezVousGroupController(),
     new SprintController(),
     new CardController(),
     new PLDController(),

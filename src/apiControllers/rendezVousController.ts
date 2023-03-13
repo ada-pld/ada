@@ -7,6 +7,7 @@ import User from "../models/user";
 import RendezVousUserAttendance from "../models/rendezVousUserAttendance";
 import { sendRendezVousCreatedMail, sendRendezVousPassedMail } from "../mails";
 import { Op } from "sequelize";
+import RendezVousGroup from "../models/rendezVousGroup";
 
 class RendezVousController implements IController {
     public path = "/rendezVous";
@@ -26,7 +27,8 @@ class RendezVousController implements IController {
     private list = async (req: Request, res: Response) => {
         let rendezVouss = await RendezVous.findAll({
             include: [
-                RendezVousUserAttendance
+                RendezVousUserAttendance,
+                RendezVousGroup
             ],
             order: [
                 ["date", "DESC"]
@@ -56,7 +58,8 @@ class RendezVousController implements IController {
     private getOne = async (req: Request, res: Response) => {
         let rendezVous = await RendezVous.findOne({
             include: [
-                RendezVousUserAttendance
+                RendezVousUserAttendance,
+                RendezVousGroup
             ],
             where: {
                 id: req.params.id
@@ -107,9 +110,39 @@ class RendezVousController implements IController {
             }),
             RendezVous.create({
                 date: date,
-                agenda: req.body.agenda.replace(/[\r]+/g, '')
+                agenda: req.body.agenda.replace(/[\r]+/g, ''),
+                duration: req.body.duration,
+                location: req.body.location,
             })
         ])
+        if (req.body.newGroup && req.body.newGroup === true) {
+            if (!req.body.newGroupName || !req.body.newGroupColor || !req.body.newGroupDuration || !req.body.newGroupLocation ) {
+                return res.status(400).send({
+                    message: "Invalid new group params"
+                });
+            }
+            const rendezVousGroup = await RendezVousGroup.create({
+                groupName: req.body.newGroupName,
+                groupColor: req.body.newGroupColor,
+                typicalDuration: req.body.newGroupDuration,
+                typicalLocation: req.body.newGroupLocation,
+            });
+            rendezVous.rendezVousGroupId = rendezVousGroup.id;
+            await rendezVous.save();
+        } else if(req.body.groupId) {
+            const rendezVousGroup = await RendezVousGroup.findOne({
+                where: {
+                    id: req.body.groupId
+                }
+            });
+            if (!rendezVousGroup) {
+                return res.status(400).send({
+                    message: "Invalid rendezVousGroup id"
+                });
+            }
+            rendezVous.rendezVousGroupId = rendezVousGroup.id;
+            await rendezVous.save();
+        }
         let allPromises = [];
         for (const user of allUsers) {
             allPromises.push(new Promise(async (resolve, reject) => {
@@ -145,6 +178,9 @@ class RendezVousController implements IController {
                     include: [
                         User
                     ]
+                },
+                {
+                    model: RendezVousGroup
                 }
             ]
         });
@@ -162,12 +198,42 @@ class RendezVousController implements IController {
                 })
             }
         }
+        if (req.body.newGroup && req.body.newGroup === true) {
+            if (!req.body.newGroupName || !req.body.newGroupColor || !req.body.newGroupDuration || !req.body.newGroupLocation) {
+                return res.status(400).send({
+                    message: "Invalid new group params"
+                });
+            }
+            const rendezVousGroup = await RendezVousGroup.create({
+                groupName: req.body.newGroupName,
+                groupColor: req.body.newGroupColor,
+                typicalDuration: req.body.newGroupDuration,
+                typicalLocation: req.body.newGroupLocation,
+            });
+            rendezVous.rendezVousGroupId = rendezVousGroup.id;
+            await rendezVous.save();
+        } else if(req.body.groupId) {
+            const rendezVousGroup = await RendezVousGroup.findOne({
+                where: {
+                    id: req.body.groupId
+                }
+            });
+            if (!rendezVousGroup) {
+                return res.status(400).send({
+                    message: "Invalid rendezVousGroup id"
+                });
+            }
+            rendezVous.rendezVousGroupId = rendezVousGroup.id;
+            await rendezVous.save();
+        }
         rendezVous.set({
             date: date ?? rendezVous.date,
             agenda: req.body.agenda ? req.body.agenda.replace(/[\r]+/g, '') : rendezVous.agenda,
-            report: req.body.report ? req.body.report.replace(/[\r]+/g, '') : rendezVous.report
+            report: req.body.report ? req.body.report.replace(/[\r]+/g, '') : rendezVous.report,
+            duration: req.body.duration ? req.body.duration : rendezVous.duration,
+            location: req.body.location ? req.body.location : rendezVous.location,
         })
-        if (req.body.passed && req.body.passed == "true") {
+        if (req.body.passed && req.body.passed === true) {
             if (rendezVous.sheduling != "PASSED") {
                 newPassed = true;
             }
