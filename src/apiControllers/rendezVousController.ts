@@ -129,7 +129,7 @@ class RendezVousController implements IController {
                 });
             }
             const color = parseInt(req.body.newGroup.color);
-            const duration = parseInt(req.body.duration);
+            const duration = parseInt(req.body.newGroup.duration);
             if (isNaN(duration) || isNaN(color)) {
                 return res.status(400).send({
                     message: "Invalid duration or color in newGroup."
@@ -212,17 +212,33 @@ class RendezVousController implements IController {
                 })
             }
         }
-        if (req.body.newGroup && req.body.newGroup === true) {
-            if (!req.body.newGroupName || !req.body.newGroupColor || !req.body.newGroupDuration || !req.body.newGroupLocation) {
+        let duration = undefined;
+        if (req.body.duration) {
+            duration = parseInt(req.body.duration);
+            if (isNaN(duration)) {
+                return res.status(400).send({
+                    message: "Invalid duration."
+                })
+            }
+        }
+        if (req.body.newGroup) {
+            if (!req.body.newGroup.name || !req.body.newGroup.color || !req.body.newGroup.duration || !req.body.newGroup.location) {
                 return res.status(400).send({
                     message: "Invalid new group params"
                 });
             }
+            const color = parseInt(req.body.newGroup.color);
+            const duration = parseInt(req.body.newGroup.duration);
+            if (isNaN(duration) || isNaN(color)) {
+                return res.status(400).send({
+                    message: "Invalid duration or color in newGroup."
+                });
+            }
             const rendezVousGroup = await RendezVousGroup.create({
-                groupName: req.body.newGroupName,
-                groupColor: req.body.newGroupColor,
-                typicalDuration: req.body.newGroupDuration,
-                typicalLocation: req.body.newGroupLocation,
+                groupName: req.body.newGroup.name,
+                groupColor: color,
+                typicalDuration: duration,
+                typicalLocation: req.body.newGroup.location,
             });
             rendezVous.rendezVousGroupId = rendezVousGroup.id;
             await rendezVous.save();
@@ -241,6 +257,7 @@ class RendezVousController implements IController {
             await rendezVous.save();
         }
         rendezVous.set({
+            title: req.body.title ? req.body.title : rendezVous.title,
             date: date ?? rendezVous.date,
             agenda: req.body.agenda ? req.body.agenda.replace(/[\r]+/g, '') : rendezVous.agenda,
             report: req.body.report ? req.body.report.replace(/[\r]+/g, '') : rendezVous.report,
