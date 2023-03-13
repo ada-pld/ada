@@ -4,11 +4,22 @@ module.exports = {
     up: (queryInterface: QueryInterface): Promise<any> => queryInterface.sequelize.transaction(
         async (transaction) => {
             return Promise.all([
-                queryInterface.addConstraint('RendezVouss', {
-                    fields: ['rendezVousGroupId'],
+                queryInterface.addConstraint('RendezVousUserAttendances', {
+                    fields: ['rendezVousId'],
                     type: 'foreign key',
                     references: {
-                        table: 'RendezVousGroups',
+                        table: 'RendezVouss',
+                        field: 'id'
+                    },
+                    onUpdate: "CASCADE",
+                    onDelete: "CASCADE",
+                    transaction: transaction
+                }),
+                queryInterface.addConstraint('RendezVousUserAttendances', {
+                    fields: ['userId'],
+                    type: 'foreign key',
+                    references: {
+                        table: 'Users',
                         field: 'id'
                     },
                     onUpdate: "CASCADE",
@@ -22,7 +33,8 @@ module.exports = {
     down: (queryInterface: QueryInterface): Promise<any> => queryInterface.sequelize.transaction(
         async (transaction) => {
             return Promise.all([
-                queryInterface.removeColumn('RendezVouss', 'rendezVousGroupId', { transaction: transaction }),
+                queryInterface.removeColumn('RendezVousUserAttendances', 'rendezVousId', { transaction: transaction }),
+                queryInterface.removeColumn('RendezVousUserAttendances', 'userId', { transaction: transaction })
             ])
         }
     )
