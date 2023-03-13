@@ -128,16 +128,15 @@ class RendezVousController implements IController {
                     message: "Invalid new group params"
                 });
             }
-            const color = parseInt(req.body.newGroup.color);
             const duration = parseInt(req.body.newGroup.duration);
-            if (isNaN(duration) || isNaN(color)) {
+            if (isNaN(duration)) {
                 return res.status(400).send({
-                    message: "Invalid duration or color in newGroup."
+                    message: "Invalid duration in newGroup."
                 });
             }
             const rendezVousGroup = await RendezVousGroup.create({
                 groupName: req.body.newGroup.name,
-                groupColor: color,
+                groupColor: req.body.newGroup.color,
                 typicalDuration: duration,
                 typicalLocation: req.body.newGroup.location,
             });
@@ -227,16 +226,15 @@ class RendezVousController implements IController {
                     message: "Invalid new group params"
                 });
             }
-            const color = parseInt(req.body.newGroup.color);
             const duration = parseInt(req.body.newGroup.duration);
-            if (isNaN(duration) || isNaN(color)) {
+            if (isNaN(duration)) {
                 return res.status(400).send({
-                    message: "Invalid duration or color in newGroup."
+                    message: "Invalid duration in newGroup."
                 });
             }
             const rendezVousGroup = await RendezVousGroup.create({
                 groupName: req.body.newGroup.name,
-                groupColor: color,
+                groupColor: req.body.newGroup.color,
                 typicalDuration: duration,
                 typicalLocation: req.body.newGroup.location,
             });

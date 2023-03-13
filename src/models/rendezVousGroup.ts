@@ -22,8 +22,8 @@ class RendezVousGroup extends Model<RendezVousGroup> {
     groupName: string;
 
     @AllowNull(false)
-    @Column(DataType.INTEGER)
-    groupColor: number;
+    @Column(DataType.STRING)
+    groupColor: string;
 
     @AllowNull(false)
     @Column(DataType.INTEGER)
