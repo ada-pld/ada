@@ -81,7 +81,7 @@ class SprintController implements IController {
                     injected.JHNotStarted += (card.workingDays / card.assignees.length);
                 }
             }
-            injected.JHMissing = req.wap.sprint.workDaysNeeded - injected.JHIntended;
+            injected.JHMissing = Math.max(req.wap.sprint.workDaysNeeded - injected.JHIntended, 0);
         }
         return res.status(200).send(allUsers);
     }
