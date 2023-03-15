@@ -27,30 +27,35 @@ class RendezVousController implements IController {
     private list = async (req: Request, res: Response) => {
         let rendezVouss = await RendezVous.findAll({
             include: [
-                RendezVousUserAttendance,
-                RendezVousGroup
+                RendezVousGroup,
+                {
+                    model: RendezVousUserAttendance,
+                    include: [
+                        User
+                    ]
+                }
             ],
             order: [
                 ["date", "DESC"]
             ]
         });
-        let arrOfPromises = [];
         rendezVouss = rendezVouss.map((rendezVous) => {
+            rendezVous = rendezVous.toJSON();
             if (req.user.role == "MAINTENER" && rendezVous.sheduling != "PASSED") {
-                rendezVous = rendezVous.toJSON();
                 delete rendezVous.userAttendances;
                 delete rendezVous.report;
                 return rendezVous;
             }
-            rendezVous.userAttendances.forEach((x) => {
-                arrOfPromises.push(new Promise(async (resolve, reject) => {
-                    x.user = await x.$get("user");
-                    resolve(true);
-                }));
+            rendezVous.userAttendances = rendezVous.userAttendances.map((userAttendance) => {
+                delete userAttendance.user.password;
+                delete userAttendance.user.role;
+                delete userAttendance.user.isDefaultPassword;
+                delete userAttendance.user.createdAt;
+                delete userAttendance.user.updatedAt;
+                return userAttendance;
             })
             return rendezVous;
-        })
-        await Promise.all(arrOfPromises);
+        });
 
         return res.status(200).send(rendezVouss);
     }
