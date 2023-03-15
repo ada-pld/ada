@@ -100,6 +100,9 @@ class CardController implements IController {
                     case "FINISHED":
                         toRet.JHDones += toAdd; break;
                 }
+                if (card.status != "REJECTED" && card.status != "WAITING_APPROVAL") {
+                    toRet.JHIntended += toAdd;
+                }
             })
             toRet.JHMissing = req.wap.sprint.workDaysNeeded - toRet.JHIntended;
             return toRet;
