@@ -24,6 +24,7 @@ class UserController implements IController {
         this.router.post("/create", authBearer, checkPermAPI("EDITOR"), this.createUser);
         this.router.post("/edit", authBearer, this.editUser);
         this.router.post("/forgotPassword", this.forgotPassword);
+        this.router.get("/cardsStats", authBearer, checkPermAPI("MAINTENER"), this.cardsStats);
     }
 
     private listUsers = async (req: Request, res: Response) => {
@@ -235,6 +236,89 @@ class UserController implements IController {
             });
         }
     ]
+
+    private cardsStats = async (req: Request, res: Response) => {
+        let allUsers = await User.findAll({
+            order: [['firstname', 'ASC'], ['lastname', 'ASC']],
+            include: [
+                {
+                    model: Card,
+                    include: [
+                        Part,
+                        Sprint,
+                        User
+                    ],
+                }
+            ]
+        });
+        if (req.query.userId) {
+            const user = await User.findOne({
+                where: {
+                    id: req.query.userId as any
+                }
+            });
+            if (!user) {
+                return res.status(400).send({
+                    message: "Invalid user id"
+                });
+            }
+            allUsers = allUsers.filter(u => u.id == user.id);
+        }
+        if (req.query.sprintId) {
+            const sprint = await Sprint.findOne({
+                where: {
+                    id: req.query.sprintId as any
+                }
+            })
+            if (!sprint) {
+                return res.status(400).send({
+                    message: "Invalid sprint id"
+                });
+            }
+            allUsers.forEach(user => {
+                user.cards = user.cards.filter(card => card.sprintId == sprint.id)
+            })
+        }
+        allUsers = allUsers.map(user => {
+            const toRet = user.toJSON() as (User & {
+                JHIntended: number, 
+                JHDones: number,
+                JHInProgress: number,
+                JHNotStarted: number,
+                JHRejected: number,
+                JHWaitingApproval: number,
+                JHMissing: number,
+            });
+            toRet.JHIntended = 0;
+            toRet.JHDones = 0;
+            toRet.JHInProgress = 0;
+            toRet.JHNotStarted = 0;
+            toRet.JHRejected = 0;
+            toRet.JHWaitingApproval = 0;
+            toRet.JHMissing = 0;
+            user.cards.forEach(card => {
+                const toAdd = (card.workingDays / card.assignees.length);
+                switch (card.status) {
+                    case "REJECTED":
+                        toRet.JHRejected += toAdd; break;
+                    case "WAITING_APPROVAL":
+                        toRet.JHWaitingApproval += toAdd; break;
+                    case "NOT_STARTED":
+                        toRet.JHNotStarted += toAdd; break;
+                    case "STARTED":
+                        toRet.JHInProgress += toAdd; break;
+                    case "FINISHED":
+                        toRet.JHDones += toAdd; break;
+                }
+                if (card.status != "REJECTED" && card.status != "WAITING_APPROVAL") {
+                    toRet.JHIntended += toAdd;
+                }
+            })
+            toRet.JHMissing = req.wap.sprint.workDaysNeeded - toRet.JHIntended;
+            return toRet;
+        })
+        return res.status(200).send((allUsers.length == 1) ? allUsers[0] : allUsers);
+    }
 }
 
 export default UserController;
