@@ -21,7 +21,6 @@ class UserController implements IController {
     private initializeRoutes() {
         this.router.get("/list", authBearer, checkPermAPI("MAINTENER"), this.listUsers);
         this.router.get("/:id", authBearer, this.getOne);
-        this.router.get("/:id/cards", authBearer, checkPermAPI("MAINTENER"), this.getCards);
         this.router.post("/create", authBearer, checkPermAPI("EDITOR"), this.createUser);
         this.router.post("/edit", authBearer, this.editUser);
         this.router.post("/forgotPassword", this.forgotPassword);
@@ -66,62 +65,6 @@ class UserController implements IController {
             });
         }
         return res.status(200).send(user);
-    }
-
-    private getCards = async (req: Request, res: Response) => {
-        const user = await User.findOne({
-            where: {
-                id: req.params.id
-            },
-            include: [
-                {
-                    model: Card,
-                    include: [
-                        Part,
-                        Sprint,
-                        User
-                    ]
-                }
-            ]
-        });
-        if (!user) {
-            return res.status(400).send({
-                message: "Invalid id"
-            });
-        }
-        if (req.query.sprintId) {
-            const sprint = await Sprint.findOne({
-                where: {
-                    id: req.query.sprintId as any
-                }
-            });
-            if (!sprint) {
-                return res.status(400).send({
-                    message: "Invalid sprint id"
-                });
-            }
-            user.cards = user.cards.filter(x => x.sprintId == sprint.id);
-        }
-        user.cards.forEach(x => x.assignees = x.assignees.map(x => x.toJSON()))
-        user.cards = user.cards.map(x => x.toJSON());
-        let intended = 0;
-        let waiting_approval = 0;
-        let rejected = 0;
-        user.cards.forEach((x) => {
-            if (x.status == "FINISHED" || x.status == "NOT_STARTED" || x.status == "STARTED") {
-                intended += (x.workingDays / x.assignees.length);
-            } else if (x.status == "REJECTED") {
-                rejected += (x.workingDays / x.assignees.length);
-            } else {
-                waiting_approval += (x.workingDays / x.assignees.length);
-            }
-        })
-        return res.status(200).send({
-            cards: user.cards,
-            intended: intended,
-            waiting_approval: waiting_approval,
-            rejected: rejected
-        });
     }
 
     private createUser = [

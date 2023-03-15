@@ -18,7 +18,6 @@ class SprintController implements IController {
 
     private initializeRoutes() {
         this.router.get("/active", authBearer, this.active);
-        this.router.get("/cardStats", authBearer, checkPermAPI("MAINTENER"), this.cardStats);
         this.router.get("/list", authBearer, checkPermAPI("EDITOR"), this.listSprint);
         this.router.get("/use/:id", authBearer, checkPermAPI("EDITOR"), this.useSprint);
         this.router.post("/create", authBearer, checkPermAPI("EDITOR"), this.createSprint);
@@ -26,64 +25,6 @@ class SprintController implements IController {
 
     private active = async (req: Request, res: Response) => {
         return res.status(200).send(req.wap.sprint);
-    }
-
-    private cardStats = async (req: Request, res: Response) => {
-        let allUsers = await User.findAll({
-            order: [['firstname', 'ASC'], ['lastname', 'ASC']],
-            include: [
-                {
-                    model: Card,
-                    where: {
-                        sprintId: req.wap.sprint.id
-                    },
-                    include: [
-                        User,
-                        Part
-                    ],
-                    required: false
-                },
-            ],
-            where: {
-                id: {
-                    [Op.not]: "USER"
-                }
-            }
-        })
-        allUsers = allUsers.map(x => x.toJSON());
-
-        for (const user of allUsers) {
-            const injected = user as (User & {
-                JHIntended: number, 
-                JHDones: number,
-                JHInProgress: number,
-                JHNotStarted: number,
-                JHNotAccepted: number,
-                JHMissing: number,
-            })
-            injected.JHIntended = 0;
-            injected.JHDones = 0;
-            injected.JHInProgress = 0;
-            injected.JHNotStarted = 0;
-            injected.JHNotAccepted = 0;
-            injected.JHMissing = 0;
-            for (const card of user.cards) {
-                if (card.status != "REJECTED" && card.status != "WAITING_APPROVAL") {
-                    injected.JHIntended += (card.workingDays / card.assignees.length);
-                } else {
-                    injected.JHNotAccepted += (card.workingDays / card.assignees.length);
-                }
-                if (card.status == "FINISHED") {
-                    injected.JHDones += (card.workingDays / card.assignees.length);
-                } else if (card.status == "STARTED") {
-                    injected.JHInProgress += (card.workingDays / card.assignees.length);
-                } else if (card.status == "NOT_STARTED") {
-                    injected.JHNotStarted += (card.workingDays / card.assignees.length);
-                }
-            }
-            injected.JHMissing = req.wap.sprint.workDaysNeeded - injected.JHIntended;
-        }
-        return res.status(200).send(allUsers);
     }
 
     private listSprint = async (req: Request, res: Response) => {
