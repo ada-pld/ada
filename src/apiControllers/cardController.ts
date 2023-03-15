@@ -69,7 +69,7 @@ class CardController implements IController {
                 user.cards = user.cards.filter(card => card.sprintId == sprint.id)
             })
         }
-        allUsers.map(user => {
+        allUsers = allUsers.map(user => {
             const toRet = user.toJSON() as (User & {
                 JHIntended: number, 
                 JHDones: number,
@@ -99,6 +99,7 @@ class CardController implements IController {
                 }
             })
             toRet.JHMissing = req.wap.sprint.workDaysNeeded - toRet.JHIntended;
+            return toRet;
         })
         return res.status(200).send((allUsers.length == 1) ? allUsers[0] : allUsers);
     }
