@@ -22,6 +22,7 @@ class RendezVousController implements IController {
         this.router.get("/:id", authBearer, checkPermAPI("MAINTENER"), this.getOne);
         this.router.post("/create", authBearer, checkPermAPI("EDITOR"), this.create);
         this.router.post("/edit", authBearer, checkPermAPI("EDITOR"), this.edit);
+        this.router.get("/delete/:id", authBearer, checkPermAPI("EDITOR"), this.delete);
     }
 
     private list = async (req: Request, res: Response) => {
@@ -302,6 +303,23 @@ class RendezVousController implements IController {
         await Promise.all(allPromises);
         return res.status(200).send({
             message: "Success."
+        });
+    }
+
+    private delete = async (req: Request, res: Response) => {
+        const rendezVous = await RendezVous.findOne({
+            where: {
+                id: req.params.id as any
+            }
+        });
+        if (!rendezVous) {
+            return res.status(400).send({
+                message: "Invalid rendezVous id"
+            });
+        }
+        await rendezVous.destroy();
+        return res.status(200).send({
+            message: "Success"
         });
     }
 
