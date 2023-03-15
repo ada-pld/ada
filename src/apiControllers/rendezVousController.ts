@@ -276,18 +276,35 @@ class RendezVousController implements IController {
         }
         let allPromises = [];
         allPromises.push(rendezVous.save());
-        for (const attendance of rendezVous.userAttendances) {
-            if (req.body["presence_" + attendance.id]) {
-                const value = req.body["presence_" + attendance.id];
-                if (value == "na") {
-                    attendance.attendance = "UNDEFINED";
-                } else if (value == "present") {
-                    attendance.attendance = "PRESENT";
-                } else if (value == "absent") {
-                    attendance.attendance = "ABSENT";
-                }
-                allPromises.push(attendance.save());
+        if (req.body.attendances && !Array.isArray(req.body.attendances)) {
+            return res.status(400).send({
+                message: "Attendances is not an array."
+            });
+        }
+        for (const editedAttendance of req.body.attendances) {
+            if (!editedAttendance.id || !editedAttendance.presence) {
+                return res.status(400).send({
+                    message: "Invalid attendance body."
+                });
             }
+            const attendance = rendezVous.userAttendances.find(x => x.id == editedAttendance.id);
+            if (!attendance) {
+                return res.status(400).send({
+                    message: "Invalid attendance id."
+                });
+            }
+            if (editedAttendance.presence == "na") {
+                attendance.attendance = "UNDEFINED";
+            } else if (editedAttendance.presence == "present") {
+                attendance.attendance = "PRESENT";
+            } else if (editedAttendance.presence == "absent") {
+                attendance.attendance = "ABSENT";
+            } else {
+                return res.status(400).send({
+                    message: "Invalid attendance value."
+                });
+            }
+            allPromises.push(attendance.save());
         }
         if (newPassed) {
             for (const attendance of rendezVous.userAttendances) {
