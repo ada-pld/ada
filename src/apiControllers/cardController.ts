@@ -104,15 +104,7 @@ class CardController implements IController {
     }
 
     private create = async (req: Request, res: Response) => {
-        console.log(req.body);
         if (!req.body.name || !req.body.asWho || !req.body.task || !req.body.description || !req.body.workingDays || !req.body.dods || !req.body.partId) {
-            console.log(req.body.name)
-            console.log(req.body.asWho)
-            console.log(req.body.task)
-            console.log(req.body.description)
-            console.log(req.body.workingDays)
-            console.log(req.body.dods)
-            console.log(req.body.partId)
             return res.status(400).send({
                 message: "Invalid body."
             });

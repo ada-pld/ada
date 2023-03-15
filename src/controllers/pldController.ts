@@ -88,7 +88,7 @@ class PLDController implements IController {
             this.importedGenerator.generatePld = imported.default.getGenerator();
             this.importedGenerator.requireImages = imported.default.getRequired();
         } catch (ex) {
-            console.log(ex);
+            console.error(ex);
             return res.redirect("/pld/setGenerator/?error=invalid_generator");
         }
         next();
@@ -122,7 +122,7 @@ class PLDController implements IController {
     private setGeneratorPOST = async (req: Request, res: Response) => {
         this.upload.single("generator.js")(req, res, async function (err) {
             if (err) {
-                console.log(err);
+                console.error(err);
                 return res.redirect("/pld/setGenerator?error=invalid_file_type");
             }
             if (req.file) {
@@ -148,7 +148,7 @@ class PLDController implements IController {
         const filesMiddleware = this.upload.fields(fields);
         filesMiddleware(req, res, async function (err) {
             if (err) {
-                console.log(err);
+                console.error(err);
                 return res.redirect("/pld/setImages?error=invalid_file_type");
             }
             for (const required of requireImages) {

@@ -47,7 +47,7 @@ module.exports = {
 
     down: (queryInterface: QueryInterface): Promise<any> => queryInterface.sequelize.transaction(
         async (transaction) => {
-            console.log("You can't go further beyond in the past migrations\nThis would cause data loss");
+            console.error("You can't go further beyond in the past migrations\nThis would cause data loss");
             transaction.rollback();
         }
     )

@@ -53,7 +53,7 @@ class PLDController implements IController {
             this.importedGenerator.generatePld = imported.default.getGenerator();
             this.importedGenerator.requireImages = imported.default.getRequired();
         } catch (ex) {
-            console.log(ex);
+            console.error(ex);
             return res.status(400).send({
                 message: "Invalid generator."
             })
@@ -123,7 +123,7 @@ class PLDController implements IController {
     private setGenerator = async (req: Request, res: Response) => {
         this.upload.single("generator.js")(req, res, async function (err) {
             if (err) {
-                console.log(err);
+                console.error(err);
                 return res.status(400).send({
                     message: "Invalid file type."
                 })
@@ -148,7 +148,7 @@ class PLDController implements IController {
         const filesMiddleware = this.upload.fields(fields);
         filesMiddleware(req, res, async function (err) {
             if (err) {
-                console.log(err);
+                console.error(err);
                 return res.status(400).send({
                     message: "Invalid file type."
                 })
