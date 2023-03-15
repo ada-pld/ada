@@ -75,27 +75,30 @@ class CardController implements IController {
                 JHDones: number,
                 JHInProgress: number,
                 JHNotStarted: number,
-                JHNotAccepted: number,
+                JHRejected: number,
+                JHWaitingApproval: number,
                 JHMissing: number,
             });
             toRet.JHIntended = 0;
             toRet.JHDones = 0;
             toRet.JHInProgress = 0;
             toRet.JHNotStarted = 0;
-            toRet.JHNotAccepted = 0;
+            toRet.JHRejected = 0;
+            toRet.JHWaitingApproval = 0;
             toRet.JHMissing = 0;
             user.cards.forEach(card => {
-                if (card.status != "REJECTED" && card.status != "WAITING_APPROVAL") {
-                    toRet.JHIntended += (card.workingDays / card.assignees.length);
-                } else {
-                    toRet.JHNotAccepted += (card.workingDays / card.assignees.length);
-                }
-                if (card.status == "FINISHED") {
-                    toRet.JHDones += (card.workingDays / card.assignees.length);
-                } else if (card.status == "STARTED") {
-                    toRet.JHInProgress += (card.workingDays / card.assignees.length);
-                } else if (card.status == "NOT_STARTED") {
-                    toRet.JHNotStarted += (card.workingDays / card.assignees.length);
+                const toAdd = (card.workingDays / card.assignees.length);
+                switch (card.status) {
+                    case "REJECTED":
+                        toRet.JHRejected += toAdd; break;
+                    case "WAITING_APPROVAL":
+                        toRet.JHWaitingApproval += toAdd; break;
+                    case "NOT_STARTED":
+                        toRet.JHNotStarted += toAdd; break;
+                    case "STARTED":
+                        toRet.JHInProgress += toAdd; break;
+                    case "FINISHED":
+                        toRet.JHDones += toAdd; break;
                 }
             })
             toRet.JHMissing = req.wap.sprint.workDaysNeeded - toRet.JHIntended;
