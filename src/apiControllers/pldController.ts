@@ -1,12 +1,12 @@
 import IController from "../controllers/controller";
 import express, {NextFunction, Request, Response } from "express";
-import { authUser } from "../middlewares/auth";
+import { authBearer, authUser } from "../middlewares/auth";
 import Card from "../models/card";
 import makePld from "../../pldGenerator";
 import { Op } from "sequelize";
 import User from "../models/user";
 import Part from "../models/part";
-import { checkPerm } from "../middlewares/checkPerms";
+import { checkPerm, checkPermAPI } from "../middlewares/checkPerms";
 import multer, { MulterError } from "multer";
 import { writeFileSync, readFileSync, existsSync, mkdirSync, copyFileSync, rmSync } from "fs";
 import { rgb, degrees, PDFDocument } from "pdf-lib";
@@ -86,15 +86,15 @@ class PLDController implements IController {
     }
 
     private initializeRoutes() {
-        this.router.get("/", authUser, checkPerm("EDITOR"), this.list);
-        this.router.get("/generator", authUser, checkPerm("EDITOR"), this.getGenerator);
-        this.router.post("/generator", authUser, checkPerm("ADMIN"), this.setGenerator);
-        this.router.get("/images", authUser, checkPerm("EDITOR"), this.importGenerator, this.getImages);
-        this.router.post("/images", authUser, checkPerm("EDITOR"), this.importGenerator, this.setImages);
-        this.router.get("/changes", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.getChanges);
-        this.router.post("/changes", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.setChangesAndGeneratePreview);
-        this.router.post("/generate", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.generate);
-        this.router.get("/checkPreview", authUser, checkPerm("EDITOR"), this.importGenerator, this.checkAssets, this.checkPreviewExists);
+        this.router.get("/list", authBearer, checkPermAPI("MAINTENER"), this.list);
+        this.router.get("/generator", authBearer, checkPermAPI("EDITOR"), this.getGenerator);
+        this.router.post("/generator", authBearer, checkPermAPI("ADMIN"), this.setGenerator);
+        this.router.get("/images", authBearer, checkPermAPI("EDITOR"), this.importGenerator, this.getImages);
+        this.router.post("/images", authBearer, checkPermAPI("EDITOR"), this.importGenerator, this.setImages);
+        this.router.get("/changes", authBearer, checkPermAPI("EDITOR"), this.importGenerator, this.checkAssets, this.getChanges);
+        this.router.post("/changes", authBearer, checkPermAPI("EDITOR"), this.importGenerator, this.checkAssets, this.setChangesAndGeneratePreview);
+        this.router.post("/generate", authBearer, checkPermAPI("EDITOR"), this.importGenerator, this.checkAssets, this.generate);
+        this.router.get("/checkPreview", authBearer, checkPermAPI("EDITOR"), this.importGenerator, this.checkAssets, this.checkPreviewExists);
     }
 
     private list = async (req: Request, res: Response) => {
