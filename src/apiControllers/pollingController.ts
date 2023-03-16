@@ -1,11 +1,6 @@
 import IController from "../controllers/controller";
 import express, {Request, Response} from "express";
-import { checkPerm, checkPermAPI } from "../middlewares/checkPerms";
-import { authBearer, authUser } from "../middlewares/auth";
-import Part from "../models/part";
-import Card from "../models/card";
-import Sprint from "../models/sprint";
-import User from "../models/user";
+import uuid from 'uuid';
 
 class PollingController implements IController {
     public path = "/polling";
@@ -18,7 +13,7 @@ class PollingController implements IController {
     }
 
     private initializeRoutes() {
-        this.router.get("/poll", this.poll);
+        this.router.get("/:id", this.poll);
     }
 
     public static addToPollList(toRefresh: string) {
@@ -28,33 +23,18 @@ class PollingController implements IController {
     }
 
     private poll = async (req: Request, res: Response) => {
-        const token = req.headers.authorization?.split(' ')[1];
-        if (!token) {
-            return res.status(200).send();
+        const uuidv4 = req.params.id || uuid.v4();
+        if (!req.params.id) {
+            PollingController.pollList.set(uuidv4, new Set<string>());
+            return res.status(200).send(uuid.v4());
         }
-        const session = req.wap.sessions.find(x => token && (x.accessToken == token));
-        if (!session) {
-            return res.status(401).send({
-                message: "Invalid token."
-            });
-        }
-        const user = await User.findOne({
-            where: {
-                id: session.userId
-            }
-        })
-        if (!user) {
-            return res.status(401).send({
-                message: "Invalid session."
-            })
-        }
-        const pollList = PollingController.pollList.get(user.id);
+        const pollList = PollingController.pollList.get(uuidv4);
         if (!pollList) {
-            PollingController.pollList.set(user.id, new Set<string>());
-            return res.status(204).send();
+            return res.status(400).send();
         }
+        const cpy = new Set(pollList);
         pollList.clear()
-        return res.status(200).send(pollList);
+        return res.status(200).send(cpy);
     }
 
 }
