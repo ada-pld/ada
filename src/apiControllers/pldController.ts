@@ -29,11 +29,11 @@ class PLDController implements IController {
     private upload = multer({
         dest: "tmp_uploads/",
         fileFilter(req, file, callback) {
-            if (file.mimetype == "image/jpeg" && (req.baseUrl + req.path == '/pld/setImages'))
+            if (file.mimetype == "image/jpeg" && (req.baseUrl + req.path == '/api/pld/images'))
                 return callback(null, true);
-            if (file.mimetype == "image/png" && (req.baseUrl + req.path == '/pld/setImages'))
+            if (file.mimetype == "image/png" && (req.baseUrl + req.path == '/api/pld/images'))
                 return callback(null, true);
-            if ((file.mimetype == "text/javascript" || file.mimetype == "application/x-javascript") && (req.baseUrl + req.path == '/pld/setGenerator'))
+            if ((file.mimetype == "text/javascript" || file.mimetype == "application/x-javascript") && (req.baseUrl + req.path == '/api/pld/generator'))
                 return callback(null, true);
             callback(new Error("Invalid file: " + file.mimetype));
         },
@@ -274,7 +274,9 @@ class PLDController implements IController {
         }[] = [];
         for (const user of allUsers) {
             if (!req.body["report-" + user.id]) {
-                return res.redirect("/pld/setChanges?error=missing_user_report");
+                return res.status(400).send({
+                    message: "Missing user report."
+                });
             }
             advancementReports.push({
                 userId: user.id,
@@ -283,7 +285,10 @@ class PLDController implements IController {
                 report: req.body["report-" + user.id].replace(/[\r+]/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd()
             });
         }
-        return this.generatePreview(req.wap.sprint.id, changelogOnPLD, advancementReports);
+        await this.generatePreview(req.wap.sprint.id, changelogOnPLD, advancementReports);
+        return res.status(200).send({
+            message: "Success."
+        });
     }
 
     private generate = async (req: Request, res: Response) => {
