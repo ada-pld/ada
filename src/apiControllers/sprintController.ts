@@ -7,6 +7,7 @@ import Sprint from "../models/sprint";
 import User from "../models/user";
 import { Op } from "sequelize";
 import Part from "../models/part";
+import PollingController from "./pollingController";
 
 class SprintController implements IController {
     public path = "/sprint";
@@ -72,6 +73,7 @@ class SprintController implements IController {
         })
         await Promise.all(allPromises);
         req.wap.sprint = sprint;
+        PollingController.addToPollList('useGetSprintQuery');
         return res.status(200).send({
             message: "Success."
         });
@@ -103,6 +105,7 @@ class SprintController implements IController {
             name: req.body.name,
             workDaysNeeded: value
         });
+        PollingController.addToPollList('useGetSprintQuery');
         return res.status(200).send({
             message: "Success."
         });

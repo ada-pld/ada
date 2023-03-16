@@ -4,6 +4,7 @@ import CardController from "./cardController";
 import ConfigController from "./configController";
 import PartController from "./partController";
 import PLDController from "./pldController";
+import PollingController from "./pollingController";
 import RendezVousController from "./rendezVousController";
 import RendezVousGroupController from "./rendezVousGroupController";
 import SprintController from "./sprintController";
@@ -19,4 +20,5 @@ export const apiControllers :IController[] = [
     new SprintController(),
     new CardController(),
     new PLDController(),
+    new PollingController(),
 ]

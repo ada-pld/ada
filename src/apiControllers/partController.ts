@@ -5,6 +5,7 @@ import { authBearer, authUser } from "../middlewares/auth";
 import Part from "../models/part";
 import Card from "../models/card";
 import Sprint from "../models/sprint";
+import PollingController from "./pollingController";
 
 class PartController implements IController {
     public path = "/part";
@@ -63,6 +64,7 @@ class PartController implements IController {
         await Part.create({
             name: req.body.name
         });
+        PollingController.addToPollList('useListPartsQuery');
         return res.status(200).send({
             message: "Success."
         });

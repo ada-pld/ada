@@ -8,6 +8,7 @@ import Part from "../models/part";
 import User from "../models/user";
 import Config from "../models/config";
 import Session from "../models/session";
+import PollingController from "./pollingController";
 
 class ConfigController implements IController {
     public path = "/config";
@@ -66,6 +67,7 @@ class ConfigController implements IController {
         }
         await Promise.all(allPromises);
         await setupMailTransporter();
+        PollingController.addToPollList('useGetConfigQuery');
         return res.status(200).send({
             message: "Success."
         })

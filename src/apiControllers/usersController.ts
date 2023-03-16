@@ -9,6 +9,7 @@ import { checkMailTransporter, sendCreationEmail, sendPasswordForgottenMail } fr
 import Card from "../models/card";
 import Part from "../models/part";
 import Sprint from "../models/sprint";
+import PollingController from "./pollingController";
 
 class UserController implements IController {
     public path = "/users";
@@ -108,6 +109,8 @@ class UserController implements IController {
                 created.password = await bcrypt.hash(process.env.PASS_SALT + req.wap.config.Default_Password.value, 10);
             }
             await created.save();
+            PollingController.addToPollList('useListUsersQuery');
+            PollingController.addToPollList('useUserInfosQuery');
             return res.status(200).send({
                 message: "User created."
             });
@@ -197,6 +200,8 @@ class UserController implements IController {
                 role: req.body.role ?? user.role
             });
             await user.save();
+            PollingController.addToPollList('useListUsersQuery');
+            PollingController.addToPollList('useUserInfosQuery');
             return res.status(200).send({
                 message: "Success."
             });
@@ -231,6 +236,8 @@ class UserController implements IController {
             user.isDefaultPassword = true;
             await user.save();
             await sendPasswordForgottenMail(user, password);
+            PollingController.addToPollList('useListUsersQuery');
+            PollingController.addToPollList('useUserInfosQuery');
             return res.status(200).send({
                 message: "Success."
             });

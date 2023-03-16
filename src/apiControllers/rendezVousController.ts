@@ -8,6 +8,7 @@ import RendezVousUserAttendance from "../models/rendezVousUserAttendance";
 import { sendRendezVousCreatedMail, sendRendezVousPassedMail } from "../mails";
 import { Op } from "sequelize";
 import RendezVousGroup from "../models/rendezVousGroup";
+import PollingController from "./pollingController";
 
 class RendezVousController implements IController {
     public path = "/rendezVous";
@@ -175,6 +176,7 @@ class RendezVousController implements IController {
             }));
         }
         await Promise.all(allPromises);
+        PollingController.addToPollList('useGetMeetingsQuery');
         return res.status(200).send({
             message: "Success."
         })
@@ -318,6 +320,7 @@ class RendezVousController implements IController {
             }
         }
         await Promise.all(allPromises);
+        PollingController.addToPollList('useGetMeetingsQuery');
         return res.status(200).send({
             message: "Success."
         });
@@ -335,6 +338,7 @@ class RendezVousController implements IController {
             });
         }
         await rendezVous.destroy();
+        PollingController.addToPollList('useGetMeetingsQuery');
         return res.status(200).send({
             message: "Success"
         });

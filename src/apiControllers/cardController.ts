@@ -8,6 +8,7 @@ import Card, { Status } from "../models/card";
 import Sprint from "../models/sprint";
 import User from "../models/user";
 import { sendApprovalEmail, sendCardAwaitingApprovalEmail, sendRejectionEmail } from "../mails";
+import PollingController from "./pollingController";
 
 class CardController implements IController {
     public path = "/card";
@@ -140,6 +141,8 @@ class CardController implements IController {
         for (const user of editorAndAdmins) {
             sendCardAwaitingApprovalEmail(user, req.user, card);
         }
+        PollingController.addToPollList('useGetCardsQuery');
+        PollingController.addToPollList('useGetCardListQuery');
         return res.status(200).send({
             message: "Success"
         })
@@ -266,6 +269,8 @@ class CardController implements IController {
             card.status = "WAITING_APPROVAL";
         }
         await card.save();
+        PollingController.addToPollList('useGetCardsQuery');
+        PollingController.addToPollList('useGetCardListQuery');
         return res.status(200).send({
             message: "Success"
         })
@@ -312,6 +317,8 @@ class CardController implements IController {
             statusToSet = "NOT_STARTED";
         card.status = statusToSet;
         await card.save();
+        PollingController.addToPollList('useGetCardsQuery');
+        PollingController.addToPollList('useGetCardListQuery');
         return res.status(200).send({
             message: "Success."
         })
@@ -351,6 +358,8 @@ class CardController implements IController {
         for (const user of card.assignees) {
             sendApprovalEmail(user, card);
         }
+        PollingController.addToPollList('useGetCardsQuery');
+        PollingController.addToPollList('useGetCardListQuery');
         return res.status(200).send({
             message: "Success."
         })
@@ -386,6 +395,8 @@ class CardController implements IController {
             sendRejectionEmail(user, card, req.body.reason);
         }
         await card.save();
+        PollingController.addToPollList('useGetCardsQuery');
+        PollingController.addToPollList('useGetCardListQuery');
         return res.status(200).send({
             message: "Success."
         })
@@ -418,6 +429,8 @@ class CardController implements IController {
             })
         }
         await toEdit.destroy();
+        PollingController.addToPollList('useGetCardsQuery');
+        PollingController.addToPollList('useGetCardListQuery');
         return res.status(200).send({
             message: "Success"
         })
