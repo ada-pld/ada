@@ -283,7 +283,7 @@ class RendezVousController implements IController {
                 message: "Attendances is not an array."
             });
         }
-        for (const editedAttendance of req.body.attendances) {
+        req.body.attendances.forEach(editedAttendance => {
             if (!editedAttendance.id || !editedAttendance.presence) {
                 return res.status(400).send({
                     message: "Invalid attendance body."
@@ -307,7 +307,7 @@ class RendezVousController implements IController {
                 });
             }
             allPromises.push(attendance.save());
-        }
+        })
         if (newPassed) {
             for (const attendance of rendezVous.userAttendances) {
                 let userAttendanceStr = "indéfini";

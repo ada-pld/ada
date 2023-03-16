@@ -21,11 +21,11 @@ class UserController implements IController {
 
     private initializeRoutes() {
         this.router.get("/list", authBearer, checkPermAPI("MAINTENER"), this.listUsers);
+        this.router.get("/cardsStats", authBearer, checkPermAPI("MAINTENER"), this.cardsStats);
         this.router.get("/:id", authBearer, this.getOne);
         this.router.post("/create", authBearer, checkPermAPI("EDITOR"), this.createUser);
         this.router.post("/edit", authBearer, this.editUser);
         this.router.post("/forgotPassword", this.forgotPassword);
-        this.router.get("/cardsStats", authBearer, checkPermAPI("MAINTENER"), this.cardsStats);
     }
 
     private listUsers = async (req: Request, res: Response) => {
