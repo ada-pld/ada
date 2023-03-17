@@ -205,9 +205,10 @@ class PLDController implements IController {
 
         let cardAdded = '';
         let cardModified = '';
+        let warnings: string[] = [];
         for (const card of allCards) {
             const cardVersion = card.sprintId + '.' + card.partId + '.' + card.idInSprint + ((card.version != 1) ? '.' + card.version : '');
-            if (card.actPLD == 0) {
+            if (!card.actPLD) {
                 cardAdded += ((cardAdded != '') ? ', ' : '') + cardVersion;
             } else if (card.actPLD == card.lastPLDEdit) {
                 cardModified += ((cardModified != '') ? ', ' : '') + cardVersion;
@@ -215,16 +216,11 @@ class PLDController implements IController {
             if (card.lastPLDStatus != card.status) {
                 if (card.status == "FINISHED" || card.status == "STARTED") {
                     for (const user of card.assignees) {
-                        let report = advancementReports.find(x => x.userId == user.id);
-                        if (!report) {
-                            console.log("First fix:");
-                            console.log(user.id);
-                            console.log("Second fix:");
-                            const set = new Set<string>();
-                            advancementReports.forEach(x => set.add(x.userId));
-                            set.forEach(x => console.log(x));
+                        if (user.role == "USER") {
+                            warnings.push(`${user.firstname} ${user.lastname} is assigned the card ${cardVersion} but is not at least a MAINTENER`);
                             continue;
                         }
+                        let report = advancementReports.find(x => x.userId == user.id);
                         if (report.report == "Pas d'avancements connu\n")
                             report.report = "";
                         if (card.status == "FINISHED")
@@ -242,7 +238,8 @@ class PLDController implements IController {
         return res.status(200).send({
             cardAdded: cardAdded,
             cardModified: cardModified,
-            advancementReports: advancementReports
+            advancementReports: advancementReports,
+            warnings: warnings,
         });
     }
 
