@@ -25,8 +25,12 @@ import RendezVousController from "./controllers/rendezVousController";
 import { apiControllers } from "./apiControllers";
 import Session from "./models/session";
 import cors from "cors";
+import path from "path";
+import fs from "fs";
+import { sendEvents } from "./utils/utils";
 
-const app = express();
+const api = express();
+const next = express();
 const wap = new WAP();
 
 async function checkDatabaseConnection() {
@@ -48,22 +52,17 @@ async function closeDatabaseConnection() {
     }
 }
 
-app.use(cors());
-app.set("views", "./views");
-app.set("view engine", "ejs");
-app.use(express.static("public"));
-app.use("/pldAssets", express.static("pldGenerator/assets"));
-app.use("/pldGenerated", express.static("pldGenerator/generated"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(session({
+api.use(cors());
+api.use(express.json());
+api.use(express.urlencoded({ extended: true }));
+api.use(session({
     secret: "SessionSecret",
     cookie: {
         maxAge: 60000*60*60*24
     }
 }))
 
-app.use(async (req: Request, res: Response, next: NextFunction) => {
+api.use(async (req: Request, res: Response, next: NextFunction) => {
     if (wap.sprint == null) {
         const sprint = await Sprint.findOne({
             where: {
@@ -100,8 +99,8 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
     next();
 })
 
-app.use(checkDefaultPassword);
-app.use(checkMaintenance);
+api.use(checkDefaultPassword);
+api.use(checkMaintenance);
 
 const controllers : IController[] = [
     new LoginController(),
@@ -116,32 +115,24 @@ const controllers : IController[] = [
     new MycardsController(),
     new ConfigController(),
 ];
-for (let controller of controllers) {
-    app.use(controller.path, controller.router);
-}
 
 for (let controller of apiControllers) {
-    app.use("/api" + controller.path, controller.router);
+    api.use(controller.path, controller.router);
 }
 
-app.get("/makeItCrash", async (req, res) => {
+api.get("/makeItCrash", async (req, res) => {
     await new Promise((r, e) => {
         e(0)
     });
 })
 
-app.get('/', authUser, (req, res) => {
-    return res.redirect("/dashboard");
-})
-
-app.use((req, res) => {
+next.use("/api", api);
+next.use("/pldAssets", express.static("pldGenerator/assets"));
+next.use("/pldGenerated", express.static("pldGenerator/generated"));
+next.use(express.static('public2/'));
+next.use((req, res) => {
     res.status(404);
-    return res.render("404", {
-        user: req.user,
-        wap: req.wap,
-        currentPage: "404",
-        url: req.url
-    });
+    return res.sendFile(path.join(__dirname, '../public2/404/index.html'));
 })
 
-export { app, checkDatabaseConnection, closeDatabaseConnection, wap }
+export { next as app, api, checkDatabaseConnection, closeDatabaseConnection, wap }
