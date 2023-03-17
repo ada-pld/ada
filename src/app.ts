@@ -2,7 +2,6 @@ import "dotenv/config";
 import express, { Request, Response, NextFunction } from "express";
 import db from "./models";
 import User from "./models/user";
-import session from "express-session";
 import WAP from "./WAP";
 import Sprint from "./models/sprint";
 import Part from "./models/part";
