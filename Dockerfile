@@ -1,6 +1,9 @@
 FROM node:16 AS frontend
 WORKDIR /tmp/frontendbuild
 ENV FRONTEND_COMMIT a25c4a9f268c599253b7299574f00b2de1a37c2b
+ARG VAR_NAME_HERE=${BASE_API_URL}
+ARG VAR_NAME_HERE=${BASE_URL}
+ARG VAR_NAME_HERE=${HOSTNAME}
 RUN git clone https://github.com/protoxvga/wap_ui && \
     cd wap_ui && \ 
     git reset --hard ${FRONTEND_COMMIT} && \
