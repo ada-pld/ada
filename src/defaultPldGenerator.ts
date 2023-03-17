@@ -64,7 +64,7 @@ function createATable(card: Card)
             body: [
                 [{text: cardVersion, colSpan: 1}, {text: cardName, colSpan: 5}, '', '', '', ''],
                 [{text: assigneesNames, colSpan: 6}, '', '', '', ''],
-                [{text: 'En temps que:', colSpan: 3}, '', '', {text: 'Je veux:', colSpan: 3}, '', ''],
+                [{text: 'En tant que:', colSpan: 3}, '', '', {text: 'Je veux:', colSpan: 3}, '', ''],
                 [{text: `\n${asWho}`, colSpan: 3, alignment:'center'}, '', '', {text: iWant, colSpan: 3, alignment:'center'}, '', ''],
                 [{text: `Description:\n${descritpion}`, colSpan: 6}, '', '', '', '', ''],
                 [{text: `Definitions of Dones:\n\n${dods}`, colSpan: 6}, '', '', '', '', ''],
