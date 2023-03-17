@@ -52,15 +52,15 @@ docker build -t wap \
     --build-arg HOSTNAME="wap-dev.hemmer.dev" \
     .
 docker run -d \
-    -p 4000:80
-    -p 4000:443
-    -e PROD_DB_HOST="localhost"
-    -e PROD_DB_NAME="WAP"
-    -e PROD_DB_PORT="3306"
-    -e PROD_DB_USER="root"
-    -e PROD_DB_PASS="root"
-    -e NODE_ENV="production"
-    -e PORT="4000"
+    -p 4000:80 \
+    -p 4000:443 \
+    -e PROD_DB_HOST="localhost" \
+    -e PROD_DB_NAME="WAP" \
+    -e PROD_DB_PORT="3306" \
+    -e PROD_DB_USER="root" \
+    -e PROD_DB_PASS="root" \
+    -e NODE_ENV="production" \
+    -e PORT="4000" \
     -e PASS_SALT="passwordSalt"
 ```
 
