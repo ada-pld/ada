@@ -216,6 +216,15 @@ class PLDController implements IController {
                 if (card.status == "FINISHED" || card.status == "STARTED") {
                     for (const user of card.assignees) {
                         let report = advancementReports.find(x => x.userId == user.id);
+                        if (!report) {
+                            console.log("First fix:");
+                            console.log(user.id);
+                            console.log("Second fix:");
+                            const set = new Set<string>();
+                            advancementReports.forEach(x => set.add(x.userId));
+                            set.forEach(x => console.log(x));
+                            continue;
+                        }
                         if (report.report == "Pas d'avancements connu\n")
                             report.report = "";
                         if (card.status == "FINISHED")
