@@ -25,8 +25,7 @@ RUN npm install && \
     npm cache clean --force
 COPY ./ ./
 RUN npm run buildMail && \
-    npm run build && \
-    chmod +x dockerEntrypoint.sh
+    npm run build
 COPY ./ ./
 
 FROM node:16
