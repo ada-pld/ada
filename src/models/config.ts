@@ -1,4 +1,5 @@
 import { Model, Column, DataType, Default, AllowNull, Unique, Table, HasMany, BelongsTo, ForeignKey } from 'sequelize-typescript';
+import { generateRandomString } from '../utils/utils';
 
 @Table({
     modelName: "Config",
@@ -85,6 +86,38 @@ class Config extends Model<Config> {
                 name: "UNDER_MAINTENANCE"
             }
         }))[0];
+    }
+
+    static async enableFailSafe() {
+        if (!Config.checkFailSafe()) {
+            await Config.create({
+                name: "TESTS_FAILSAFE",
+                value: "true"
+            });
+        }
+    }
+
+    static async checkFailSafe() {
+        return (await Config.findOne({
+            where: {
+                name: "TESTS_FAILSAFE"
+            }
+        }));
+    }
+
+    static async getWAPInstanceId() {
+        const config = await Config.findOne({
+            where: {
+                name: "WAP_INSTANCE_ID"
+            }
+        });
+        if (!config) {
+            return (await Config.create({
+                name: "WAP_INSTANCE_ID",
+                value: await generateRandomString(48)
+            }))
+        }
+        return config;
     }
 
 }

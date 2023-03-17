@@ -4,17 +4,7 @@ module.exports = {
     up: (queryInterface: QueryInterface): Promise<any> => queryInterface.sequelize.transaction(
         async (transaction) => {
             return Promise.all([
-                queryInterface.addConstraint('CardUsers', {
-                    fields: ['cardId'],
-                    type: 'foreign key',
-                    references: {
-                        table: 'Cards',
-                        field: 'id'
-                    },
-                    onUpdate: "CASCADE",
-                    onDelete: "CASCADE"
-                }),
-                queryInterface.addConstraint('CardUsers', {
+                queryInterface.addConstraint('Sessions', {
                     fields: ['userId'],
                     type: 'foreign key',
                     references: {
@@ -22,7 +12,8 @@ module.exports = {
                         field: 'id'
                     },
                     onUpdate: "CASCADE",
-                    onDelete: "CASCADE"
+                    onDelete: "CASCADE",
+                    transaction: transaction
                 })
             ])
         }
@@ -30,8 +21,9 @@ module.exports = {
 
     down: (queryInterface: QueryInterface): Promise<any> => queryInterface.sequelize.transaction(
         async (transaction) => {
-            console.error("You can't go further beyond in the past migrations\nThis would cause data loss");
-            transaction.rollback();
+            return Promise.all([
+                queryInterface.removeColumn('Sessions', 'userId', { transaction: transaction })
+            ])
         }
     )
 };

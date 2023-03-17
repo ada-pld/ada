@@ -208,7 +208,6 @@ function addChangelogPage(changelog: string) {
         }
         return [to_ret];
     })
-    console.log(changelogBody);
     changelogPage.push({
         color: '#444',
         style: 'tableMargin',

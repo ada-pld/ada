@@ -1,5 +1,6 @@
 import Config from "./models/config";
 import Part from "./models/part";
+import Session from "./models/session";
 import Sprint from "./models/sprint";
 import User from "./models/user";
 
@@ -12,11 +13,13 @@ interface WAP_Config {
     Hostname :Config;
     UsingCustomGenerator: Config;
     UnderMaintenance: Config;
+    WAPInstanceId: Config;
 }
 
 class WAP {
     public sprint: Sprint = null;
     public parts: Part[] = null;
+    public sessions: Session[] = null;
 
     /*
     ** *WARNING*: Do not use users for anything else than getting a list and names of already existing users.
@@ -34,6 +37,7 @@ class WAP {
         Hostname: null,
         UsingCustomGenerator: null,
         UnderMaintenance: null,
+        WAPInstanceId: null,
     };
 
 }

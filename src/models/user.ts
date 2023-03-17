@@ -1,5 +1,6 @@
 import { Op } from 'sequelize';
 import { Model, Column, DataType, Default, AllowNull, Unique, Table, HasMany, BelongsToMany } from 'sequelize-typescript';
+import { FindOptions, Attributes } from "sequelize/types/model";
 import Card from './card';
 import CardUser from './cardUser';
 import RendezVousUserAttendance from './rendezVousUserAttendance';
@@ -70,6 +71,43 @@ class User extends Model<User> {
                 }
             }
         })
+    }
+
+    static async findAllSafe(options?: FindOptions<Attributes<User>>) {
+        return this.findAll({
+            attributes: ['id', 'firstname', 'lastname', 'email', 'role'],
+            ...options
+        });
+    }
+
+    static isEmailAlreadyUsed(email: string) : Promise<boolean>{
+        return new Promise(async (resolve, reject) => {
+            User.count({where: {email: email}})
+                .then((number) => {
+                    resolve(number > 0)
+                })
+                .catch((err) => {
+                    reject(err)
+                });
+        })
+    }
+
+    static getById(id: string) {
+        return User.findOne({
+            where: {
+                id: id
+            }
+        });
+    }
+
+    toJSON() {
+        const values = super.toJSON();
+        delete values.password;
+        delete values.isDefaultPassword;
+        delete values.deletedAt;
+        delete values.createdAt
+        delete values.updatedAt;
+        return values;
     }
 
 }

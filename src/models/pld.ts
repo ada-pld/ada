@@ -39,6 +39,14 @@ class PLD extends Model<PLD> {
     @BelongsTo(() => Sprint)
     sprint: Sprint;
 
+    toJSON() {
+        const values = super.toJSON()
+        delete values.deletedAt;
+        delete values.createdAt;
+        delete values.updatedAt;
+        return values;
+    }
+
 }
 
 export default PLD;

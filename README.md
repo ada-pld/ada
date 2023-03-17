@@ -1,117 +1,73 @@
-# WAP
+<div align="center">
+    <h1>WAP</h1>
+    <a href="https://github.com/theohemmer/wap/releases" target="_blank" title="GitHub release (latest by date)">
+    <img src="https://img.shields.io/github/v/release/theohemmer/wap" alt="GitHub release (latest by date)"/>
+    </a>
+    <p>Web-Administration-Panel, a tool to manage sprints and generate Project Log Documents</p>
+</div>
 
-A web administration panel for managing sprints and generating PLDs
+<a href="#what-is-wap">What is WAP ?</a><br>
+<a href="#installation">Installation</a><br>
+<a href="#frontend">Frontend</a><br>
+<a href="#contributing">Contributing</a>
 
-# Usage
+## What is WAP ?
 
-## Informations about usage
+WAP is a tool originally developed by two EPITECH students to easily manage the creations of PLDs, and manage the cards assigned to each user on a sprint.
 
-I've tried to make this application usable by as many people as possible.
+<b>The main idea behind WAP is to make more conscistent PLDs, with less errors, in less time.</b>
 
-When you launch the application for the first time, you will be redirected to a page to create the default account on the application, this will be an administrator account.
+## How does it does that ?
 
-I recommand to not have a lot of administrator since they have access to the SMTP settings of the application.
+To handle automatically the creation of the PLDs and ensure a faster and more accurate PLD, WAP is designed to integrate the user-stories in a sort of workflown and be robust about what can and can't be done.
 
-Once you've created the default account, you will be redirected to the settings page of the application, here you can choose to use a SMTP transporter to send mail from the application.
+The main problems WAP solves are the following:
+- The PLD take too much time to make, one day everytime a new one must be done -- WAP shorten this time to 2 minutes.
+- The PLD have many typos in it, many mistakes and errors -- WAP let you review every user-stories written by anyone before accepting them in the PLD.
+- Peoples don't have informations on the progress of others peoples cards -- WAP let you view the progress of everyone in your team as well as what should be done.
+- "I need to change the description of the card after having made the first PLD, can we do this without telling anyone ?" -- Yes you can do this. But this will be written.
+- "PLD must be generated at 8:00" -- PLD <b>WILL</b> be generated at 8:00.
+- "I didn't update my work on WAP" -- Then this will not appear on the PLD.
 
-From now, the mail are only used to send their password to the newly created users, but latter in the development, this will also include remainder for the user to mark their task as completed before the PLD is generated, mail to inform that a PLD has been generated, mails to inform of a new card or card status change etc...
+<b><u>Think of WAP as way to ensure the PLD is qualitative while making it in no time</u></b>
 
-## Features of WAP
+- When a card is submited by an user, the card goes for verification by admins and editors, if the card contains mistakes, the editors and admins can edit the card, then accept it. If the card is unnnaceptable, the card can be rejected.
+- One a card is in the system, every edit made by admins and editors on the card will <i>(smartly)</i> increment the internal version of the card and display a message on the generated PLD accordingly.
+- An user can't edit a card that has been accepted by an admin or an editor.
 
-The Dashboard tab is to see your active cards on the sprint, and changing their status, with a quick overview of what's done.
+The generated PLD is fully programatically customizable, but you can use the generator we used in our team at <a href="src/defaultPldGenerator.ts">src/defaultPldGenerator.ts</a>
 
-The My Cards tab is to create a new User Story that will be mark as waiting for approval and viewing your cards.
+## Installation
 
-The Rendez-vous tab is under development.
+To install WAP you'll need to have Docker and a MySQL database with a database ready for WAP.
 
-The Users tab is to create new users and managing their role.
+Run WAP on Docker by redirecting the port 4000 and setting thoses environment variables:
 
-The Cards tab is to view all User Stories of the current sprint, aprove, eddit or reject them.
-
-The Sprint tab is to create a new Sprint and select a sprint as active, one a sprint is selected, you will see stats for all users on the sprint
-
-The PLD tab is to generate the PLD, it's still under development but should be finished before version 1.0.0
-
-The Config tab is to manage the configuration of WAP
-
-## Types of Users account
-
-There is 4 types of account on WAP:
-
-ADMIN:
-- Access to the config of the app
-- All bellow
-
-EDITOR:
-- Access to the lists of Users
-- Creation and edition of users
-- Editions of User Stories
-- Approbation / Rejection of User Stories
-- Creating and selecting a Sprint
-- View stats for all users
-- Creating new parts
-- Generating PLD
-- Changing the default PLD generator to a custom one
-- All bellow
-
-MAINTAINER:
-- Adding a new card
-- Beeing assigned on a card
-- View the cards they are asisgned on
-- Changing the status of their cards
-- All bellow
-
-USER:
-- Downloading the last PLD
-
-## Generating the PLD
-
-The pld is generated using a default generator that format the card as we do on my team. But once completly implemented, you will be able to change the default generator to switch on a custom one.
-
-This is usefull if you don't want your PLD to have the same look as ours, and want to use you're own, if this is the case, you will be able to see all informations about switching to a custom generator on the PLD tab once the feature will be finished, if you're curious, you can already take a look inside [The custom generator example](pldGenerator/custom/customGenerator/example.js`)
-
-## Warning: 
-For the moment, anyone with the EDITOR role is able to upload a custom generator.
-The custom generator is a JS file that get hot-loaded and executed by the server, this can potentially cause some security issues since any code in this file will be executed on the server, with the same permissions as the server process.
-I HIGLY recommand the following:
-- Do not use this feature in production until I've set the permission for the generator upload to ADMIN only
-- Do not use your production environment to test your generator, test your generator locally before uploading it to the production environment
-- When creating a custom generator, only code it to work the intended way (i.e: a script that takes Cards, and format them as wanted), only implements other logic if you're sure about what you're doing
-
-# Installation
-
-This project is still in development, there might be some issues with it and some features described belllow may change during development.
-
-To use this application you will have to connect it to a MySQL database
-To do so, create a .env file, containing the following:
 ```
-DB_HOST=<the host of your database>
-DB_PORT=<the port of your database>
-DB_USER=<user to connect on your database>
-DB_PASS=<password of the database>
-DB_NAME=<name of the database>
-ENVIRONMENT=production
-PORT=4000
-PASS_SALT=<salt for password>
+git clone https://github.com/theohemmer/wap
+cd wap
+docker build -t wap \
+    --build-arg BASE_API_URL="https://wap-dev.hemmer.dev/api/" \
+    --build-arg BASE_URL="https://wap-dev.hemmer.dev" \
+    --build-arg HOSTNAME="wap-dev.hemmer.dev" \
+    .
+docker run -d \
+    -p 4000:80
+    -p 4000:443
+    -e PROD_DB_HOST="localhost"
+    -e PROD_DB_NAME="WAP"
+    -e PROD_DB_PORT="3306"
+    -e PROD_DB_USER="root"
+    -e PROD_DB_PASS="root"
+    -e NODE_ENV="production"
+    -e PORT="4000"
+    -e PASS_SALT="passwordSalt"
 ```
-Be aware that changing the value of PASS_SALT after having users created on your databse will prevent them from connecting.
 
-Once you have the .env file, run `npm install` then `cd pldGenerator && npm install` to install the dependencies
+## Frontend
 
-After that, you will have to go to the root folder of the application, and build it, to do so use the command `npm run buildMail` then `npm run build`
+The frontend application of WAP is primarly maintened by <a href="https://github.com/protoxvga">@protoxvga</a> on <a href="https://github.com/protoxvga/wap_ui">the WAP frontend repository</a>
 
-You will then have to perform the migrations on the database using `npx sequelize db:migrate`
+## Contributing
 
-Once you've build the project, everything is ready, just run the command `npm start`
-
-# Docker
-
-This project also come with a Dockerfile that do all the step notted bellow, note that if you're running it inside a Docker, you will have to creates two volumes,
-
-One volume for the custom generator in `./pldGenerator/custom/customGenerator`
-
-And one volume for the generated PLDs in `./pldGenerator/generated`
-
-# Contributing
-
-This project is open to contributions, if you want to add your own features, you can also ask for features by openning an issue if you want.
+WAP is open to contributions, feel free to open an issue, fork the repository, and create a PR

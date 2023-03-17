@@ -1,5 +1,6 @@
 import { Op } from 'sequelize';
-import { Model, Column, DataType, Default, AllowNull, Unique, Table, HasMany, BelongsToMany } from 'sequelize-typescript';
+import { Model, Column, DataType, Default, AllowNull, Unique, Table, HasMany, BelongsToMany, BelongsTo, ForeignKey } from 'sequelize-typescript';
+import RendezVousGroup from './rendezVousGroup';
 import RendezVousUserAttendance from './rendezVousUserAttendance';
 
 export type Sheduling = "PLANNED"|"PASSED";
@@ -19,6 +20,10 @@ class RendezVous extends Model<RendezVous> {
     id: number;
 
     @AllowNull(false)
+    @Column(DataType.STRING)
+    title: string;
+
+    @AllowNull(false)
     @Column(DataType.DATE)
     date: Date;
 
@@ -35,6 +40,26 @@ class RendezVous extends Model<RendezVous> {
     @HasMany(() => RendezVousUserAttendance)
     userAttendances: RendezVousUserAttendance[];
 
+    @ForeignKey(() => RendezVousGroup)
+    @Column(DataType.INTEGER)
+    rendezVousGroupId: number
+
+    @BelongsTo(() => RendezVousGroup)
+    rendezVousGroup: RendezVousGroup;
+
+    @Column(DataType.INTEGER)
+    duration: number;
+
+    @Column(DataType.STRING)
+    location: string;
+
+    toJSON() {
+        const values = super.toJSON()
+        delete values.deletedAt;
+        delete values.createdAt;
+        delete values.updatedAt;
+        return values;
+    }
 }
 
 export default RendezVous;

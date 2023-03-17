@@ -18,20 +18,29 @@ export const checkDefaultPassword = async function (req: Request, res: Response,
     next();
 }
 
-export const authUser = async function (req: Request, res: Response, next: NextFunction) {
-    if (req.user)
-        return next();
-    if (!req.session.user)
-        return res.redirect("/login");
+export const authBearer = async function (req: Request, res: Response, next: NextFunction) {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+        return res.status(401).send({
+            message: "No token provided."
+        });
+    }
+    const session = req.wap.sessions.find(x => x.accessToken == token);
+    if (!session) {
+        return res.status(401).send({
+            message: "Invalid token."
+        });
+    }
     const user = await User.findOne({
         where: {
-            id: req.session.user
+            id: session.userId
         }
     });
+    if (!user) {
+        return res.status(401).send({
+            message: "Invalid session."
+        })
+    }
     req.user = user;
-    if (!req.user)
-        return res.redirect("/login");
-    if (req.user.isDefaultPassword)
-        return res.redirect("/users/changeDefaultPassword");
     next();
 }

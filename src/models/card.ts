@@ -87,6 +87,14 @@ class Card extends Model<Card> {
     @Column(DataType.ENUM("REJECTED", "WAITING_APPROVAL", "NOT_STARTED", "STARTED", "FINISHED"))
     lastPLDStatus: Status;
 
+    toJSON() {
+        const values = super.toJSON()
+        delete values.deletedAt;
+        delete values.createdAt;
+        delete values.updatedAt;
+        return values;
+    }
+
 }
 
 export default Card;
