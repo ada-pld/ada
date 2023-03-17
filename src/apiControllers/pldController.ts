@@ -281,7 +281,7 @@ class PLDController implements IController {
         for (const user of allUsers) {
             if (!req.body["report-" + user.id]) {
                 return res.status(400).send({
-                    message: "Missing user report."
+                    message: "Missing user report for " + user.id + "."
                 });
             }
             advancementReports.push({
