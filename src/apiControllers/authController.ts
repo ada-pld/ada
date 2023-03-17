@@ -1,4 +1,4 @@
-import IController from "../controllers/controller";
+import IController from "./controller";
 import express, { Request, Response } from "express";
 import User from "../models/user";
 import * as bcrypt from "bcrypt";

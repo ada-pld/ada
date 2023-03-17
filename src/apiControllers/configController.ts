@@ -1,7 +1,7 @@
-import IController from "../controllers/controller";
+import IController from "./controller";
 import express, {Request, Response} from "express";
-import { checkPerm, checkPermAPI } from "../middlewares/checkPerms";
-import { authBearer, authUser } from "../middlewares/auth";
+import { checkPermAPI } from "../middlewares/checkPerms";
+import { authBearer } from "../middlewares/auth";
 import { checkMailTransporter, setupMailTransporter } from "../mails";
 import Sprint from "../models/sprint";
 import Part from "../models/part";

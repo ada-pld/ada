@@ -1,4 +1,4 @@
-import IController from "../controllers/controller";
+import IController from "./controller";
 import express, {Request, Response} from "express";
 import uuid from 'uuid';
 

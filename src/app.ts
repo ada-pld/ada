@@ -3,25 +3,13 @@ import express, { Request, Response, NextFunction } from "express";
 import db from "./models";
 import User from "./models/user";
 import session from "express-session";
-import LoginController from "./controllers/loginController";
-import IController from "./controllers/controller";
-import LogoutController from "./controllers/logoutController";
-import DashboardController from "./controllers/dashboardController";
-import UserController from "./controllers/usersController";
-import SprintController from "./controllers/sprintController";
 import WAP from "./WAP";
 import Sprint from "./models/sprint";
-import PartsController from "./controllers/partsController";
 import Part from "./models/part";
-import PLDController from "./controllers/pldController";
-import CardsController from "./controllers/cardsController";
-import { authUser, checkDefaultPassword } from "./middlewares/auth";
-import MycardsController from "./controllers/mycardsController";
+import { checkDefaultPassword } from "./middlewares/auth";
 import Config from "./models/config";
-import ConfigController from "./controllers/configController";
 import { setupMailTransporter } from "./mails";
 import { checkMaintenance } from "./middlewares/maintenance";
-import RendezVousController from "./controllers/rendezVousController";
 import { apiControllers } from "./apiControllers";
 import Session from "./models/session";
 import cors from "cors";
@@ -55,12 +43,6 @@ async function closeDatabaseConnection() {
 api.use(cors());
 api.use(express.json());
 api.use(express.urlencoded({ extended: true }));
-api.use(session({
-    secret: "SessionSecret",
-    cookie: {
-        maxAge: 60000*60*60*24
-    }
-}))
 
 api.use(async (req: Request, res: Response, next: NextFunction) => {
     if (wap.sprint == null) {
@@ -102,29 +84,9 @@ api.use(async (req: Request, res: Response, next: NextFunction) => {
 api.use(checkDefaultPassword);
 api.use(checkMaintenance);
 
-const controllers : IController[] = [
-    new LoginController(),
-    new LogoutController(),
-    new DashboardController(),
-    new UserController(),
-    new SprintController(),
-    new PartsController(),
-    new RendezVousController(),
-    new PLDController(),
-    new CardsController(),
-    new MycardsController(),
-    new ConfigController(),
-];
-
 for (let controller of apiControllers) {
     api.use(controller.path, controller.router);
 }
-
-api.get("/makeItCrash", async (req, res) => {
-    await new Promise((r, e) => {
-        e(0)
-    });
-})
 
 next.use("/api", api);
 next.use("/pldAssets", express.static("pldGenerator/assets"));

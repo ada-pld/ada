@@ -13,6 +13,7 @@ interface WAP_Config {
     Hostname :Config;
     UsingCustomGenerator: Config;
     UnderMaintenance: Config;
+    WAPInstanceId: Config;
 }
 
 class WAP {
@@ -36,6 +37,7 @@ class WAP {
         Hostname: null,
         UsingCustomGenerator: null,
         UnderMaintenance: null,
+        WAPInstanceId: null,
     };
 
 }

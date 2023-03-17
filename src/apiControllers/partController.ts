@@ -1,7 +1,7 @@
-import IController from "../controllers/controller";
+import IController from "./controller";
 import express, {Request, Response} from "express";
-import { checkPerm, checkPermAPI } from "../middlewares/checkPerms";
-import { authBearer, authUser } from "../middlewares/auth";
+import { checkPermAPI } from "../middlewares/checkPerms";
+import { authBearer } from "../middlewares/auth";
 import Part from "../models/part";
 import Card from "../models/card";
 import Sprint from "../models/sprint";

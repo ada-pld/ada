@@ -1,4 +1,4 @@
-import IController from "../controllers/controller";
+import IController from "./controller";
 import AuthController from "./authController";
 import CardController from "./cardController";
 import ConfigController from "./configController";

@@ -1,13 +1,13 @@
-import IController from "../controllers/controller";
+import IController from "./controller";
 import express, {NextFunction, Request, Response } from "express";
-import { authBearer, authUser } from "../middlewares/auth";
+import { authBearer } from "../middlewares/auth";
 import Card from "../models/card";
 import makePld from "../../pldGenerator";
 import { Op } from "sequelize";
 import User from "../models/user";
 import Part from "../models/part";
-import { checkPerm, checkPermAPI } from "../middlewares/checkPerms";
-import multer, { MulterError } from "multer";
+import { checkPermAPI } from "../middlewares/checkPerms";
+import multer from "multer";
 import { writeFileSync, readFileSync, existsSync, mkdirSync, copyFileSync, rmSync } from "fs";
 import { rgb, degrees, PDFDocument } from "pdf-lib";
 import Sprint from "../models/sprint";

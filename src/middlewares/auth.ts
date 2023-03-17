@@ -18,24 +18,6 @@ export const checkDefaultPassword = async function (req: Request, res: Response,
     next();
 }
 
-export const authUser = async function (req: Request, res: Response, next: NextFunction) {
-    if (req.user)
-        return next();
-    if (!req.session.user)
-        return res.redirect("/login");
-    const user = await User.findOne({
-        where: {
-            id: req.session.user
-        }
-    });
-    req.user = user;
-    if (!req.user)
-        return res.redirect("/login");
-    if (req.user.isDefaultPassword)
-        return res.redirect("/users/changeDefaultPassword");
-    next();
-}
-
 export const authBearer = async function (req: Request, res: Response, next: NextFunction) {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {

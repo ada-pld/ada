@@ -1,12 +1,9 @@
-import IController from "../controllers/controller";
+import IController from "./controller";
 import express, {Request, Response} from "express";
-import { checkPerm, checkPermAPI } from "../middlewares/checkPerms";
-import { authBearer, authUser } from "../middlewares/auth";
+import { checkPermAPI } from "../middlewares/checkPerms";
+import { authBearer } from "../middlewares/auth";
 import Card from "../models/card";
 import Sprint from "../models/sprint";
-import User from "../models/user";
-import { Op } from "sequelize";
-import Part from "../models/part";
 import PollingController from "./pollingController";
 
 class SprintController implements IController {

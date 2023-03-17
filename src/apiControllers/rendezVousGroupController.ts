@@ -1,12 +1,7 @@
-import IController from "../controllers/controller";
+import IController from "./controller";
 import express, {Request, Response} from "express";
 import { authBearer } from "../middlewares/auth";
 import { checkPermAPI } from "../middlewares/checkPerms";
-import RendezVous from "../models/rendezVous";
-import User from "../models/user";
-import RendezVousUserAttendance from "../models/rendezVousUserAttendance";
-import { sendRendezVousCreatedMail, sendRendezVousPassedMail } from "../mails";
-import { Op } from "sequelize";
 import RendezVousGroup from "../models/rendezVousGroup";
 
 class RendezVousGroupController implements IController {
