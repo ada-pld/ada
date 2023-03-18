@@ -283,7 +283,7 @@ class RendezVousController implements IController {
                 message: "Attendances is not an array."
             });
         }
-        req.body.attendances.forEach(editedAttendance => {
+        req.body.attendances?.forEach(editedAttendance => {
             if (!editedAttendance.id || !editedAttendance.presence) {
                 return res.status(400).send({
                     message: "Invalid attendance body."
