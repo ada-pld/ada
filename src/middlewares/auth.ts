@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import User from "../models/user";
 
 export const checkDefaultPassword = async function (req: Request, res: Response, next: NextFunction) {
+    return next();
     if (!req.user && req.session.user) {
         const user = await User.findOne({
             where: {
