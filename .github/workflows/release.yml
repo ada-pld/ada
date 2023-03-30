@@ -1,8 +1,19 @@
 name: WAP Release
 on:
-  release:
-    types: [published]
   workflow_dispatch:
+    inputs:
+      baseAPIURL:
+        description: 'Base API URL'
+        required: true
+        type: string
+      baseURL:
+        description: 'Base URL'
+        required: true
+        type: string
+      hostname:
+        description: 'Hostname'
+        required: true
+        type: string
 
 jobs:
   build_and_push_to_registry:
@@ -27,6 +38,10 @@ jobs:
         with:
           context: .
           push: true
+          build-args: |
+            BASE_API_URL=${{ inputs.baseAPIURL }}
+            BASE_URL${{ inputs.baseURL }}
+            HOSTNAME=${{ inputs.hostname }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
