@@ -36,7 +36,7 @@ jobs:
       - name: Deploy on server
         uses: floms/action-caprover@v1
         with:
-          host: ${{ vars.CAPROVER_SERVER }}
+          host: ${{ secrets.CAPROVER_SERVER }}
           password: ${{ secrets.CAPROVER_PASSWORD }}
           app: "wap"
           image: ${{ vars.IMAGE_NAME }}
