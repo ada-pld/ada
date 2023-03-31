@@ -13,8 +13,7 @@ import { apiControllers } from "./apiControllers";
 import Session from "./models/session";
 import cors from "cors";
 import path from "path";
-import fs from "fs";
-import { sendEvents } from "./utils/utils";
+import morgan from "morgan";
 
 const api = express();
 const next = express();
@@ -86,6 +85,11 @@ api.use(checkMaintenance);
 for (let controller of apiControllers) {
     api.use(controller.path, controller.router);
 }
+
+morgan.token('username', function getUsername(req: Request, res: Response) {
+    return req.user ? (` [${req.user.firstname} ${req.user.lastname}]`) : "";
+})
+api.use(morgan(':method :url:username :status :res[content-length] - :response-time ms'))
 
 next.use("/api", api);
 next.use("/pldAssets", express.static("pldGenerator/assets"));
