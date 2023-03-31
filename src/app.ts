@@ -82,14 +82,15 @@ api.use(async (req: Request, res: Response, next: NextFunction) => {
 api.use(checkDefaultPassword);
 api.use(checkMaintenance);
 
+/*morgan.token('username', function getUsername(req: Request, res: Response) {
+    return req.user ? (` [${req.user.firstname} ${req.user.lastname}]`) : "";
+})*/
+api.use(morgan('tiny'))
+
+
 for (let controller of apiControllers) {
     api.use(controller.path, controller.router);
 }
-
-morgan.token('username', function getUsername(req: Request, res: Response) {
-    return req.user ? (` [${req.user.firstname} ${req.user.lastname}]`) : "";
-})
-next.use(morgan(':method :url:username :status :res[content-length] - :response-time ms'))
 
 next.use("/api", api);
 next.use("/pldAssets", express.static("pldGenerator/assets"));
