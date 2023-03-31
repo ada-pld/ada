@@ -38,12 +38,6 @@ async function closeDatabaseConnection() {
     }
 }
 
-
-morgan.token('username', function getUsername(req: Request, res: Response) {
-    return req.user ? (` [${req.user.firstname} ${req.user.lastname}]`) : "";
-})
-api.use(morgan(':method :url:username :status :res[content-length] - :response-time ms'))
-
 api.use(cors());
 api.use(express.json());
 api.use(express.urlencoded({ extended: true }));
@@ -91,6 +85,11 @@ api.use(checkMaintenance);
 for (let controller of apiControllers) {
     api.use(controller.path, controller.router);
 }
+
+morgan.token('username', function getUsername(req: Request, res: Response) {
+    return req.user ? (` [${req.user.firstname} ${req.user.lastname}]`) : "";
+})
+next.use(morgan(':method :url:username :status :res[content-length] - :response-time ms'))
 
 next.use("/api", api);
 next.use("/pldAssets", express.static("pldGenerator/assets"));
