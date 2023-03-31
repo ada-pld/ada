@@ -1,4 +1,4 @@
-name: WAP Release
+name: WAP Release on Dev Instance
 on:
   workflow_dispatch:
     inputs:
