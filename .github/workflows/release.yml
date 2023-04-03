@@ -1,19 +1,6 @@
 name: WAP Release on Dev Instance
 on:
   workflow_dispatch:
-    inputs:
-      baseAPIURL:
-        description: 'Base API URL'
-        required: true
-        type: string
-      baseURL:
-        description: 'Base URL'
-        required: true
-        type: string
-      hostname:
-        description: 'Hostname'
-        required: true
-        type: string
 
 jobs:
   build_and_push_to_registry:
