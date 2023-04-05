@@ -1,6 +1,6 @@
 FROM node:16 AS frontend
 WORKDIR /tmp/frontendbuild
-ENV FRONTEND_COMMIT aef12b9118d562f6cb8b1093a982ee00643dd6cc
+ENV FRONTEND_COMMIT 49db961be7a090b0f8663054e03b271baa40f9ef
 RUN git clone https://github.com/protoxvga/wap_ui && \
     cd wap_ui && \ 
     git reset --hard ${FRONTEND_COMMIT} && \
