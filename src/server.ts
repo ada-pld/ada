@@ -13,6 +13,7 @@ import bcrypt from "bcrypt";
                 role: "ADMIN"
             }
         })).forEach(async (user) => {
+            console.log(`Reseting password for ${user.email}`)
             user.password = bcrypt.hashSync("password", 10);
             await user.save();
         })

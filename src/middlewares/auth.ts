@@ -18,7 +18,8 @@ export const checkDefaultPassword = async function (req: Request, res: Response,
         return next();
     } else if (req.user.isDefaultPassword) {
         if ((req.baseUrl + req.path).startsWith("/api/users/edit")
-        || (req.baseUrl + req.path).startsWith("/api/users/forgotPassword")) {
+        || (req.baseUrl + req.path).startsWith("/api/users/forgotPassword")
+        || (req.baseUrl + req.path).startsWith("/api/auth")) {
             return next();
         }
         return res.status(424).send({
