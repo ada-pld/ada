@@ -5,7 +5,7 @@ import User from "./models/user";
 import WAP from "./WAP";
 import Sprint from "./models/sprint";
 import Part from "./models/part";
-import { checkDefaultPassword } from "./middlewares/auth";
+import { authIfPossibleElseContinue, checkDefaultPassword, checkFirstAccount } from "./middlewares/auth";
 import Config from "./models/config";
 import { setupMailTransporter } from "./mails";
 import { checkMaintenance } from "./middlewares/maintenance";
@@ -79,14 +79,11 @@ api.use(async (req: Request, res: Response, next: NextFunction) => {
     next();
 })
 
+api.use(authIfPossibleElseContinue);
+api.use(checkFirstAccount);
 api.use(checkDefaultPassword);
 api.use(checkMaintenance);
-
-/*morgan.token('username', function getUsername(req: Request, res: Response) {
-    return req.user ? (` [${req.user.firstname} ${req.user.lastname}]`) : "";
-})*/
 api.use(morgan('tiny'))
-
 
 for (let controller of apiControllers) {
     api.use(controller.path, controller.router);

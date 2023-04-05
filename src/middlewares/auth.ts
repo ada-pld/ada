@@ -1,25 +1,57 @@
 import { Request, Response, NextFunction } from "express";
 import User from "../models/user";
 
-export const checkDefaultPassword = async function (req: Request, res: Response, next: NextFunction) {
-    return next();
-    if (!req.user && req.session.user) {
-        const user = await User.findOne({
-            where: {
-                id: req.session.user
-            }
-        });
-        req.user = user;
-    }
-    if (req.user && req.user.isDefaultPassword) {
-        if (req.baseUrl + req.path == '/users/changeDefaultPassword')
+export const checkFirstAccount = async function (req: Request, res: Response, next: NextFunction) {
+    if ((await User.count()) == 0) {
+        if ((req.baseUrl + req.path).startsWith("/api/users/createDefault")) {
             return next();
-        return res.redirect("/users/changeDefaultPassword");
+        }
+        return res.status(424).send({
+            message: "noAdminAccount"
+        });
     }
     next();
 }
 
+export const checkDefaultPassword = async function (req: Request, res: Response, next: NextFunction) {
+    if (!req.user) {
+        return next();
+    } else if (req.user.isDefaultPassword) {
+        if ((req.baseUrl + req.path).startsWith("/api/users/edit")) {
+            return next();
+        }
+        return res.status(424).send({
+            message: "defaultPassword"
+        });
+    }
+    next();
+}
+
+export const authIfPossibleElseContinue = async function (req: Request, res: Response, next: NextFunction) {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+        return next();
+    }
+    const session = req.wap.sessions.find(x => x.accessToken == token);
+    if (!session) {
+        return next();
+    }
+    const user = await User.findOne({
+        where: {
+            id: session.userId
+        }
+    });
+    if (!user) {
+        return next();
+    }
+    req.user = user;
+    next();
+}
+
 export const authBearer = async function (req: Request, res: Response, next: NextFunction) {
+    if (req.user) {
+        next();
+    }
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
         return res.status(401).send({

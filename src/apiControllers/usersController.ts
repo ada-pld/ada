@@ -24,6 +24,7 @@ class UserController implements IController {
         this.router.get("/cardsStats", authBearer, checkPermAPI("MAINTENER"), this.cardsStats);
         this.router.get("/:id", authBearer, this.getOne);
         this.router.post("/create", authBearer, checkPermAPI("EDITOR"), this.createUser);
+        this.router.post("/createDefault", this.createDefaultUser);
         this.router.post("/edit", authBearer, this.editUser);
         this.router.post("/forgotPassword", this.forgotPassword);
     }
@@ -205,6 +206,34 @@ class UserController implements IController {
             return res.status(200).send({
                 message: "Success."
             });
+        }
+    ]
+
+    private createDefaultUser = [
+        body("email").normalizeEmail().isEmail(),
+        body("firstname").exists({ checkFalsy: true }),
+        body("lastname").exists({ checkFalsy: true }),
+        body("password").exists({ checkFalsy: true }),
+        async (req: Request, res: Response) =>  {
+            if (!validationResult(req).isEmpty()) {
+                return res.status(400).send({
+                    message: "Invalid body."
+                });
+            }
+            if ((await User.count() == 0)) {
+                return res.status(403).send({
+                    message: "You can't acces this route."
+                })
+            }
+            const user = await User.create({
+                email: req.body.email,
+                firstname: req.body.firstname,
+                lastname: req.body.lastname,
+                password: await bcrypt.hash(req.body.password, 12)
+            })
+            return res.status(200).send({
+                message: "Defautl account successfully created."
+            })
         }
     ]
 
