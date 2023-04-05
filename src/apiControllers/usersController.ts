@@ -167,7 +167,7 @@ class UserController implements IController {
                     }
                     user.isDefaultPassword = false;
                     user.password = await bcrypt.hash(req.body.password, 10);
-                    await req.user.save();
+                    await user.save();
                 }
                 return res.status(200).send({
                     message: "Success."
