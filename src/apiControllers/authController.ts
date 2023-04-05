@@ -31,7 +31,6 @@ class AuthController implements IController {
                 email: req.body.email
             }
         });
-        const salted = process.env.PASS_SALT + req.body.password;
 
         if (!user) {
             await bcrypt.compare("nothing", "issecure");
@@ -39,7 +38,7 @@ class AuthController implements IController {
                 message: "Invalid credentials."
             });
         }
-        if (!(await bcrypt.compare(salted, user.password))) {
+        if (!(await bcrypt.compare(req.body.password, user.password))) {
             return res.status(401).send({
                 message: "Invalid credentials."
             });

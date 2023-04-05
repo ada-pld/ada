@@ -99,7 +99,7 @@ class UserController implements IController {
             })
             if (checkMailTransporter()) {
                 const password = User.generateRandomPassword();
-                created.password = await bcrypt.hash(process.env.PASS_SALT + password, 10);
+                created.password = await bcrypt.hash(password, 10);
                 sendCreationEmail(created, req.user, password);
             } else {
                 if (!req.wap.config.Default_Password.value) {
@@ -107,7 +107,7 @@ class UserController implements IController {
                         message: "Default password is not set in the config."
                     });
                 }
-                created.password = await bcrypt.hash(process.env.PASS_SALT + req.wap.config.Default_Password.value, 10);
+                created.password = await bcrypt.hash(req.wap.config.Default_Password.value, 10);
             }
             await created.save();
             PollingController.addToPollList('useListUsersQuery');
@@ -166,7 +166,7 @@ class UserController implements IController {
                         });
                     }
                     user.isDefaultPassword = false;
-                    user.password = await bcrypt.hash(process.env.PASS_SALT + req.body.password, 10);
+                    user.password = await bcrypt.hash(req.body.password, 10);
                     await req.user.save();
                 }
                 return res.status(200).send({
@@ -192,7 +192,7 @@ class UserController implements IController {
                     });
                 }
                 user.isDefaultPassword = false;
-                user.password = await bcrypt.hash(process.env.PASS_SALT + req.body.password, 10);
+                user.password = await bcrypt.hash(req.body.password, 10);
             }
             user.set({
                 firstname: req.body.firstname ?? user.firstname,
@@ -229,7 +229,8 @@ class UserController implements IController {
                 email: req.body.email,
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
-                password: await bcrypt.hash(req.body.password, 12)
+                password: await bcrypt.hash(req.body.password, 10),
+                role: "ADMIN"
             })
             return res.status(200).send({
                 message: "Defautl account successfully created."
@@ -261,7 +262,7 @@ class UserController implements IController {
                 })
             }
             const password = User.generateRandomPassword();
-            user.password = await bcrypt.hash(process.env.PASS_SALT + password, 10);
+            user.password = await bcrypt.hash(password, 10);
             user.isDefaultPassword = true;
             await user.save();
             await sendPasswordForgottenMail(user, password);
