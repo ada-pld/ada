@@ -89,6 +89,10 @@ for (let controller of apiControllers) {
     api.use(controller.path, controller.router);
 }
 
+api.get('/', (req, res) => {
+    res.status(404).send();
+})
+
 next.use("/api", api);
 next.use("/pldAssets", express.static("pldGenerator/assets"));
 next.use("/pldGenerated", express.static("pldGenerator/generated"));
