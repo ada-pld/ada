@@ -220,7 +220,7 @@ class UserController implements IController {
                     message: "Invalid body."
                 });
             }
-            if ((await User.count() == 0)) {
+            if ((await User.count() != 0)) {
                 return res.status(403).send({
                     message: "You can't acces this route."
                 })
