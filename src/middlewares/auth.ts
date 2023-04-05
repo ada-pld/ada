@@ -52,7 +52,7 @@ export const authIfPossibleElseContinue = async function (req: Request, res: Res
 
 export const authBearer = async function (req: Request, res: Response, next: NextFunction) {
     if (req.user) {
-        next();
+        return next();
     }
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
