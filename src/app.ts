@@ -89,8 +89,8 @@ for (let controller of apiControllers) {
     api.use(controller.path, controller.router);
 }
 
-api.get('/', (req, res) => {
-    res.status(404).send();
+api.get('/health', (req, res) => {
+    res.status(200).send();
 })
 
 next.use("/api", api);
