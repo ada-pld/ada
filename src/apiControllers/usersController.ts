@@ -225,12 +225,13 @@ class UserController implements IController {
                     message: "You can't acces this route."
                 })
             }
-            const user = await User.create({
+            await User.create({
                 email: req.body.email,
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
                 password: await bcrypt.hash(req.body.password, 10),
-                role: "ADMIN"
+                role: "ADMIN",
+                isDefaultPassword: false,
             })
             return res.status(200).send({
                 message: "Defautl account successfully created."
