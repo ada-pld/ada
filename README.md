@@ -3,7 +3,7 @@
     <a href="https://github.com/theohemmer/ada/releases" target="_blank" title="GitHub release (latest by date)">
     <img src="https://img.shields.io/github/v/release/theohemmer/ada" alt="GitHub release (latest by date)"/>
     </a>
-    <p>Automatic Document Administration (formerly WAP), a tool to manage sprints and generate Project Log Documents</p>
+    <p>Automatic Documents Administration (formerly WAP), a tool to manage sprints and generate Project Log Documents</p>
 </div>
 
 <a href="#what-is-ada">What is ADA ?</a><br>

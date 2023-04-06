@@ -1,7 +1,7 @@
 {
   "name": "ada",
-  "version": "1.0.11",
-  "description": "Web Administration Panel",
+  "version": "1.1.0",
+  "description": "Automatic Documents Administration",
   "main": "build/app.js",
   "repository": "https://github.com/theohemmer/ada",
   "scripts": {
