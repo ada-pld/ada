@@ -44,13 +44,6 @@ To install WAP you'll need to have Docker and a MySQL database with a database r
 Run WAP on Docker by redirecting the port 4000 and setting thoses environment variables:
 
 ```
-git clone https://github.com/theohemmer/wap
-cd wap
-docker build -t wap \
-    --build-arg BASE_API_URL="https://wap-dev.hemmer.dev/api/" \
-    --build-arg BASE_URL="https://wap-dev.hemmer.dev" \
-    --build-arg HOSTNAME="wap-dev.hemmer.dev" \
-    .
 docker run -d \
     -p 4000:80 \
     -p 4000:443 \
@@ -61,7 +54,7 @@ docker run -d \
     -e PROD_DB_PASS="root" \
     -e NODE_ENV="production" \
     -e PORT="4000" \
-    -e PASS_SALT="passwordSalt"
+    theohmmr/wap:dev
 ```
 
 ## Frontend

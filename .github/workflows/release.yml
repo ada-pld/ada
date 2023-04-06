@@ -1,6 +1,7 @@
 name: WAP Release
 on:
-  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   build_and_push_to_registry:
