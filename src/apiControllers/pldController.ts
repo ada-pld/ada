@@ -171,7 +171,7 @@ class PLDController implements IController {
                 idInSprint: {
                     [Op.ne]: -1
                 },
-                sprintId: req.wap.sprint.id,
+                sprintId: req.ada.sprint.id,
             },
             order: [['sprintId', 'ASC'], ['partId', 'ASC'], ['idInSprint', 'ASC']],
             include: [
@@ -254,7 +254,7 @@ class PLDController implements IController {
 
         const allPLDs = await PLD.findAll({
             where: {
-                sprintId: req.wap.sprint.id
+                sprintId: req.ada.sprint.id
             }
         });
         for (const pld of allPLDs) {
@@ -291,7 +291,7 @@ class PLDController implements IController {
                 report: req.body["report-" + user.id].replace(/[\r+]/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd()
             });
         }
-        await this.generatePreview(req.wap.sprint.id, changelogOnPLD, advancementReports);
+        await this.generatePreview(req.ada.sprint.id, changelogOnPLD, advancementReports);
         return res.status(200).send({
             message: "Success."
         });
@@ -306,11 +306,11 @@ class PLDController implements IController {
 
         const allPldsCounts = await PLD.count({
             where: {
-                sprintId: req.wap.sprint.id
+                sprintId: req.ada.sprint.id
             }
         });
         let newPldCount = allPldsCounts + 1;
-        const fileName = "WAP_PLD_SPRINT" + req.wap.sprint.id + "_VERSION" + newPldCount + ".pdf";
+        const fileName = "ADA_PLD_SPRINT" + req.ada.sprint.id + "_VERSION" + newPldCount + ".pdf";
         const path = "./pldGenerator/generated/" + fileName;
         const downloadPath = "/pldGenerated/" + fileName;
         await makePld(this.lastPreview, {}, path);
@@ -321,7 +321,7 @@ class PLDController implements IController {
             downloadPath: downloadPath,
             changesToPLD: this.lastChangelog
         });
-        newPLD.$set("sprint", req.wap.sprint);
+        newPLD.$set("sprint", req.ada.sprint);
         await newPLD.save();
 
         const allCards = await Card.findAll({
@@ -329,7 +329,7 @@ class PLDController implements IController {
                 idInSprint: {
                     [Op.ne]: -1
                 },
-                sprintId: req.wap.sprint.id,
+                sprintId: req.ada.sprint.id,
             }
         })
         for (const card of allCards) {

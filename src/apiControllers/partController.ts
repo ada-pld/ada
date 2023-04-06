@@ -35,7 +35,7 @@ class PartController implements IController {
         if (req.user.role == "ADMIN" || req.user.role == "EDITOR") {
             allParts.forEach((x) => {
                 const resultObject = x.toJSON() as (Part & {totalInSprint: number, totalCards: number});
-                resultObject.totalInSprint = x.cards.filter(x => x.sprintId == req.wap.sprint.id).length;
+                resultObject.totalInSprint = x.cards.filter(x => x.sprintId == req.ada.sprint.id).length;
                 resultObject.totalCards = x.cards.length;
             });
         } else {

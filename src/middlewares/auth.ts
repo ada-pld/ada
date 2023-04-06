@@ -34,7 +34,7 @@ export const authIfPossibleElseContinue = async function (req: Request, res: Res
     if (!token) {
         return next();
     }
-    const session = req.wap.sessions.find(x => x.accessToken == token);
+    const session = req.ada.sessions.find(x => x.accessToken == token);
     if (!session) {
         return next();
     }
@@ -60,7 +60,7 @@ export const authBearer = async function (req: Request, res: Response, next: Nex
             message: "No token provided."
         });
     }
-    const session = req.wap.sessions.find(x => x.accessToken == token);
+    const session = req.ada.sessions.find(x => x.accessToken == token);
     if (!session) {
         return res.status(401).send({
             message: "Invalid token."

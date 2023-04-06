@@ -22,7 +22,7 @@ class SprintController implements IController {
     }
 
     private active = async (req: Request, res: Response) => {
-        return res.status(200).send(req.wap.sprint);
+        return res.status(200).send(req.ada.sprint);
     }
 
     private listSprint = async (req: Request, res: Response) => {
@@ -69,7 +69,7 @@ class SprintController implements IController {
             }
         })
         await Promise.all(allPromises);
-        req.wap.sprint = sprint;
+        req.ada.sprint = sprint;
         PollingController.addToPollList('useGetSprintQuery');
         return res.status(200).send({
             message: "Success."

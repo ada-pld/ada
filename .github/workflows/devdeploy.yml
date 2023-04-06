@@ -1,4 +1,4 @@
-name: WAP Release on Dev Instance
+name: ADA Release on Dev Instance
 on:
   workflow_dispatch:
 
@@ -37,5 +37,5 @@ jobs:
         with:
           host: ${{ secrets.CAPROVER_SERVER }}
           password: ${{ secrets.CAPROVER_PASSWORD }}
-          app: "wap"
+          app: "ada"
           image: ${{ vars.IMAGE_NAME }}:dev

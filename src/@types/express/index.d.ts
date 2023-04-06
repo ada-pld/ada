@@ -1,11 +1,11 @@
 import User from "../../models/user";
-import WAP from "../../WAP";
+import ADA from "../../ADA";
 
 declare global {
     namespace Express {
         interface Request {
             user?: User;
-            wap?: WAP;
+            ada?: ADA;
         }
         interface Response {
             unauthorized(message: string): void;

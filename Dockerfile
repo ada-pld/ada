@@ -1,15 +1,15 @@
 FROM node:16 AS frontend
 WORKDIR /tmp/frontendbuild
 ENV FRONTEND_COMMIT 49db961be7a090b0f8663054e03b271baa40f9ef
-RUN git clone https://github.com/protoxvga/wap_ui && \
-    cd wap_ui && \ 
+RUN git clone https://github.com/protoxvga/ada_ui && \
+    cd ada_ui && \ 
     git reset --hard ${FRONTEND_COMMIT} && \
     npm install && \
     npx next build && \
     npx next export && \
     cp -r out /tmp/out && \
     cd .. && \
-    rm -rf wapui
+    rm -rf adaui
 
 FROM node:16 AS pldgenerator
 WORKDIR /tmp/pldgeneratorbuild

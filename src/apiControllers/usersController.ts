@@ -102,12 +102,12 @@ class UserController implements IController {
                 created.password = await bcrypt.hash(password, 10);
                 sendCreationEmail(created, req.user, password);
             } else {
-                if (!req.wap.config.Default_Password.value) {
+                if (!req.ada.config.Default_Password.value) {
                     return res.status(400).send({
                         message: "Default password is not set in the config."
                     });
                 }
-                created.password = await bcrypt.hash(req.wap.config.Default_Password.value, 10);
+                created.password = await bcrypt.hash(req.ada.config.Default_Password.value, 10);
             }
             await created.save();
             PollingController.addToPollList('useListUsersQuery');
@@ -259,7 +259,7 @@ class UserController implements IController {
             }
             if (!checkMailTransporter()) {
                 return res.status(409).send({
-                    message: "Mail sending is not supported on this WAP instance. Please contact your WAP administrator."
+                    message: "Mail sending is not supported on this ADA instance. Please contact your ADA administrator."
                 })
             }
             const password = User.generateRandomPassword();
@@ -352,7 +352,7 @@ class UserController implements IController {
                     toRet.JHIntended += toAdd;
                 }
             })
-            toRet.JHMissing = req.wap.sprint.workDaysNeeded - toRet.JHIntended;
+            toRet.JHMissing = req.ada.sprint.workDaysNeeded - toRet.JHIntended;
             return toRet;
         })
         return res.status(200).send((allUsers.length == 1) ? allUsers[0] : allUsers);

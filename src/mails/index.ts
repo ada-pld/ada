@@ -1,7 +1,7 @@
 import nodemailer, { Transporter } from 'nodemailer';
 import ejs from 'ejs';
 import User from '../models/user';
-import { wap } from "../app";
+import { ada } from "../app";
 import Card from '../models/card';
 import dayjs from 'dayjs';
 
@@ -10,11 +10,11 @@ let transporter :Transporter = null;
 export async function setupMailTransporter() {
     try {
         transporter = nodemailer.createTransport({
-            host: wap.config.SMTP_Host.value,
-            port: parseInt(wap.config.SMTP_Port.value),
+            host: ada.config.SMTP_Host.value,
+            port: parseInt(ada.config.SMTP_Port.value),
             auth: {
-                user: wap.config.SMTP_User.value,
-                pass: wap.config.SMTP_Password.value
+                user: ada.config.SMTP_User.value,
+                pass: ada.config.SMTP_Password.value
             }
         })
         await transporter.verify()
@@ -36,12 +36,12 @@ export async function sendCreationEmail(newUser: User, creatorUser: User, tempor
         creatorLastname: creatorUser.lastname,
         email: newUser.email,
         password: temporaryPassword,
-        wapLink: wap.config.Hostname.value,
-        wapRepository: "https://github.com/theohemmer/wap"
+        adaLink: ada.config.Hostname.value,
+        adaRepository: "https://github.com/theohemmer/ada"
     });
     const options = {
-        from: '"WAP" ' + wap.config.SMTP_User.value.toString(),
-        subject: "WAP - Account created",
+        from: '"ADA" ' + ada.config.SMTP_User.value.toString(),
+        subject: "ADA - Account created",
         to: newUser.email,
         html: rendered
     }
@@ -55,12 +55,12 @@ export async function sendPasswordForgottenMail(user: User, temporaryPassword: s
         firstname: user.firstname,
         email: user.email,
         password: temporaryPassword,
-        wapLink: wap.config.Hostname.value,
-        wapRepository: "https://github.com/theohemmer/wap"
+        adaLink: ada.config.Hostname.value,
+        adaRepository: "https://github.com/theohemmer/ada"
     });
     const options = {
-        from: '"WAP" ' + wap.config.SMTP_User.value.toString(),
-        subject: "WAP - Password reset",
+        from: '"ADA" ' + ada.config.SMTP_User.value.toString(),
+        subject: "ADA - Password reset",
         to: user.email,
         html: rendered
     }
@@ -74,11 +74,11 @@ export async function sendRejectionEmail(user: User, card: Card, rejectionReason
         firstname: user.firstname,
         cardTitle: card.name,
         cardRejectionReason: rejectionReason,
-        wapRepository: "https://github.com/theohemmer/wap"
+        adaRepository: "https://github.com/theohemmer/ada"
     });
     const options = {
-        from: '"WAP" ' + wap.config.SMTP_User.value.toString(),
-        subject: "WAP - Card rejected",
+        from: '"ADA" ' + ada.config.SMTP_User.value.toString(),
+        subject: "ADA - Card rejected",
         to: user.email,
         html: rendered
     }
@@ -93,11 +93,11 @@ export async function sendApprovalEmail(user: User, card: Card) {
         cardTitle: card.name,
         cardNumber: card.sprintId + "." + card.partId + "." + card.idInSprint,
         cardWorkingDays: card.workingDays,
-        wapRepository: "https://github.com/theohemmer/wap"
+        adaRepository: "https://github.com/theohemmer/ada"
     });
     const options = {
-        from: '"WAP" ' + wap.config.SMTP_User.value.toString(),
-        subject: "WAP - Card approved",
+        from: '"ADA" ' + ada.config.SMTP_User.value.toString(),
+        subject: "ADA - Card approved",
         to: user.email,
         html: rendered
     }
@@ -114,12 +114,12 @@ export async function sendCardAwaitingApprovalEmail(user: User, creator: User, c
         cardTitle: card.name,
         cardDescription: card.description,
         cardWorkingDays: card.workingDays,
-        wapCardsLink: wap.config.Hostname.value + "/cards",
-        wapRepository: "https://github.com/theohemmer/wap"
+        adaCardsLink: ada.config.Hostname.value + "/cards",
+        adaRepository: "https://github.com/theohemmer/ada"
     });
     const options = {
-        from: '"WAP" ' + wap.config.SMTP_User.value.toString(),
-        subject: "WAP - Card awaiting approval",
+        from: '"ADA" ' + ada.config.SMTP_User.value.toString(),
+        subject: "ADA - Card awaiting approval",
         to: user.email,
         html: rendered
     }
@@ -133,12 +133,12 @@ export async function sendRendezVousCreatedMail(user: User, date: Date, agenda: 
         firstname: user.firstname,
         date: dayjs(date).format("DD/MM/YYYY [à] HH:MM [(UTC+2)]"),
         agenda: ejs.escapeXML(agenda).replace(/\n/g, '<br>'),
-        wapCardsLink: wap.config.Hostname.value + "/cards",
-        wapRepository: "https://github.com/theohemmer/wap"
+        adaCardsLink: ada.config.Hostname.value + "/cards",
+        adaRepository: "https://github.com/theohemmer/ada"
     });
     const options = {
-        from: '"WAP" ' + wap.config.SMTP_User.value.toString(),
-        subject: "WAP - Rendez-Vous created",
+        from: '"ADA" ' + ada.config.SMTP_User.value.toString(),
+        subject: "ADA - Rendez-Vous created",
         to: user.email,
         html: rendered
     }
@@ -153,12 +153,12 @@ export async function sendRendezVousPassedMail(user: User, date: Date, report: s
         date: dayjs(date).format("DD/MM/YYYY [à] HH:MM [(UTC+2)]"),
         report: ejs.escapeXML(report).replace(/\n/g, '<br>'),
         attendance: attendance,
-        wapCardsLink: wap.config.Hostname.value + "/cards",
-        wapRepository: "https://github.com/theohemmer/wap"
+        adaCardsLink: ada.config.Hostname.value + "/cards",
+        adaRepository: "https://github.com/theohemmer/ada"
     });
     const options = {
-        from: '"WAP" ' + wap.config.SMTP_User.value.toString(),
-        subject: "WAP - Rendez-Vous report published",
+        from: '"ADA" ' + ada.config.SMTP_User.value.toString(),
+        subject: "ADA - Rendez-Vous report published",
         to: user.email,
         html: rendered
     }

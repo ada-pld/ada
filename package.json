@@ -1,9 +1,9 @@
 {
-  "name": "wap",
+  "name": "ada",
   "version": "1.0.11",
   "description": "Web Administration Panel",
   "main": "build/app.js",
-  "repository": "https://github.com/theohemmer/wap",
+  "repository": "https://github.com/theohemmer/ada",
   "scripts": {
     "build": "tsc",
     "start": "node ./build/server.js",

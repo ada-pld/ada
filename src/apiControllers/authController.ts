@@ -69,7 +69,7 @@ class AuthController implements IController {
             refreshTokenExpires: (date + (1 * 60 * 60 * 24)),
         });
 
-        req.wap.sessions = await Session.findAll();
+        req.ada.sessions = await Session.findAll();
 
         return res.status(200).send({
             userId: user.id,
@@ -84,7 +84,7 @@ class AuthController implements IController {
                 message: "Invalid refreshToken or UserId"
             });
         }
-        const session = req.wap.sessions.find(x => (x.refreshToken == req.query.refreshToken) && (x.userId == req.query.userId));
+        const session = req.ada.sessions.find(x => (x.refreshToken == req.query.refreshToken) && (x.userId == req.query.userId));
         if (!session) {
             return res.status(400).send({
                 message: "Invalid refreshToken or userId"
@@ -109,7 +109,7 @@ class AuthController implements IController {
         session.refreshTokenExpires = date + (1 * 60 * 60 * 24);
         await session.save();
 
-        req.wap.sessions = await Session.findAll();
+        req.ada.sessions = await Session.findAll();
 
         return res.status(200).send({
             accessToken: roleId + accessToken.substring(1),
@@ -123,7 +123,7 @@ class AuthController implements IController {
                 message: "No token provided"
             });
         }
-        const session = req.wap.sessions.find(x => x.accessToken == req.query.token);
+        const session = req.ada.sessions.find(x => x.accessToken == req.query.token);
         if (!session) {
             return res.status(400).send({
                 message: "Invalid token"
@@ -136,7 +136,7 @@ class AuthController implements IController {
             }
         });
 
-        req.wap.sessions = await Session.findAll();
+        req.ada.sessions = await Session.findAll();
 
         return res.status(200).send({
             message: "Logout complete."
@@ -149,7 +149,7 @@ class AuthController implements IController {
                 message: "No token provided"
             });
         }
-        const session = req.wap.sessions.find(x => x.accessToken == req.query.token);
+        const session = req.ada.sessions.find(x => x.accessToken == req.query.token);
         if (!session) {
             return res.status(400).send({
                 message: "Invalid token"

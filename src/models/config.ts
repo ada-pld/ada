@@ -105,15 +105,15 @@ class Config extends Model<Config> {
         }));
     }
 
-    static async getWAPInstanceId() {
+    static async getADAInstanceId() {
         const config = await Config.findOne({
             where: {
-                name: "WAP_INSTANCE_ID"
+                name: "ADA_INSTANCE_ID"
             }
         });
         if (!config) {
             return (await Config.create({
-                name: "WAP_INSTANCE_ID",
+                name: "ADA_INSTANCE_ID",
                 value: await generateRandomString(48)
             }))
         }

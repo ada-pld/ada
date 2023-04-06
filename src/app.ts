@@ -2,7 +2,7 @@ import "dotenv/config";
 import express, { Request, Response, NextFunction } from "express";
 import db from "./models";
 import User from "./models/user";
-import WAP from "./WAP";
+import ADA from "./ADA";
 import Sprint from "./models/sprint";
 import Part from "./models/part";
 import { authIfPossibleElseContinue, checkDefaultPassword, checkFirstAccount } from "./middlewares/auth";
@@ -17,7 +17,7 @@ import morgan from "morgan";
 
 const api = express();
 const next = express();
-const wap = new WAP();
+const ada = new ADA();
 
 async function checkDatabaseConnection() {
     try {
@@ -43,38 +43,38 @@ api.use(express.json());
 api.use(express.urlencoded({ extended: true }));
 
 api.use(async (req: Request, res: Response, next: NextFunction) => {
-    if (wap.sprint == null) {
+    if (ada.sprint == null) {
         const sprint = await Sprint.findOne({
             where: {
                 active: true
             }
         })
-        wap.sprint = sprint;
+        ada.sprint = sprint;
     }
-    if (wap.parts == null) {
+    if (ada.parts == null) {
         const parts = await Part.findAll();
-        wap.parts = parts;
+        ada.parts = parts;
     }
-    if (wap.users == null) {
+    if (ada.users == null) {
         const users = await User.findAll();
-        wap.users = users;
+        ada.users = users;
     }
-    if (wap.sessions == null) {
+    if (ada.sessions == null) {
         const sessions = await Session.findAll();
-        wap.sessions = sessions;
+        ada.sessions = sessions;
     }
-    if (wap.config.SMTP_Host == null) {
-        wap.config.SMTP_Host = await Config.getSMTPHost();
-        wap.config.SMTP_User = await Config.getSMTPUser();
-        wap.config.SMTP_Port = await Config.getSMTPPort();
-        wap.config.SMTP_Password = await Config.getSMTPPassword();
-        wap.config.Default_Password = await Config.getDefaultPassword();
-        wap.config.Hostname = await Config.getHostname();
-        wap.config.UsingCustomGenerator = await Config.getUsingCustomGenerator();
-        wap.config.UnderMaintenance = await Config.getUnderMaintenance();
+    if (ada.config.SMTP_Host == null) {
+        ada.config.SMTP_Host = await Config.getSMTPHost();
+        ada.config.SMTP_User = await Config.getSMTPUser();
+        ada.config.SMTP_Port = await Config.getSMTPPort();
+        ada.config.SMTP_Password = await Config.getSMTPPassword();
+        ada.config.Default_Password = await Config.getDefaultPassword();
+        ada.config.Hostname = await Config.getHostname();
+        ada.config.UsingCustomGenerator = await Config.getUsingCustomGenerator();
+        ada.config.UnderMaintenance = await Config.getUnderMaintenance();
         await setupMailTransporter();
     }
-    req.wap = wap;
+    req.ada = ada;
 
     next();
 })
@@ -102,4 +102,4 @@ next.use((req, res) => {
     return res.sendFile(path.join(__dirname, '../public2/404/index.html'));
 })
 
-export { next as app, api, checkDatabaseConnection, closeDatabaseConnection, wap }
+export { next as app, api, checkDatabaseConnection, closeDatabaseConnection, ada }

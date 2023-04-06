@@ -67,7 +67,7 @@ export function sendEvents(instanceId: string, analytics: any[], tries: number =
             encrypted: encrypted
         }
         const toSendFinal = Buffer.from(JSON.stringify(toSend)).toString('base64');
-        axios.post(`http://localhost:4001/recolt?project=WAP&WAPInstanceId=${instanceId}`, {
+        axios.post(`http://localhost:4001/recolt?project=ADA&ADAInstanceId=${instanceId}`, {
             json: toSendFinal
         }).catch((_error) => {setTimeout(() => {sendEvents(instanceId, analytics, tries + 1)}, 10000)})
     }).catch((_error) => {})

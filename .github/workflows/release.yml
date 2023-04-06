@@ -1,4 +1,4 @@
-name: WAP Release
+name: ADA Release
 on:
   release:
     types: [published]
@@ -38,5 +38,5 @@ jobs:
         with:
           host: ${{ secrets.CAPROVER_SERVER }}
           password: ${{ secrets.CAPROVER_PASSWORD }}
-          app: "wap"
+          app: "ada"
           image: ${{ vars.IMAGE_NAME }}

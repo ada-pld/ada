@@ -132,7 +132,7 @@ class CardController implements IController {
             dods: req.body.dods.replace(/[\r]+/g, '').replace(/^(\s*$)(?:\r\n?|\n)/gm, '').trimEnd(),
             workingDays: workingDays,
             partId: part.id,
-            sprintId: req.wap.sprint.id
+            sprintId: req.ada.sprint.id
         });
         await card.$set("assignees", assignees);
         await card.save();
@@ -348,7 +348,7 @@ class CardController implements IController {
                 status: {
                     [Op.notIn]: ["WAITING_APPROVAL", "REJECTED"]
                 },
-                sprintId: req.wap.sprint.id,
+                sprintId: req.ada.sprint.id,
                 partId: card.partId
             }
         })

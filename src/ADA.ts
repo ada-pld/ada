@@ -4,7 +4,7 @@ import Session from "./models/session";
 import Sprint from "./models/sprint";
 import User from "./models/user";
 
-interface WAP_Config {
+interface ADA_Config {
     SMTP_Host :Config;
     SMTP_User :Config;
     SMTP_Port :Config;
@@ -13,10 +13,10 @@ interface WAP_Config {
     Hostname :Config;
     UsingCustomGenerator: Config;
     UnderMaintenance: Config;
-    WAPInstanceId: Config;
+    ADAInstanceId: Config;
 }
 
-class WAP {
+class ADA {
     public sprint: Sprint = null;
     public parts: Part[] = null;
     public sessions: Session[] = null;
@@ -28,7 +28,7 @@ class WAP {
     */
     public users: User[] = null;
 
-    public config :WAP_Config = {
+    public config :ADA_Config = {
         SMTP_Host: null,
         SMTP_User: null,
         SMTP_Port: null,
@@ -37,9 +37,9 @@ class WAP {
         Hostname: null,
         UsingCustomGenerator: null,
         UnderMaintenance: null,
-        WAPInstanceId: null,
+        ADAInstanceId: null,
     };
 
 }
 
-export default WAP;
+export default ADA;

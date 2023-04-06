@@ -5,24 +5,24 @@
                 <mj-text font-size="20px" color="black" font-family="helvetica">
                     <h3>Hi <%= firstname %>,</h3>
                     <br />
-                    <p>Your card <b><%= cardTitle %></b>, as been approved by an editor or administrator of WAP</p>
+                    <p>Your card <b><%= cardTitle %></b>, as been approved by an editor or administrator of ADA</p>
                     <br />
                     <p>Your card as been assignated the number <b><%= cardNumber %></b>, and is currently valuated as <b><%= cardWorkingDays %></b>J/H</p>
                     <br />
-                    <p>If you feel an error has been made, please contact your WAP administrator or editors to edit this card</p>
+                    <p>If you feel an error has been made, please contact your ADA administrator or editors to edit this card</p>
                 </mj-text>
                 <mj-text  font-size="20px" color="black" font-family="helvetica">
-                    <h3 style="color: #FF6363">What is WAP ?</h3>
-                    <p>WAP is an open-source project which goal is to simplify the managment of sprints and generation of the PLDs.</p>
+                    <h3 style="color: #FF6363">What is ADA ?</h3>
+                    <p>ADA is an open-source project which goal is to simplify the managment of sprints and generation of the PLDs.</p>
                     <p>It has been created by a student to help in the process of handling users stories of a sprint and their versionning.</p>
-                    <p>You can find more about WAP on the main <a href="<%= wapRepository %>">Github repository</a>.</p>
+                    <p>You can find more about ADA on the main <a href="<%= adaRepository %>">Github repository</a>.</p>
                 </mj-text>
             </mj-column>
         </mj-section>
         <mj-section background-color="#C8C8C8">
             <mj-column>
                 <mj-text font-size="13px" color="grey" font-family="helvetica">
-                    You received this email because your card status have changed on WAP.
+                    You received this email because your card status have changed on ADA.
                     <br /><br />
                     This is an automated email, please do not respond to it.
                 </mj-text>
