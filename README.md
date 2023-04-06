@@ -45,8 +45,7 @@ Run ADA on Docker by redirecting the port 4000 and setting thoses environment va
 
 ```
 docker run -d \
-    -p 4000:80 \
-    -p 4000:443 \
+    -p 80:4000 \
     -e PROD_DB_HOST="localhost" \
     -e PROD_DB_NAME="ADA" \
     -e PROD_DB_PORT="3306" \
