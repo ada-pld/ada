@@ -38,5 +38,5 @@ jobs:
         with:
           host: ${{ secrets.CAPROVER_SERVER }}
           password: ${{ secrets.CAPROVER_PASSWORD }}
-          app: "ada"
+          app: "ada-dev"
           image: ${{ vars.IMAGE_NAME }}
