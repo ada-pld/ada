@@ -1,6 +1,6 @@
 FROM node:16 AS frontend
 WORKDIR /tmp/frontendbuild
-ENV FRONTEND_COMMIT 9f933937058aceb974cb51eb7ed6c36b309011ad
+ENV FRONTEND_COMMIT af03fa9529283fa03bd27f9b9a3b507afda99dab
 RUN git clone https://github.com/protoxvga/ada_ui && \
     cd ada_ui && \ 
     git reset --hard ${FRONTEND_COMMIT} && \
