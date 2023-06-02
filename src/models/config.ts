@@ -88,19 +88,12 @@ class Config extends Model<Config> {
         }))[0];
     }
 
-    static async enableFailSafe() {
-        if (!Config.checkFailSafe()) {
-            await Config.create({
-                name: "TESTS_FAILSAFE",
-                value: "true"
-            });
-        }
-    }
-
+    /* This failsafe is present when the Database is used for testing*/
     static async checkFailSafe() {
         return (await Config.findOne({
             where: {
-                name: "TESTS_FAILSAFE"
+                name: "TESTS_FAILSAFE_DISABLED",
+                value: "TRUE"
             }
         }));
     }

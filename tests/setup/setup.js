@@ -14,11 +14,11 @@ module.exports = async () => {
     console.log("Setting up tests.");
     await checkDatabaseConnection();
 
-    if (await Config.checkFailSafe()) {
+    if (!(await Config.checkFailSafe())) {
         console.warn("");
-        console.warn("/!\\ WARNING: It seems like the CI is beeing runned on a fail-safed database.");
+        console.warn("/!\\ WARNING: It seems like the CI is beeing runned on a non-fail-safed database.");
         console.warn("/!\\ CI will not run since this would require truncating all tables.");
-        console.warn("/!\\ To delete the failsafe, connect to the database and delete the TESTS_FAILSAFE row from the Configs table.");
+        console.warn("/!\\ To remove the failsafe, connect to the database and add a TESTS_FAILSAFE_DISABLED row with a value of TRUE into the Configs table.");
         process.exit(1);
     }
 
