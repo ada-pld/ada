@@ -3,9 +3,6 @@ import "dotenv/config";
 (async () => {
     if (process.env.NODE_ENV == 'test') {
         const { app_test, checkDatabaseConnection_test } = await import('./app.test');
-        const { setupMailTransporter } = await import('./mails');
-        const User = (await import('./models/user')).default;
-        const bcrypt = await import('bcrypt');
 
         (async () => {
             await checkDatabaseConnection_test();

@@ -55,6 +55,13 @@ async function checkDatabaseConnection_test() {
     }
 }
 
+app_test.get('/start_tests', async (req, res) => {
+    await checkDatabaseConnection_test();
+    return res.status(200).send({
+        message: "Database ready."
+    })
+})
+
 app_test_router.use(cors());
 app_test_router.use(express.json());
 app_test_router.use(express.urlencoded({ extended: true }));
