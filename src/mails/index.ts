@@ -8,6 +8,9 @@ import dayjs from 'dayjs';
 let transporter :Transporter = null;
 
 export async function setupMailTransporter() {
+    if (process.env.NODE_ENV == "test") {
+        return;
+    }
     try {
         transporter = nodemailer.createTransport({
             host: ada.config.SMTP_Host.value,

@@ -10,13 +10,6 @@ import "dotenv/config";
         (async () => {
             await checkDatabaseConnection_test();
 
-            app_test.get('/start_tests', async (req, res) => {
-                await checkDatabaseConnection_test();
-                return res.status(200).send({
-                    message: "Database ready."
-                })
-            })
-
             app_test.listen(parseInt(process.env.PORT), () => {
                 console.log(`Test Server launched on port ${process.env.PORT}`)
             })

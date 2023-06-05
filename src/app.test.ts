@@ -29,6 +29,21 @@ async function checkDatabaseConnection_test() {
             console.warn("/!\\ To remove the failsafe, connect to the database and add a TESTS_FAILSAFE_DISABLED row with a value of TRUE into the Configs table.");
             process.exit(1);
         }
+        ada.sprint = null;
+        ada.parts = null;
+        ada.users = null;
+        ada.sessions = null;
+        ada.config = {
+            SMTP_Host: null,
+            SMTP_User: null,
+            SMTP_Port: null,
+            SMTP_Password: null,
+            Default_Password: null,
+            Hostname: null,
+            UsingCustomGenerator: null,
+            UnderMaintenance: null,
+            ADAInstanceId: null
+        }
         await db.sync({ force: true });
         await Config.create({
             name: "TESTS_FAILSAFE_DISABLED",
