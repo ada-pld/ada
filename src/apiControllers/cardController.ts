@@ -188,21 +188,53 @@ class CardController implements IController {
         }
         if (req.body.partId && req.body.partId != card.partId) {
             if (card.status != "WAITING_APPROVAL" && card.status != "REJECTED") {
-                return res.status(400).send({
-                    message: "You cannot change the part of a card that as already been accepted."
+                const cardsToUpdate = await Card.findAll({
+                    where: {
+                        partId: card.partId,
+                        sprintId: card.sprintId,
+                        idInSprint: {
+                            [Op.gt]: card.idInSprint
+                        }
+                    }
                 });
-            }
-            const part = await Part.findOne({
-                where: {
-                    id: req.body.partId
+                const allProms: Promise<Card>[] = [];
+                for (const cardToUpdate of cardsToUpdate) {
+                    cardToUpdate.idInSprint -= 1;
+                    allProms.push(cardToUpdate.save());
                 }
-            })
-            if (!part) {
-                return res.status(400).send({
-                    message: "Invalid part id."
+                const part = await Part.findOne({
+                    where: {
+                        id: req.body.partId
+                    }
+                });
+                if (!part) {
+                    return res.status(400).send({
+                        message: "Invalid part id."
+                    })
+                }
+                const totalCardsInPart = await Card.findAll({
+                    where: {
+                        sprintId: card.sprintId,
+                        partId: part.id
+                    }
+                });
+                card.sprintId = totalCardsInPart.length + 1;
+                allProms.push(card.save());
+                await card.$set('partId', part.id);
+                await Promise.all(allProms);
+            } else {
+                const part = await Part.findOne({
+                    where: {
+                        id: req.body.partId
+                    }
                 })
+                if (!part) {
+                    return res.status(400).send({
+                        message: "Invalid part id."
+                    })
+                }
+                partId = part.id;
             }
-            partId = part.id;
         }
         if (req.body.assignees) {
             let assArr: string[] = [];
