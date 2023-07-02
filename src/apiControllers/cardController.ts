@@ -219,8 +219,10 @@ class CardController implements IController {
                     }
                 });
                 card.sprintId = totalCardsInPart.length + 1;
+                card.set({
+                    partId: part.id
+                })
                 allProms.push(card.save());
-                await card.$set('partId', part.id);
                 await Promise.all(allProms);
             } else {
                 const part = await Part.findOne({
