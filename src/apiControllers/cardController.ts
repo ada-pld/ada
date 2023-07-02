@@ -177,6 +177,7 @@ class CardController implements IController {
         let partId: number = card.partId;
         let description: string = card.description;
         let dods: string = card.dods;
+        const promsPartUpdate: Promise<Card>[] = [];
 
         if (req.body.workingDays) {
             workingDays = parseInt(req.body.workingDays);
@@ -197,10 +198,9 @@ class CardController implements IController {
                         }
                     }
                 });
-                const allProms: Promise<Card>[] = [];
                 for (const cardToUpdate of cardsToUpdate) {
                     cardToUpdate.idInSprint = cardToUpdate.idInSprint - 1;
-                    allProms.push(cardToUpdate.save());
+                    promsPartUpdate.push(cardToUpdate.save());
                 }
                 const part = await Part.findOne({
                     where: {
@@ -219,11 +219,7 @@ class CardController implements IController {
                     }
                 });
                 card.idInSprint = totalCardsInPart.length + 1;
-                card.set({
-                    partId: part.id
-                })
-                allProms.push(card.save());
-                await Promise.all(allProms);
+                partId = part.id;
             } else {
                 const part = await Part.findOne({
                     where: {
@@ -302,6 +298,7 @@ class CardController implements IController {
         if (card.status == "REJECTED") {
             card.status = "WAITING_APPROVAL";
         }
+        await Promise.all(promsPartUpdate);
         await card.save();
         PollingController.addToPollList('useGetCardsQuery');
         PollingController.addToPollList('useGetCardListQuery');
