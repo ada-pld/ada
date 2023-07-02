@@ -218,7 +218,7 @@ class CardController implements IController {
                         partId: part.id
                     }
                 });
-                card.sprintId = totalCardsInPart.length + 1;
+                card.idInSprint = totalCardsInPart.length + 1;
                 card.set({
                     partId: part.id
                 })
