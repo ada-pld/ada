@@ -19,7 +19,7 @@ const sequelize = new Sequelize({
     username: db_config[process.env.NODE_ENV].username,
     password: db_config[process.env.NODE_ENV].password,
     dialect: "mysql",
-    logging: process.env.ENVIRONMENT != "dev" ? false : console.log,
+    logging: process.env.ENVIRONMENT != "dev" && process.env.ENVIRONMENT != "test" ? false : console.log,
     models: [
         User,
         Sprint,
