@@ -199,7 +199,7 @@ class CardController implements IController {
                 });
                 const allProms: Promise<Card>[] = [];
                 for (const cardToUpdate of cardsToUpdate) {
-                    cardToUpdate.idInSprint -= 1;
+                    cardToUpdate.idInSprint = cardToUpdate.idInSprint - 1;
                     allProms.push(cardToUpdate.save());
                 }
                 const part = await Part.findOne({
