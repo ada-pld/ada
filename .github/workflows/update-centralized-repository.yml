@@ -31,6 +31,8 @@ jobs:
           git add .
           git commit -m "[Automated] Update to commit $COMMIT"
 
+          git config -l | grep 'http\..*\.extraheader' | cut -d= -f1 | \
+            xargs -L1 git config --unset-all
           git push --set-upstream origin update-to-$COMMIT
 
       - name: Create Pull Request
