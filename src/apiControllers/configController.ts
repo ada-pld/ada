@@ -20,7 +20,7 @@ class ConfigController implements IController {
 
     private initializeRoutes() {
         this.router.get("/", authBearer, checkPermAPI("ADMIN"), this.show);
-        this.router.get("/refresh", authBearer, checkPermAPI("ADMIN"), this.refresh);
+        this.router.get("/refresh", authBearer, checkPermAPI("ADMIN"), ConfigController.refresh);
         this.router.post("/edit", authBearer, checkPermAPI("ADMIN"), this.edit);
     }
 
