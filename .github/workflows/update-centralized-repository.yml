@@ -17,7 +17,7 @@ jobs:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
           REPOSITORY: ${{ secrets.REPOSITORY }}
         run: |
-          git clone https://$PAT_USERNAME:$PAT_TOKEN@github.com/$REPOSITORY ../$REPOSITORY
+          git clone https://$PAT_USERNAME:$PAT_TOKEN@github.com/ada-pld/$REPOSITORY ../$REPOSITORY
           cp -r ../$REPOSITORY/.github ../.github_bck
           rm -rf ../$REPOSITORY/*
           cp -r ./* ../$REPOSITORY
@@ -27,6 +27,7 @@ jobs:
           git config user.email "$PAT_EMAIL"
 
           git checkout -b update-to-$COMMIT
+          git add .
 
           git config --unset-all http.https://github.com/.extraheader
           git push --set-upstream origin update-to-$COMMIT
