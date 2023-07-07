@@ -1,0 +1,35 @@
+name: Update Centralized Repository
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  updata_centralized_repository:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Push to Centralized repository
+        env:
+          PAT_USERNAME: ${{ secrets.PAT_USERNAME }}
+          PAT_EMAIL: ${{ secrets.PAT_EMAIL }}
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+          REPOSITORY: ${{ secrets.REPOSITORY }}
+        run: |
+          git clone https://$PAT_USERNAME:$PAT_TOKEN@github.com/$REPOSITORY
+          cd $REPOSITORY
+
+          git config user.name "$PAT_USERNAME"
+          git config user.email "$PAT_EMAIL"
+
+          git checkout -b update-to-$COMMIT
+
+          git config --unset-all http.https://github.com/.extraheader
+          git push --set-upstream origin update-to-$COMMIT
+
+      - name: Create Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+          REPOSITORY: ${{ secrets.REPOSITORY }}
+        run: gh pr create -R ada-pld/$REPOSITORY -B main -H update-to-$COMMIT -b "[Automated] Update to commit $COMMIT" -t "Automated pull request to update repository to $COMMIT"
