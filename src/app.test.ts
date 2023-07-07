@@ -14,6 +14,7 @@ import Session from "./models/session";
 import cors from "cors";
 import path from "path";
 import morgan from "morgan";
+import ConfigController from "./apiControllers/configController";
 
 const app_test_router = express.Router();
 const app_test = express();
@@ -55,12 +56,11 @@ async function checkDatabaseConnection_test() {
     }
 }
 
-app_test.get('/start_tests', async (req, res) => {
+app_test.get('/start_tests', async (req, res, next) => {
     await checkDatabaseConnection_test();
-    return res.status(200).send({
-        message: "Database ready."
-    })
-})
+    req.ada = ada;
+    return next();
+}, ConfigController.refresh);
 
 app_test_router.use(cors());
 app_test_router.use(express.json());

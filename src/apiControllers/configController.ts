@@ -73,7 +73,7 @@ class ConfigController implements IController {
         })
     }
 
-    private refresh = async (req: Request, res: Response) => {
+    static refresh = async (req: Request, res: Response) => {
         const ada = req.ada;
         const [parts, users, sessions, sprint, SMTP_Host, SMTP_User,
         SMTP_Port, SMTP_Password, Default_Password, Hostname,
