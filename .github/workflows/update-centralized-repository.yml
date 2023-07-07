@@ -17,8 +17,11 @@ jobs:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
           REPOSITORY: ${{ secrets.REPOSITORY }}
         run: |
-          git clone https://$PAT_USERNAME:$PAT_TOKEN@github.com/$REPOSITORY
-          cd $REPOSITORY
+          git clone https://$PAT_USERNAME:$PAT_TOKEN@github.com/$REPOSITORY ../$REPOSITORY
+          cp -r ../$REPOSITORY/.github ../.github_bck
+          rm -rf ../$REPOSITORY/*
+          cp -r ./* ../$REPOSITORY
+          cd ../$REPOSITORY
 
           git config user.name "$PAT_USERNAME"
           git config user.email "$PAT_EMAIL"
