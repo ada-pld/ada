@@ -16,7 +16,6 @@ jobs:
           PAT_EMAIL: ${{ secrets.PAT_EMAIL }}
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
           REPOSITORY: ${{ secrets.REPOSITORY }}
-          COMMIT: ${{ vars.COMMIT }}
         run: |
           git clone https://$PAT_USERNAME:$PAT_TOKEN@github.com/ada-pld/$REPOSITORY ../$REPOSITORY
           cp -r ../$REPOSITORY/.github ../.github_bck
@@ -27,15 +26,14 @@ jobs:
           git config user.name "$PAT_USERNAME"
           git config user.email "$PAT_EMAIL"
 
-          git checkout -b update-to-$COMMIT
+          git checkout -b update-to-$GITHUB_SHA
           git add .
-          git commit -m "[Automated] Update to commit $COMMIT"
+          git commit -m "[Automated] Update to commit $GITHUB_SHA"
 
-          git push --set-upstream origin update-to-$COMMIT
+          git push --set-upstream origin update-to-$GITHUB_SHA
 
       - name: Create Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
           REPOSITORY: ${{ secrets.REPOSITORY }}
-          COMMIT: ${{ vars.COMMIT }}
-        run: gh pr create -R "ada-pld/$REPOSITORY" -B main -H "update-to-$COMMIT" -b "[Automated] Update to commit $COMMIT" -t "Automated pull request to update repository to $COMMIT"
+        run: gh pr create -R "ada-pld/$REPOSITORY" -B main -H "update-to-$GITHUB_SHA" -b "[Automated] Update to commit $GITHUB_SHA" -t "Automated pull request to update repository to $GITHUB_SHA"
