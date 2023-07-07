@@ -26,9 +26,13 @@ jobs:
           git config user.name "$PAT_USERNAME"
           git config user.email "$PAT_EMAIL"
 
-          git checkout -b update-to-$GITHUB_SHA
+          git checkout -b update-to-$GITHUB_SHA tags/last_update_from_public
+          git push origin :refs/tags/last_update_from_public
+          git tag --delete last_update_from_public
+
           git add .
           git commit -m "[Automated] Update to commit $GITHUB_SHA"
+          git tag last_update_from_public
 
           git push --set-upstream origin update-to-$GITHUB_SHA
 
