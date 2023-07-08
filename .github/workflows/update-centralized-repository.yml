@@ -22,7 +22,7 @@ jobs:
           git clone https://$PAT_USERNAME:$PAT_TOKEN@github.com/ada-pld/$REPOSITORY ../$REPOSITORY
           cd ../$REPOSITORY
           git remote add public file://$REPO_PATH
-          git pull public main
+          git pull public
 
           git config user.name "$PAT_USERNAME"
           git config user.email "$PAT_EMAIL"
