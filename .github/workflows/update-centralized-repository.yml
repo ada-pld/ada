@@ -22,6 +22,7 @@ jobs:
           git checkout main
           git clone https://$PAT_USERNAME:$PAT_TOKEN@github.com/ada-pld/$REPOSITORY ../$REPOSITORY
           cd ../$REPOSITORY
+          git config pull.rebase false
           git remote add public file://$REPO_PATH
           git pull public main
 
