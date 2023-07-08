@@ -17,10 +17,10 @@ jobs:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
           REPOSITORY: ${{ secrets.REPOSITORY }}
         run: |
-          PATH=`pwd`
+          REPO_PATH=`pwd`
           git clone https://$PAT_USERNAME:$PAT_TOKEN@github.com/ada-pld/$REPOSITORY ../$REPOSITORY
           cd ../$REPOSITORY
-          git pull $PATH main
+          git pull $REPO_PATH main
 
           git config user.name "$PAT_USERNAME"
           git config user.email "$PAT_EMAIL"
