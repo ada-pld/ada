@@ -18,6 +18,7 @@ jobs:
           REPOSITORY: ${{ secrets.REPOSITORY }}
         run: |
           REPO_PATH=`pwd`
+          git fetch
           git clone https://$PAT_USERNAME:$PAT_TOKEN@github.com/ada-pld/$REPOSITORY ../$REPOSITORY
           cd ../$REPOSITORY
           git pull $REPO_PATH main
