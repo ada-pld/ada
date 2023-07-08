@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  updata_centralized_repository:
+  update_centralized_repository:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,22 +17,20 @@ jobs:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
           REPOSITORY: ${{ secrets.REPOSITORY }}
         run: |
+          REPO_PATH=`pwd`
+          git pull
+          git checkout main
           git clone https://$PAT_USERNAME:$PAT_TOKEN@github.com/ada-pld/$REPOSITORY ../$REPOSITORY
-          cp -r ../$REPOSITORY/.github ../.github_bck
-          rm -rf ../$REPOSITORY/*
-          cp -r ./* ../$REPOSITORY
           cd ../$REPOSITORY
 
+          git config pull.rebase false
           git config user.name "$PAT_USERNAME"
           git config user.email "$PAT_EMAIL"
 
-          git checkout -b update-to-$GITHUB_SHA tags/last_update_from_public
-          git push origin :refs/tags/last_update_from_public
-          git tag --delete last_update_from_public
+          git checkout -b update-to-$GITHUB_SHA
 
-          git add .
-          git commit -m "[Automated] Update to commit $GITHUB_SHA"
-          git tag last_update_from_public
+          git remote add public file://$REPO_PATH
+          git pull public main
 
           git push --set-upstream origin update-to-$GITHUB_SHA
 
