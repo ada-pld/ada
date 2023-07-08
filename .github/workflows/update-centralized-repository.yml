@@ -27,12 +27,10 @@ jobs:
           git config user.name "$PAT_USERNAME"
           git config user.email "$PAT_EMAIL"
 
+          git checkout -b update-to-$GITHUB_SHA
+
           git remote add public file://$REPO_PATH
           git pull public main
-
-          git add .
-          git commit -m "[Automated] Update to commit $GITHUB_SHA"
-          git tag last_update_from_public
 
           git push --set-upstream origin update-to-$GITHUB_SHA
 
