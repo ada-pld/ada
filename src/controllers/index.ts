@@ -10,7 +10,7 @@ import RendezVousGroupController from "./rendezVousGroupController";
 import SprintController from "./sprintController";
 import UserController from "./usersController";
 
-export const apiControllers :IController[] = [
+export const controllers :IController[] = [
     new AuthController(),
     new UserController(),
     new PartController(),

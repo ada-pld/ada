@@ -9,7 +9,7 @@ import { authIfPossibleElseContinue, checkDefaultPassword, checkFirstAccount } f
 import Config from "./models/config";
 import { setupMailTransporter } from "./mails";
 import { checkMaintenance } from "./middlewares/maintenance";
-import { apiControllers } from "./apiControllers";
+import { controllers } from "./controllers";
 import Session from "./models/session";
 import cors from "cors";
 import path from "path";
@@ -85,7 +85,7 @@ api.use(checkDefaultPassword);
 api.use(checkMaintenance);
 api.use(morgan('tiny'))
 
-for (let controller of apiControllers) {
+for (let controller of controllers) {
     api.use(controller.path, controller.router);
 }
 

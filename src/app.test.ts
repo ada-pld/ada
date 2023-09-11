@@ -9,12 +9,12 @@ import { authIfPossibleElseContinue, checkDefaultPassword, checkFirstAccount } f
 import Config from "./models/config";
 import { setupMailTransporter } from "./mails";
 import { checkMaintenance } from "./middlewares/maintenance";
-import { apiControllers } from "./apiControllers";
+import { controllers } from "./controllers";
 import Session from "./models/session";
 import cors from "cors";
 import path from "path";
 import morgan from "morgan";
-import ConfigController from "./apiControllers/configController";
+import ConfigController from "./controllers/configController";
 
 const app_test_router = express.Router();
 const app_test = express();
@@ -109,7 +109,7 @@ app_test_router.use(checkDefaultPassword);
 app_test_router.use(checkMaintenance);
 app_test_router.use(morgan('tiny'));
 
-for (let controller of apiControllers) {
+for (let controller of controllers) {
     app_test_router.use(controller.path, controller.router);
 }
 
